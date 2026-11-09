@@ -555,14 +555,100 @@ img, video { display: block; max-width: 100%; }
 .next .arrow-big { font-size: 32px; transition: transform 0.3s var(--ease); }
 .next:hover .arrow-big { transform: translateX(6px); }
 
-/* Reveal */
-.js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+/* Motion
+   Every state below is added by site.js, which skips all of it under
+   prefers-reduced-motion, so the page stays fully visible without JS or motion. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+  transition-delay: var(--base, 0ms);
+}
 .js .reveal.in { opacity: 1; transform: none; }
+
+/* Headlines rise word by word */
+.js .reveal.words { opacity: 1; transform: none; }
+.words .wi {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(0.45em);
+  transition: opacity 0.7s var(--ease), transform 0.9s var(--ease), filter 0.7s var(--ease);
+  transition-delay: calc(var(--base, 0ms) + var(--d, 0) * 45ms);
+}
+.words.in .wi { opacity: 1; filter: none; transform: none; }
+
+/* Groups arrive one item at a time */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transition-delay: calc(var(--base, 0ms) + var(--i, 0) * 80ms);
+}
+.stagger.in > * { opacity: 1; transform: none; }
+
+/* Media opens from a narrower window */
+.clip {
+  clip-path: inset(9% 7% 9% 7% round 22px);
+  transform: scale(1.05);
+  transition: clip-path 1.2s var(--ease), transform 1.6s var(--ease);
+}
+.clip.in { clip-path: inset(-80px -80px -80px -80px round 0px); transform: none; }
+
+/* Section dividers draw from left to right */
+.section.draw { position: relative; border-top-color: transparent; }
+.section.draw::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 0; right: 0;
+  height: 1px;
+  background: var(--rule);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.6s var(--ease);
+}
+.section.draw.in::before { transform: none; }
+
+/* Reading progress along the bottom of the nav */
+.nav::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: var(--ink);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* Renude chat plays out like a live exchange */
+.chat.play .msg-user,
+.chat.play .trace span,
+.chat.play .msg-card,
+.chat.play .mc-steps li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.chat.play .trace span { transform: translateY(6px) scale(0.9); }
+.chat.play .sk { transform: scaleX(0); transform-origin: left center; transition: transform 0.3s var(--ease); }
+
+.chat.play.in .msg-user,
+.chat.play.in .trace span,
+.chat.play.in .msg-card,
+.chat.play.in .mc-steps li {
+  opacity: 1;
+  transform: none;
+  transition-duration: 0.6s;
+  transition-delay: calc(0.15s + var(--s, 0) * 0.28s);
+}
+.chat.play.in .sk { transform: none; transition-duration: 0.9s; transition-delay: calc(0.75s + var(--s, 0) * 0.28s); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal { transition: none; }
   .work-media, .arrow-link span, .next .arrow-big { transition: none; }
+  .nav::after { display: none; }
 }
 
 /* Responsive */
