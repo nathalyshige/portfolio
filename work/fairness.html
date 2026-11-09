@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fairness-aware cosmetics recommendation · Nathaly Shige</title>
+  <meta name="description" content="A Stanford CS 129 project by Nathaly Shige: predicting Fitzpatrick skin type with a ResNet50 and using it for ingredient-aware, fairer cosmetics recommendations." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#about" class="hide-sm">About</a>
+        <a href="../Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="container">
+        <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="eyebrow reveal">Stanford CS 129 · Course project under Andrew Ng</p>
+        <h1 class="reveal">Bridging skin tone classification with fair cosmetics recommendation.</h1>
+        <p class="lede reveal">
+          Skincare recommenders usually focus on visible conditions like acne or
+          dryness and overlook skin tone, which can bias results against
+          underrepresented groups. I built a pipeline that predicts Fitzpatrick
+          skin type from a photo and uses it to rank products with
+          ingredient-aware scoring.
+        </p>
+        <dl class="case-meta reveal">
+          <div><dt>Context</dt><dd>CS 129, Stanford</dd></div>
+          <div><dt>Model</dt><dd>Fine-tuned ResNet50</dd></div>
+          <div><dt>Data</dt><dd>Fitzpatrick17k, FairFace, Sephora</dd></div>
+          <div><dt>Poster</dt><dd><a href="../images/fairness-poster.webp" target="_blank" rel="noopener">Open full size ↗</a></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container">
+      <figure class="reveal">
+        <a class="case-cover" href="../images/fairness-poster.webp" target="_blank" rel="noopener" style="cursor: zoom-in">
+          <img src="../images/fairness-poster.webp" width="2000" height="1333" alt="Research poster: Beauty, but Make it Tech. Bridging Skin Tone Classification with Fair Cosmetics Formulation and Recommendation, covering motivation, approach, data, model, results, and per-skin-type product recommendations" />
+        </a>
+        <figcaption class="cover-caption">Project poster. Click to open it at full size.</figcaption>
+      </figure>
+
+      <ul class="case-stats">
+        <li class="reveal"><b>37.3%</b><span>six-class evaluation accuracy, against a 16.7% random baseline</span></li>
+        <li class="reveal"><b>45.8%</b><span>validation accuracy</span></li>
+        <li class="reveal"><b>8,500</b><span>Sephora products ranked</span></li>
+        <li class="reveal"><b>100K+</b><span>FairFace images added for demographic diversity</span></li>
+      </ul>
+
+      <section class="case-section">
+        <h2 class="reveal">Approach</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>
+              An end-to-end pipeline that combines learned visual features with
+              domain-specific ingredient knowledge: predict skin type first, then
+              use that prediction inside a structured, interpretable ranking.
+            </p>
+          </div>
+          <figure class="wide">
+            <div class="diagram diagram--row">
+              <div class="node"><span class="node-k">Face image</span><span class="node-v">224×224 RGB</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">ResNet50</span><span class="node-v">Fitzpatrick type I to VI</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Ingredient scoring</span><span class="node-v">Weights conditioned on skin type</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Ranked products</span><span class="node-v">Across 8,500 Sephora items</span></div>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">Data</h2>
+        <ul class="points reveal">
+          <li><strong>Fitzpatrick17k.</strong> Labeled skin tone images, about 12K after cleaning.</li>
+          <li><strong>FairFace.</strong> Over 100K images to improve demographic diversity.</li>
+          <li><strong>Sephora.</strong> 8,500 products with ingredient lists.</li>
+        </ul>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">Model and ranking</h2>
+        <div class="reveal">
+          <ul class="points">
+            <li><strong>Classifier.</strong> A fine-tuned ResNet50 maps a face image to a 2048-d embedding and a probability distribution over Fitzpatrick types I to VI, trained with cross-entropy and Adam (learning rate 0.001).</li>
+            <li><strong>Ranking.</strong> Each product gets a weighted score over four ingredient features, with coefficients that depend on the predicted skin type <i>f</i>:</li>
+          </ul>
+          <p class="formula wide">Score(P, <i>f</i>) = α<sub><i>f</i></sub> · Reflectivity + β<sub><i>f</i></sub> · Pigment + γ<sub><i>f</i></sub> · Irritation + δ<sub><i>f</i></sub> · Dullness</p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">Results</h2>
+        <div class="prose reveal">
+          <p>
+            The model shows that automated skin tone classification is feasible:
+            <strong>45.8% validation and 37.3% evaluation accuracy</strong>,
+            against a 16.7% random baseline, with performance varying across
+            classes. Most errors fall between adjacent skin tones, which reflects
+            how continuous the label space really is.
+          </p>
+          <p>
+            Dataset imbalance and ambiguity in skin tone labeling were the main
+            constraints. The hybrid design made recommendations more
+            interpretable, but fairness challenges remain wherever
+            representation is uneven.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What's next</h2>
+        <ul class="points reveal">
+          <li>More diverse data and refined label definitions.</li>
+          <li>Transformer-based architectures, and multi-task learning that models skin tone and skin conditions together.</li>
+          <li>Real-world user feedback to improve personalization.</li>
+        </ul>
+      </section>
+
+      <a class="next" href="renude.html">
+        <div>
+          <p class="eyebrow">Next project</p>
+          <p class="next-title">Renude agent harness</p>
+        </div>
+        <span class="arrow-big" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renude agent harness · Nathaly Shige</title>
+  <meta name="description" content="How Nathaly Shige engineered the agent harness behind Renude's AI-native skincare assistant: 27 tools, grounded answers, and graceful fallbacks." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#about" class="hide-sm">About</a>
+        <a href="../Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="container">
+        <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="eyebrow reveal">Renude · 2026</p>
+        <h1 class="reveal">An agent harness for Renude's AI-native skincare assistant.</h1>
+        <p class="lede reveal">
+          I engineered the harness behind Renude's AI-native revamp of its
+          skincare assistant and shipped it as a drop-in plugin. Most of the work
+          went into what keeps an agent trustworthy: grounding, fallbacks, and a
+          hardened server.
+        </p>
+        <dl class="case-meta reveal">
+          <div><dt>Role</dt><dd>AI Engineer &amp; Product Intern</dd></div>
+          <div><dt>Timeline</dt><dd>Jul to Sep 2026 · Remote</dd></div>
+          <div><dt>Focus</dt><dd>Agent harness, grounding, reliability</dd></div>
+          <div><dt>Stack</dt><dd>OpenAI Responses API, React 19, SSE, Vercel</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container">
+      <figure class="reveal">
+        <div class="case-cover">
+          <div class="chat" aria-hidden="true">
+            <div class="msg-user">Build me an evening routine for dry, sensitive skin.</div>
+            <div class="trace"><span>Profile</span><span>Ranking</span><span>Compatibility</span></div>
+            <div class="msg-card">
+              <div class="mc-head"><b>Evening routine</b><span class="src">From tool run</span></div>
+              <ol class="mc-steps">
+                <li><i>1</i><b>Cleanse</b><span class="sk" style="--w: 46%"></span></li>
+                <li><i>2</i><b>Treat</b><span class="sk" style="--w: 58%"></span></li>
+                <li><i>3</i><b>Moisturize</b><span class="sk" style="--w: 38%"></span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <figcaption class="cover-caption">Illustration of the pattern, not the shipped UI: the assistant answers with cards produced by tool runs after profile, ranking, and compatibility checks.</figcaption>
+      </figure>
+
+      <ul class="case-stats">
+        <li class="reveal"><b>27</b><span>client-side tools orchestrated by the agent loop</span></li>
+        <li class="reveal"><b>0</b><span>figures taken from model prose; every number comes from a tool run</span></li>
+      </ul>
+
+      <section class="case-section">
+        <h2 class="reveal">The challenge</h2>
+        <div class="prose reveal">
+          <p>
+            A skincare assistant has to get details right, keep working when the
+            model doesn't, and run inside other people's storefronts without
+            exposing its prompts or inviting abuse. The revamp needed an agent
+            that was useful and trustworthy at the same time.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">Architecture</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>
+              The assistant runs as a <strong>browser-side agent loop</strong> on
+              the OpenAI Responses API. It orchestrates 27 client-side tools and
+              streams over SSE through a <strong>stateless Vercel proxy</strong>
+              that owns the prompts and tool schemas.
+            </p>
+          </div>
+          <figure class="wide">
+            <div class="diagram diagram--row">
+              <div class="node"><span class="node-k">Agent loop</span><span class="node-v">In the browser, 27 client-side tools</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Vercel proxy</span><span class="node-v">Stateless, server-owned prompts and schemas</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Responses API</span><span class="node-v">OpenAI, streamed back over SSE</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Grounded cards</span><span class="node-v">Every figure comes from a tool run</span></div>
+            </div>
+            <figcaption class="diagram-caption">If the model fails, the harness retries, then hands off to a deterministic offline intent router.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I built</h2>
+        <div class="cards two reveal">
+          <div class="card">
+            <span class="eyebrow">Grounding</span>
+            <h3>No numbers from model prose</h3>
+            <p>Cards are emitted by tool runs, so every figure the user sees is traceable. I also measured the provenance of the profile fields each tool read.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Reliability</span>
+            <h3>Retry, then fall back</h3>
+            <p>When the model fails, the harness retries and then falls back to a deterministic offline intent router, so the assistant keeps working.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Security</span>
+            <h3>A hardened server</h3>
+            <p>Server-owned prompts and tool schemas, input validation, and per-IP rate limits. I also added voice input.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Distribution</span>
+            <h3>Shipped as a plugin</h3>
+            <p>A Shopify-style plugin behind a two-file adapter and a kill switch, with ranking, compatibility, and rule engines built in React 19.</p>
+          </div>
+        </div>
+      </section>
+
+      <a class="next" href="smart-match.html">
+        <div>
+          <p class="eyebrow">Next project</p>
+          <p class="next-title">Smart Match at Giving Connection</p>
+        </div>
+        <span class="arrow-big" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

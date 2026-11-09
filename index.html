@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nathaly Shige, AI Engineer and Product Builder</title>
+  <meta name="description" content="AI engineer and product builder at Stanford specializing in agent harnesses and recommendation systems, from user research to production." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#approach" class="hide-sm">Approach</a>
+        <a href="#about" class="hide-sm">About</a>
+        <a href="Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow reveal">Nathaly Shige · AI engineer and product builder · Stanford</p>
+        <h1 class="reveal">I build AI products from the first user interview to production.</h1>
+        <p class="lede reveal">
+          I study Product Design and Computer Science at Stanford and specialize
+          in agent harnesses and recommendation systems. I've shipped them at
+          Renude, Giving Connection, and Kuri Saúde, and I'm building Nura, an
+          AI skincare device.
+        </p>
+        <div class="hero-actions reveal">
+          <a class="btn btn--dark" href="Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener">View résumé</a>
+          <a class="link" href="https://www.linkedin.com/in/nathalyshige/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="link" href="https://github.com/nathalyshige" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="link" href="mailto:nathalyshige@stanford.edu">Email</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Selected work</p>
+          <h2 class="section-title">Five projects, from agent infrastructure to hardware.</h2>
+        </header>
+
+        <div class="work-list">
+
+          <article class="work-row reveal">
+            <a class="work-media" href="work/renude.html" aria-label="Renude case study">
+              <div class="chat" aria-hidden="true">
+                <div class="msg-user">Build me an evening routine for dry, sensitive skin.</div>
+                <div class="trace"><span>Profile</span><span>Ranking</span><span>Compatibility</span></div>
+                <div class="msg-card">
+                  <div class="mc-head"><b>Evening routine</b><span class="src">From tool run</span></div>
+                  <ol class="mc-steps">
+                    <li><i>1</i><b>Cleanse</b><span class="sk" style="--w: 46%"></span></li>
+                    <li><i>2</i><b>Treat</b><span class="sk" style="--w: 58%"></span></li>
+                    <li><i>3</i><b>Moisturize</b><span class="sk" style="--w: 38%"></span></li>
+                  </ol>
+                </div>
+              </div>
+              <span class="media-tag">Illustration</span>
+            </a>
+            <div class="work-info">
+              <p class="eyebrow">01 · Renude · 2026</p>
+              <h3 class="work-title"><a href="work/renude.html">An agent harness for an AI-native skincare assistant</a></h3>
+              <p class="work-sum">A browser-side agent loop orchestrating 27 tools, built so every figure comes from a tool run and the assistant keeps working when the model doesn't.</p>
+              <dl class="facts">
+                <div><dt>Role</dt><dd>AI Engineer &amp; Product Intern</dd></div>
+                <div><dt>Built</dt><dd>Agent harness, 27 tools</dd></div>
+              </dl>
+              <a class="arrow-link" href="work/renude.html">Read case study <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="work-row reveal">
+            <a class="work-media" href="work/smart-match.html" aria-label="Smart Match case study">
+              <div class="browser">
+                <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="url">givingconnection.org/smart_match</span></div>
+                <img src="images/smart-match/landing.webp" width="2000" height="1026" alt="The live Smart Match landing page on givingconnection.org" />
+              </div>
+            </a>
+            <div class="work-info">
+              <p class="eyebrow">02 · Giving Connection · 2025</p>
+              <h3 class="work-title"><a href="work/smart-match.html">Smart Match, a recommender that helps people find the right nonprofit</a></h3>
+              <p class="work-sum">A hybrid recommender I designed, built, and shipped to production. It turns a short quiz into ranked, explainable nonprofit matches.</p>
+              <dl class="facts">
+                <div><dt>Role</dt><dd>Platform Development &amp; ML Intern</dd></div>
+                <div><dt>Result</dt><dd>80% faster for 15,500+ users</dd></div>
+              </dl>
+              <a class="arrow-link" href="work/smart-match.html">Read case study <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="work-row reveal">
+            <a class="work-media fill" href="work/nura.html" aria-label="Nura case study">
+              <video data-autoplay muted loop playsinline preload="metadata" poster="images/nura/hero-poster.jpg" aria-label="Product film of the Nura device">
+                <source src="images/nura/hero.mp4" type="video/mp4" />
+              </video>
+            </a>
+            <div class="work-info">
+              <p class="eyebrow">03 · Nura · 2025 to present</p>
+              <h3 class="work-title"><a href="work/nura.html">A countertop device that reads your skin and formulates fresh skincare</a></h3>
+              <p class="work-sum">An AI skincare device that doses a personalized formula from eight active cartridges. Now taking reservations for its first production run.</p>
+              <dl class="facts">
+                <div><dt>Role</dt><dd>Founder · product, design, engineering</dd></div>
+                <div><dt>Research</dt><dd>100+ user and expert interviews</dd></div>
+              </dl>
+              <a class="arrow-link" href="work/nura.html">Read case study <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="work-row reveal">
+            <a class="work-media" href="work/kuri-saude.html" aria-label="Kuri Saúde case study">
+              <img src="images/kuri-dashboard.webp" width="1600" height="900" alt="Kuri Saúde document intelligence dashboard" />
+            </a>
+            <div class="work-info">
+              <p class="eyebrow">04 · Kuri Saúde · 2023</p>
+              <h3 class="work-title"><a href="work/kuri-saude.html">Turning thousands of pages of insurer contracts into usable data</a></h3>
+              <p class="work-sum">An OCR and LLM pipeline that reads hospital pricing documents and powers a dashboard for revenue-cycle analysts.</p>
+              <dl class="facts">
+                <div><dt>Role</dt><dd>Product Analyst</dd></div>
+                <div><dt>Result</dt><dd>90% less workflow time</dd></div>
+              </dl>
+              <a class="arrow-link" href="work/kuri-saude.html">Read case study <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="work-row reveal">
+            <a class="work-media" href="work/fairness.html" aria-label="Fairness-aware cosmetics recommendation case study">
+              <img src="images/fairness-poster.webp" width="2000" height="1333" alt="Research poster: Bridging Skin Tone Classification with Fair Cosmetics Formulation and Recommendation" />
+            </a>
+            <div class="work-info">
+              <p class="eyebrow">05 · Stanford CS 129</p>
+              <h3 class="work-title"><a href="work/fairness.html">Skin-tone-aware product recommendations, built to reduce bias</a></h3>
+              <p class="work-sum">A ResNet50 that predicts Fitzpatrick skin type and feeds an ingredient-aware ranking over 8,500 Sephora products.</p>
+              <dl class="facts">
+                <div><dt>Context</dt><dd>Course project under Andrew Ng</dd></div>
+                <div><dt>Result</dt><dd>37.3% vs 16.7% baseline</dd></div>
+              </dl>
+              <a class="arrow-link" href="work/fairness.html">Read case study <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="approach">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">How I build</p>
+          <h2 class="section-title">Across agents, recommenders, and hardware, the same three rules keep showing up.</h2>
+        </header>
+        <ol class="principles">
+          <li class="reveal">
+            <svg class="pi" viewBox="0 0 64 64" aria-hidden="true">
+              <ellipse cx="32" cy="48" rx="16" ry="5" fill="none" stroke="#111" stroke-width="1.5" />
+              <path d="M16 48 V54 A16 5 0 0 0 48 54 V48" fill="none" stroke="#111" stroke-width="1.5" />
+              <line x1="32" y1="42" x2="32" y2="26" stroke="#111" stroke-width="1.5" />
+              <rect x="14" y="6" width="36" height="20" rx="3" fill="#111" />
+              <line x1="20" y1="13" x2="40" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+              <line x1="20" y1="19" x2="32" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span class="eyebrow">Rule 01</span>
+            <h3>Ground the model.</h3>
+            <p>Figures come from tools and data, not model prose. At Renude, every number is a card emitted by a tool run. At Giving Connection, every match ships with its reasons.</p>
+          </li>
+          <li class="reveal">
+            <svg class="pi" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="8" cy="32" r="4" fill="#111" />
+              <path d="M12 32 H54" fill="none" stroke="#111" stroke-width="1.5" />
+              <path d="M12 32 C26 32 26 12 44 12" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="3 3" />
+              <path d="M12 32 C26 32 26 52 44 52" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="3 3" />
+              <rect x="50" y="26" width="12" height="12" fill="#111" />
+            </svg>
+            <span class="eyebrow">Rule 02</span>
+            <h3>Keep the critical path deterministic.</h3>
+            <p>ML personalizes; rules decide what can't fail. Nura's dosing lives in firmware, and Renude's assistant falls back to an offline intent router.</p>
+          </li>
+          <li class="reveal">
+            <svg class="pi" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="14" cy="20" r="7" fill="none" stroke="#111" stroke-width="1.5" />
+              <path d="M3 44 C3 34 25 34 25 44" fill="none" stroke="#111" stroke-width="1.5" />
+              <path d="M28 30 H36" stroke="#111" stroke-width="1.5" />
+              <path d="M33 27 L36 30 L33 33" fill="none" stroke="#111" stroke-width="1.5" />
+              <rect x="42" y="34" width="5" height="12" fill="#111" />
+              <rect x="50" y="26" width="5" height="20" fill="#111" />
+              <rect x="58" y="16" width="5" height="30" fill="#111" />
+              <line x1="40" y1="48" x2="64" y2="48" stroke="#111" stroke-width="1.5" />
+            </svg>
+            <span class="eyebrow">Rule 03</span>
+            <h3>Start with people, then instrument.</h3>
+            <p>Nura's requirements came from 100+ user and expert interviews. Smart Match shipped with feedback capture, so the next version starts from evidence.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="container split">
+        <header class="section-head reveal">
+          <p class="eyebrow">Experience</p>
+          <h2 class="section-title">Where I've built.</h2>
+        </header>
+        <div>
+          <ul class="rows">
+            <li class="reveal"><span class="org">Renude</span><span class="role">AI Engineer &amp; Product Intern</span><span class="when">Jul to Sep 2026</span></li>
+            <li class="reveal"><span class="org">Giving Connection</span><span class="role">Platform Development &amp; ML Intern</span><span class="when">Jun to Aug 2025</span></li>
+            <li class="reveal"><span class="org">Stanford University</span><span class="role">Research Assistant, Center for Educational Entrepreneurship and Innovation</span><span class="when"></span></li>
+            <li class="reveal"><span class="org">Kuri Saúde</span><span class="role">Product Analyst</span><span class="when">Feb to Jul 2023</span></li>
+            <li class="reveal"><span class="org">Girl Up, D&amp;D Chapter</span><span class="role">Founder</span><span class="when">Jan 2021 to Dec 2024</span></li>
+          </ul>
+
+          <p class="eyebrow sub-head reveal">Education</p>
+          <ul class="rows">
+            <li class="reveal"><span class="org">Stanford University</span><span class="role">B.S. Product Design and Computer Science</span><span class="when">Expected Jun 2027</span></li>
+            <li class="reveal"><span class="org">Etec Martin Luther King</span><span class="role">Technical Degree in Business</span><span class="when">2022</span></li>
+          </ul>
+
+          <p class="eyebrow sub-head reveal">Skills</p>
+          <div class="skills reveal">
+            <div><h4>AI and ML</h4><p>Harness engineering, LLM agents, tool calling, grounding, dense retrieval, ranking, recommender systems, computer vision</p></div>
+            <div><h4>Product</h4><p>Discovery, user research, usability testing, prototyping, roadmapping, product analytics</p></div>
+            <div><h4>Engineering</h4><p>Python, TypeScript, React, Node, Rails, PostgreSQL, PyTorch, sentence-transformers, C++, Swift, Vercel, Git</p></div>
+            <div><h4>Models</h4><p>OpenAI GPT models, Claude, Gemini, Llama</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="leadership">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">Leadership</p>
+          <h2 class="section-title">Organizing at national scale.</h2>
+        </header>
+        <div class="lead-grid">
+          <div>
+            <h3 class="lead-name reveal">Girl Up, D&amp;D Chapter</h3>
+            <p class="lead-meta reveal">Founder · Brazil · Jan 2021 to Dec 2024</p>
+            <p class="lead-text reveal">
+              I founded and led a 25-person team improving the wellness of women
+              and girls across Brazil through a menstrual pads program, four
+              educational programs, and three nationwide campaigns. The work
+              drove 50+ proposed bills and one approved national bill.
+            </p>
+            <p class="partners reveal">
+              <span class="eyebrow">Partners</span>
+              Meta, TikTok, Twitter, Greenpeace, the Brazilian Superior Electoral Court, and Ben &amp; Jerry's
+            </p>
+          </div>
+          <ul class="figures reveal">
+            <li><b>18M+</b><span>women and girls reached</span></li>
+            <li><b>25</b><span>person team led</span></li>
+            <li><b>50+</b><span>bills proposed</span></li>
+            <li><b>1</b><span>national bill approved</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="recognition">
+      <div class="container split">
+        <header class="section-head reveal">
+          <p class="eyebrow">Recognition</p>
+          <h2 class="section-title">Recognition and press.</h2>
+        </header>
+        <div>
+          <ul class="rows">
+            <li class="reveal"><span class="org">Fundação Estudar Fellow</span><span class="role">26 selected from 46,000 applicants, listed in Forbes Brasil</span><span class="when">2023</span></li>
+            <li class="reveal"><span class="org">Youth Ambassador</span><span class="role">US Department of State, 1 of 50 in Brazil</span><span class="when">2023</span></li>
+            <li class="reveal"><span class="org">Lean Launchpad</span><span class="role">Stanford GSB, 20% acceptance</span><span class="when"></span></li>
+            <li class="reveal"><span class="org">1st Place, JA &amp; Dell Startup Award</span><span class="role">Junior Achievement Brasil</span><span class="when">2020</span></li>
+            <li class="reveal"><span class="org">Bronze Medal</span><span class="role">Brazilian Investments Olympiad, 2,500+ competitors</span><span class="when"></span></li>
+          </ul>
+
+          <p class="eyebrow sub-head reveal">Selected press</p>
+          <ul class="press-list">
+            <li class="reveal"><a href="https://forbes.com.br/carreira/2023/08/fundacao-estudar-anuncia-bolsistas-do-programa-lideres-2023/" target="_blank" rel="noopener"><span class="outlet">Forbes Brasil · Aug 2023</span><span class="headline">Fundação Estudar anuncia bolsistas do Programa Líderes 2023</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+            <li class="reveal"><a href="https://girlup.org/voices/a-new-era-for-girl-up-brasil" target="_blank" rel="noopener"><span class="outlet">Girl Up · Nov 2022</span><span class="headline">A New Era for Girl Up Brasil</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+            <li class="reveal"><a href="https://www.cps.sp.gov.br/aluna-da-etec-martin-luther-king-conquista-bolsa-integral-em-stanford/" target="_blank" rel="noopener"><span class="outlet">Centro Paula Souza · Dec 2022</span><span class="headline">Aluna da Etec conquista bolsa integral em Stanford</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+            <li class="reveal"><a href="https://www.diplomaciabusiness.com/embaixada-dos-eua-divulga-nomes-dos-50-jovens-embaixadores-selecionados-para-o-programa-de-2023/" target="_blank" rel="noopener"><span class="outlet">Diplomacia Business · Nov 2022</span><span class="headline">Embaixada dos EUA divulga os 50 Jovens Embaixadores de 2023</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+            <li class="reveal"><a href="https://borderless.so/stories/from-public-school-in-brazil-to-a-full-ride-scholarship-at-stanford-university-class-of-2027" target="_blank" rel="noopener"><span class="outlet">Borderless · Jun 2023</span><span class="headline">From public school in Brazil to a full-ride scholarship at Stanford</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow">About</p>
+          <h2 class="section-title">Building between worlds.</h2>
+        </header>
+        <div class="about-cols">
+          <p class="reveal">
+            I grew up in São Paulo and studied business at a public technical
+            school. At 15 I co-founded an edtech that won the JA &amp; Dell
+            Startup Award, and I founded a Girl Up chapter that grew into a
+            25-person team running nationwide campaigns. Building products and
+            moving people at the same time still shapes how I work.
+          </p>
+          <p class="reveal">
+            At Stanford I study Product Design and Computer Science, and I'm most
+            interested in the layer of AI products where trust gets decided:
+            grounding, reliability, and the interface that makes a system feel
+            human.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <p class="eyebrow reveal">Contact</p>
+        <p class="contact-title reveal">Let's build something that matters.</p>
+        <p class="contact-sub reveal">Email is the fastest way to reach me.</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn--dark" href="mailto:nathalyshige@stanford.edu">nathalyshige@stanford.edu</a>
+          <a class="link" href="https://www.linkedin.com/in/nathalyshige/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a class="link" href="https://github.com/nathalyshige" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="link" href="Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

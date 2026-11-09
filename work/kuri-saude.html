@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuri Saúde document intelligence · Nathaly Shige</title>
+  <meta name="description" content="How Nathaly Shige built an OCR and LLM pipeline at Kuri Saúde that cut document review time by 90% for hospital revenue-cycle teams." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#about" class="hide-sm">About</a>
+        <a href="../Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="container">
+        <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="eyebrow reveal">Kuri Saúde · 2023</p>
+        <h1 class="reveal">Turning thousands of pages of insurer contracts into usable data.</h1>
+        <p class="lede reveal">
+          Hospitals rely on pricing tables and negotiation rules from insurers to
+          resolve claim denials, but those documents arrive as paper or
+          inconsistent PDFs. I co-led AI adoption at Kuri Saúde and built the OCR
+          and LLM pipeline that cut review time by 90%.
+        </p>
+        <dl class="case-meta reveal">
+          <div><dt>Role</dt><dd>Product Analyst</dd></div>
+          <div><dt>Timeline</dt><dd>Feb to Jul 2023 · São Paulo</dd></div>
+          <div><dt>Team</dt><dd>1 product analyst, 2 engineers</dd></div>
+          <div><dt>Stack</dt><dd>OCR, LLMs, computer vision</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container">
+      <figure class="reveal">
+        <div class="case-cover">
+          <img src="../images/kuri-dashboard.webp" width="1600" height="900" alt="Kuri Saúde dashboard showing critical, expired, and soon-to-expire insurer documents above a searchable document list" />
+        </div>
+        <figcaption class="cover-caption">The analyst dashboard: critical, expired, and soon-to-expire documents, with every insurer document searchable.</figcaption>
+      </figure>
+
+      <ul class="case-stats">
+        <li class="reveal"><b>90%</b><span>less time spent reviewing documents</span></li>
+        <li class="reveal"><b>80%</b><span>lower operational costs</span></li>
+        <li class="reveal"><b>10K+</b><span>pages processed in under 5 days</span></li>
+        <li class="reveal"><b>3 + 10</b><span>hospitals and insurers using it</span></li>
+      </ul>
+
+      <section class="case-section">
+        <h2 class="reveal">The problem</h2>
+        <div class="prose reveal">
+          <p>
+            Hospitals receive thousands of pages of pricing tables and
+            negotiation rules from insurers. That data is critical for resolving
+            claim denials (<em>glosas</em>), but most documents arrive on paper or
+            as inconsistent PDFs, so analysts extract the information by hand.
+          </p>
+          <p>
+            The result: slow reimbursement cycles, high operational costs, and
+            lost revenue.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">The opportunity</h2>
+        <div class="prose reveal">
+          <p>
+            An AI system that converts unstructured hospital documents into clean,
+            usable data, so analysts can review reimbursement cases faster and
+            more accurately.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">My role</h2>
+        <div class="cards reveal">
+          <div class="card">
+            <h3>Product strategy</h3>
+            <p>Scoped the problem, aligned constraints, and defined the requirements for an AI-powered revenue-cycle automation system.</p>
+          </div>
+          <div class="card">
+            <h3>AI systems</h3>
+            <p>Researched, selected, and tested OCR and LLM approaches, designed the extraction pipeline, and validated it with real hospital data.</p>
+          </div>
+          <div class="card">
+            <h3>Workflow and prototyping</h3>
+            <p>Mapped operations, designed streamlined review flows, and built interactive prototypes to test usability and output quality.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">The pipeline</h2>
+        <div class="reveal">
+          <figure>
+            <div class="diagram diagram--row">
+              <div class="node"><span class="node-k">OCR</span><span class="node-v">Digitizes scanned pages</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">LLM extraction</span><span class="node-v">Rules, operators, codes, dates</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Normalization</span><span class="node-v">Cleans fields, removes noise</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Structuring</span><span class="node-v">Stores as searchable data</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Dashboard</span><span class="node-v">Analysts review and act</span></div>
+            </div>
+          </figure>
+          <ul class="points wide">
+            <li>Reads thousands of pages in minutes.</li>
+            <li>Flags expired or risky rules before they cost money.</li>
+            <li>Structures documents into clean tables and centralizes information by insurer.</li>
+            <li>Powers a new internal dashboard for analysts.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I learned</h2>
+        <div class="prose reveal">
+          <p>
+            <strong>Infrastructure and models are product decisions.</strong>
+            Choosing OCR tools, LLMs, and the extraction pipeline wasn't a
+            back-end detail. It defined speed, reliability, and what the
+            interface could promise. I learned to treat those choices as core
+            product levers, not technical afterthoughts.
+          </p>
+        </div>
+      </section>
+
+      <a class="next" href="fairness.html">
+        <div>
+          <p class="eyebrow">Next project</p>
+          <p class="next-title">Fairness-aware cosmetics recommendation</p>
+        </div>
+        <span class="arrow-big" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

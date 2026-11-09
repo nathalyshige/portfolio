@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Match at Giving Connection · Nathaly Shige</title>
+  <meta name="description" content="How Nathaly Shige designed, built, and shipped Smart Match, a hybrid nonprofit recommender that cut Time-to-Success by 80% for 15,500+ users." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#about" class="hide-sm">About</a>
+        <a href="../Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="container">
+        <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="eyebrow reveal">Giving Connection · 2025</p>
+        <h1 class="reveal">Smart Match: helping people find the right nonprofit, faster.</h1>
+        <p class="lede reveal">
+          A hybrid recommender I designed, built, and shipped to production. It
+          turns a short quiz into ranked, explainable nonprofit matches, and it
+          cut Time-to-Success by 80% for 15,500+ users.
+        </p>
+        <dl class="case-meta reveal">
+          <div><dt>Role</dt><dd>Platform Development &amp; ML Intern</dd></div>
+          <div><dt>Timeline</dt><dd>Jun to Aug 2025 · Stanford, CA</dd></div>
+          <div><dt>Team</dt><dd>Solo project</dd></div>
+          <div><dt>Live</dt><dd><a href="https://www.givingconnection.org/smart_match" target="_blank" rel="noopener">givingconnection.org ↗</a></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container">
+      <figure class="reveal">
+        <div class="case-cover">
+          <div class="browser">
+            <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="url">givingconnection.org/smart_match</span></div>
+            <img src="../images/smart-match/landing.webp" width="2000" height="1026" alt="The live Smart Match landing page on givingconnection.org: Welcome to Smart Match, takes 3 to 5 minutes, personalized nonprofit matches" />
+          </div>
+        </div>
+        <figcaption class="cover-caption">Smart Match, live in production on Giving Connection.</figcaption>
+      </figure>
+
+      <ul class="case-stats">
+        <li class="reveal"><b>80%</b><span>cut in Time-to-Success</span></li>
+        <li class="reveal"><b>15,500+</b><span>users in production</span></li>
+        <li class="reveal"><b>928</b><span>nonprofits embedded for retrieval</span></li>
+        <li class="reveal"><b>26</b><span>config-driven attribute rules in re-ranking</span></li>
+      </ul>
+
+      <section class="case-section">
+        <h2 class="reveal">The problem</h2>
+        <div class="prose reveal">
+          <p>
+            Finding the right nonprofit is confusing. People face long lists,
+            unclear categories, and inconsistent descriptions, and many give up
+            before they reach the help they need.
+          </p>
+          <p>
+            Nonprofits have the opposite problem: poor discovery, low visibility,
+            and mismatched search terms keep them from reaching the right people.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">The opportunity</h2>
+        <div class="prose reveal">
+          <p>
+            Replace keyword search with matching. A short branching quiz helps
+            people say what they need, and their answers become semantic vectors,
+            so recommendations get more personal and much less overwhelming.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">My role</h2>
+        <div class="cards reveal">
+          <div class="card">
+            <h3>Product strategy</h3>
+            <p>Scoped the user journey, defined matching requirements, and shaped the branching quiz that feeds the engine.</p>
+          </div>
+          <div class="card">
+            <h3>ML systems</h3>
+            <p>Researched models, wrote the embedding and matching code, and validated outputs with real nonprofit data.</p>
+          </div>
+          <div class="card">
+            <h3>Front end</h3>
+            <p>Designed and coded the quiz experience, prototyped it, and iterated on clarity and match relevance.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">How it works</h2>
+        <div class="reveal">
+          <figure>
+            <div class="diagram diagram--row">
+              <div class="node"><span class="node-k">Rule filters</span><span class="node-v">Narrow the candidate set</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Dense retrieval</span><span class="node-v">bge-large-en-v1.5, 1024-d embeddings</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Re-ranking</span><span class="node-v">26 config-driven attribute rules</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Explained matches</span><span class="node-v">Reasons shown, feedback captured</span></div>
+            </div>
+            <figcaption class="diagram-caption">A hybrid pipeline: hard rules first, semantic retrieval second, interpretable re-ranking last.</figcaption>
+          </figure>
+          <ul class="points wide">
+            <li><strong>Data.</strong> I wrote the Python embedding ETL over 928 nonprofits, with regex section extraction and batched inference.</li>
+            <li><strong>Integration.</strong> I built a Ruby/Python bridge into Rails 7.2, with synonym query expansion and a PostGIS fallback.</li>
+            <li><strong>Trust.</strong> Every match comes with its reasons, and feedback capture means the next iteration starts from evidence.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">In production</h2>
+        <div class="media-grid three reveal">
+          <figure>
+            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-support.webp" width="1400" height="875" loading="lazy" alt="Quiz step: How can we support you today? Seeking help, donating, or volunteering" /></div>
+            <figcaption><b>Who you are.</b> Seeking help, donating, or volunteering.</figcaption>
+          </figure>
+          <figure>
+            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-causes.webp" width="1400" height="875" loading="lazy" alt="Quiz step: Which causes are close to your heart? A grid of cause cards with three selected" /></div>
+            <figcaption><b>What you care about.</b> Causes become structured filters.</figcaption>
+          </figure>
+          <figure>
+            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-own-words.webp" width="1400" height="875" loading="lazy" alt="Quiz step: Anything else we should know? A free-text answer before Find my matches" /></div>
+            <figcaption><b>In your own words.</b> Free text, matched semantically.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I learned</h2>
+        <div class="cards two reveal">
+          <div class="card">
+            <h3>Design clarity shapes user confidence.</h3>
+            <p>Clearer questions, guided flows, and simple visual cues didn't just improve usability. They made people feel more certain and supported in stressful moments.</p>
+          </div>
+          <div class="card">
+            <h3>The model only works when the system works.</h3>
+            <p>A matching engine isn't defined by its embeddings alone. Impact came from aligning the quiz, the ranking logic, the UI, and people's expectations into one flow.</p>
+          </div>
+        </div>
+      </section>
+
+      <a class="next" href="nura.html">
+        <div>
+          <p class="eyebrow">Next project</p>
+          <p class="next-title">Nura</p>
+        </div>
+        <span class="arrow-big" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

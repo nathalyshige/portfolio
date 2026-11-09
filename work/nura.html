@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nura · Nathaly Shige</title>
+  <meta name="description" content="Nura, a countertop AI skincare device that reads your skin and formulates a fresh, personalized dose. Founded and built by Nathaly Shige." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="wordmark">Nathaly Shige</a>
+      <nav class="nav-links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#about" class="hide-sm">About</a>
+        <a href="../Nathaly-Shige-Resume.pdf" target="_blank" rel="noopener" class="nav-cta">Résumé</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="container">
+        <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="eyebrow reveal">Nura · 2025 to present</p>
+        <h1 class="reveal">A countertop device that reads your skin and formulates fresh skincare.</h1>
+        <p class="lede reveal">
+          Nura reads how your skin is changing, along with signals like sleep
+          and stress, and doses a personalized serum and moisturizer from eight
+          NFC-tracked active cartridges. I've taken it from 100+ interviews
+          through industrial design, the companion app, and a 3D skin model.
+          It's now taking refundable reservations for its first production run.
+        </p>
+        <dl class="case-meta reveal">
+          <div><dt>Role</dt><dd>Founder · product, design, and engineering</dd></div>
+          <div><dt>Timeline</dt><dd>Sep 2025 to present</dd></div>
+          <div><dt>Stack</dt><dd>HealthKit, structure from motion, NFC</dd></div>
+          <div><dt>Site</dt><dd><a href="https://dearnura.com" target="_blank" rel="noopener">dearnura.com ↗</a></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container">
+      <figure class="reveal">
+        <div class="case-cover fill">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/nura/hero-poster.jpg" aria-label="Product film of the Nura device: a slim cream and gold column with an oval sensor window and a dispensing bowl">
+            <source src="../images/nura/hero.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <figcaption class="cover-caption">Product film from dearnura.com.</figcaption>
+      </figure>
+
+      <ul class="case-stats">
+        <li class="reveal"><b>100+</b><span>user and expert interviews behind the requirements</span></li>
+        <li class="reveal"><b>8</b><span>NFC-tracked active cartridges</span></li>
+        <li class="reveal"><b>5</b><span>skin layers measured against your own baseline</span></li>
+        <li class="reveal"><b>~1M</b><span>primitives in the on-device 3D skin model</span></li>
+      </ul>
+
+      <section class="case-section">
+        <h2 class="reveal">The idea</h2>
+        <div class="prose reveal">
+          <p>
+            Skin changes with seasons, stress, your cycle, travel, and sleep, but
+            traditional skincare commits to one formula before it ever reaches
+            you. Nura keeps its components separate, so what you put on your skin
+            can change when your skin does.
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">How it works</h2>
+        <div class="media-grid four reveal">
+          <figure>
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/sensor-poster.jpg" aria-label="Close-up of Nura's top-mounted skin sensor"><source src="../images/nura/sensor.mp4" type="video/mp4" /></video>
+            <figcaption><b>01 Reads your skin.</b> A few seconds across the sensor.</figcaption>
+          </figure>
+          <figure>
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/signals-poster.jpg" aria-label="A person typing at a laptop while wearing a smartwatch"><source src="../images/nura/signals.mp4" type="video/mp4" /></video>
+            <figcaption><b>02 Reads your wearables.</b> Sleep, recovery, and cycle, if you opt in.</figcaption>
+          </figure>
+          <figure>
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/cartridge-poster.jpg" aria-label="Nura's cartridge bay opening to reveal active concentrate cartridges"><source src="../images/nura/cartridge.mp4" type="video/mp4" /></video>
+            <figcaption><b>03 Formulates.</b> Picks from eight concentrates and how much of each.</figcaption>
+          </figure>
+          <figure>
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/dispense-poster.jpg" aria-label="Nura dispensing a single fresh dose into its bowl"><source src="../images/nura/dispense.mp4" type="video/mp4" /></video>
+            <figcaption><b>04 Dispenses.</b> One fresh dose, made when you use it.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I did</h2>
+        <div class="cards two reveal">
+          <div class="card">
+            <span class="eyebrow">Research</span>
+            <h3>100+ interviews</h3>
+            <p>User and expert interviews defined the requirements, user flows, and interaction design for the device UI and app.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Hardware</span>
+            <h3>Industrial design to BOM</h3>
+            <p>I led the industrial design, schematics, and bill of materials for the device and its eight-cartridge system.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">App</span>
+            <h3>A companion that personalizes</h3>
+            <p>I designed and built the app, from UX flows to UI and design system, personalizing routines from HealthKit biomarkers (sleep, stress, HRV), environmental data, and skin scans.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">3D skin model</span>
+            <h3>Measured against you, not an average</h3>
+            <p>On-device reconstruction using structure from motion and a ~1M-primitive Gaussian model measures five skin layers against your own baseline.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">System</h2>
+        <figure class="reveal">
+          <div class="diagram diagram--row">
+            <div class="node"><span class="node-k">Signals</span><span class="node-v">Skin scan, sleep, stress, HRV, environment</span></div>
+            <span class="wire" aria-hidden="true"></span>
+            <div class="node"><span class="node-k">Personalization</span><span class="node-v">ML adapts the routine to you</span></div>
+            <span class="wire" aria-hidden="true"></span>
+            <div class="node"><span class="node-k">Dosing</span><span class="node-v">Deterministic, in firmware</span></div>
+            <span class="wire" aria-hidden="true"></span>
+            <div class="node node-out"><span class="node-k">8 cartridges</span><span class="node-v">Personalized serum and moisturizer</span></div>
+          </div>
+          <figcaption class="diagram-caption">ML is confined to personalization; dosing stays deterministic in firmware.</figcaption>
+        </figure>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Earlier iteration</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>
+              Before the countertop device, I built Nura for retail: an in-store
+              diagnostic that scored skin with computer vision, read lifestyle
+              factors, and generated a routine on the spot, plus a dashboard that
+              turned those signals into insights for store teams.
+            </p>
+          </div>
+          <div class="media-grid two wide">
+            <figure>
+              <div class="panel-shot"><img src="../images/nura-totem.webp" width="1600" height="900" loading="lazy" alt="Nura in-store interface: a skin analysis, the lifestyle factors behind it, a welcome screen, and a personalized routine" /></div>
+              <figcaption><b>In-store skin analysis.</b> Scores, the factors behind them, and a routine with product reasoning.</figcaption>
+            </figure>
+            <figure>
+              <div class="panel-shot"><img src="../images/nura-retail.webp" width="1600" height="900" loading="lazy" alt="Nura Retail Intelligence dashboard with customer segments, AI highlights, and a store skin health index" /></div>
+              <figcaption><b>Retail intelligence.</b> Skin, behavior, environment, and product data in one store view.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I learned</h2>
+        <div class="cards two reveal">
+          <div class="card">
+            <h3>AI works best when the experience feels human.</h3>
+            <p>People trust a diagnostic not because it's technical, but because they feel guided and understood. Designing warmth and clarity into the flow mattered as much as model accuracy.</p>
+          </div>
+          <div class="card">
+            <h3>Personalization lives beyond the model.</h3>
+            <p>The best recommendations come from combining vision, lifestyle, environment, and behavior into one system. The intelligence emerges from how those pieces interact.</p>
+          </div>
+        </div>
+      </section>
+
+      <a class="next" href="kuri-saude.html">
+        <div>
+          <p class="eyebrow">Next project</p>
+          <p class="next-title">Kuri Saúde</p>
+        </div>
+        <span class="arrow-big" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© 2026 Nathaly Shige</span>
+      <span>Stanford, CA</span>
+    </div>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>
