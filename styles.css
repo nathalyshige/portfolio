@@ -161,17 +161,6 @@ img, video { display: block; max-width: 100%; }
 .work-media.fill video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); }
 .work-media .chat { margin: 0 auto; width: min(480px, 100%); }
 
-.media-tag {
-  display: block;
-  margin-top: 14px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--ink-3);
-}
-
 .work-info .eyebrow { margin-bottom: 14px; }
 
 .work-title {
