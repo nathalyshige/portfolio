@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Renude agent harness · Nathaly Shige</title>
-  <meta name="description" content="How Nathaly Shige engineered the agent harness behind Renude's AI-native skincare assistant: 27 tools, grounded answers, and graceful fallbacks." />
+  <title>Renude Beauty Concierge · Nathaly Shige</title>
+  <meta name="description" content="How Nathaly Shige researched, designed, built, and tested Renude's AI beauty concierge: a storefront plugin with 22 entry points, a 27-tool browser-side agent, and answers that show their work." />
   <meta name="theme-color" content="#FFFFFF" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=4" />
+  <link rel="stylesheet" href="../styles.css?v=6" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -30,18 +30,19 @@
       <div class="container">
         <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
         <p class="eyebrow reveal">Renude · 2026</p>
-        <h1 class="reveal">An agent harness for Renude's AI-native skincare assistant.</h1>
+        <h1 class="reveal">An AI beauty concierge that lives inside the shop, not beside it.</h1>
         <p class="lede reveal">
-          I engineered the harness behind Renude's AI-native revamp of its
-          skincare assistant and shipped it as a drop-in plugin. Most of the work
-          went into what keeps an agent trustworthy: grounding, fallbacks, and a
-          hardened server.
+          The brief was a skin-analysis revamp. Research turned it into
+          something larger. In ten weeks I researched, designed, engineered, and
+          user-tested a concierge plugin for beauty retailers: 22 ways in from
+          the storefront, a browser-side agent with 27 tools, and answers that
+          show their work. I handed it to the team as a live prototype.
         </p>
         <dl class="case-meta reveal">
           <div><dt>Role</dt><dd>AI Engineer &amp; Product Intern</dd></div>
-          <div><dt>Timeline</dt><dd>Jul to Sep 2026 · Remote</dd></div>
-          <div><dt>Focus</dt><dd>Agent harness, grounding, reliability</dd></div>
-          <div><dt>Stack</dt><dd>OpenAI Responses API, React 19, SSE, Vercel</dd></div>
+          <div><dt>Timeline</dt><dd>Jul to Sep 2026 · 10 weeks</dd></div>
+          <div><dt>Research</dt><dd>3 expert interviews, 8 user tests, weekly team reviews</dd></div>
+          <div><dt>Stack</dt><dd>React 19, Vite, Tailwind, OpenAI Responses API, SSE, Vercel</dd></div>
         </dl>
       </div>
     </section>
@@ -49,36 +50,83 @@
     <div class="container">
       <figure class="reveal">
         <div class="case-cover">
-          <div class="chat" aria-hidden="true">
-            <div class="msg-user">Build me an evening routine for dry, sensitive skin.</div>
-            <div class="trace"><span>Profile</span><span>Ranking</span><span>Compatibility</span></div>
-            <div class="msg-card">
-              <div class="mc-head"><b>Evening routine</b><span class="src">From tool run</span></div>
-              <ol class="mc-steps">
-                <li><i>1</i><b>Cleanse</b><span class="sk" style="--w: 46%"></span></li>
-                <li><i>2</i><b>Treat</b><span class="sk" style="--w: 58%"></span></li>
-                <li><i>3</i><b>Moisturize</b><span class="sk" style="--w: 38%"></span></li>
-              </ol>
-            </div>
+          <div class="browser">
+            <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div>
+            <img src="../images/renude/store-fit.webp" width="2000" height="1250" alt="Solar, a mock beauty store, with the Renude Beauty Concierge docked beside the Night Shift retinal serum. The shopper asked whether it suits their skin, and the concierge answers with a fit card: worth a closer look, with reasons and a caution about redness." />
           </div>
         </div>
-        <figcaption class="cover-caption">Illustration of the pattern, not the shipped UI: the assistant answers with cards produced by tool runs after profile, ranking, and compatibility checks.</figcaption>
+        <figcaption class="cover-caption">The live prototype on a product page: a fit check answered from the shopper's saved profile, with the reasons and the caution on a card.</figcaption>
       </figure>
 
       <ul class="case-stats">
-        <li class="reveal"><b>27</b><span>client-side tools orchestrated by the agent loop</span></li>
-        <li class="reveal"><b>0</b><span>figures taken from model prose; every number comes from a tool run</span></li>
+        <li class="reveal"><b>22</b><span>entry points across the store, each measured for seen and clicked</span></li>
+        <li class="reveal"><b>27</b><span>client-side tools; every price, verdict, and number comes from one</span></li>
+        <li class="reveal"><b>9</b><span>named skills on a rail that follows what the shopper is doing</span></li>
+        <li class="reveal"><b>8</b><span>user-testing sessions, from the live product to the prototype</span></li>
       </ul>
 
       <section class="case-section">
-        <h2 class="reveal">The challenge</h2>
+        <h2 class="reveal">How the brief moved</h2>
         <div class="prose reveal">
           <p>
-            A skincare assistant has to get details right, keep working when the
-            model doesn't, and run inside other people's storefronts without
-            exposing its prompts or inviting abuse. The revamp needed an agent
-            that was useful and trustworthy at the same time.
+            Renude makes skin consultation tools that beauty retailers install
+            on their sites: a quiz with photo analysis, and a chat that
+            recommends routines. Week one's brief was to revamp the analysis.
           </p>
+          <p>
+            Auditing the live assistant on a retailer's site, screen by screen,
+            showed the biggest losses weren't inside the analysis but around it.
+            The tool was hard to find, mistaken for customer support, forgot the
+            shopper between pages, and couldn't talk about the product on screen.
+            By week four the question had become: <strong>where does AI enter
+            the shopping journey, and how does it earn trust once it's there?</strong>
+          </p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">Research</h2>
+        <div class="cards reveal">
+          <div class="card">
+            <span class="eyebrow">Market</span>
+            <h3>Seven products on one grid</h3>
+            <p>Most beauty AI was hard to discover, quiz-heavy, and over-promised on intelligence. Few turned answers into anything a shopper could keep.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Journey audit</span>
+            <h3>Every friction point, pinned</h3>
+            <p>I used the live assistant end to end, marked where it broke or stalled, then watched testers think aloud through the same flow.</p>
+          </div>
+          <div class="card">
+            <span class="eyebrow">Interviews</span>
+            <h3>Engineering, skin practice, science</h3>
+            <p>They set the rules: reassure without overclaiming, explain the why in a warm sentence, and never infer a shade from a photo.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">A store to test it in</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>
+              Three weeks in Figma couldn't answer the real questions, which were
+              about behavior over time: whether a self-typing ask bar reads as an
+              invitation, or whether a panel that follows you across pages feels
+              like a companion. So I built <strong>Solar</strong>, a fictional
+              retailer with product pages, a bag, checkout, search, filters, and
+              72 products across skin, makeup, and hair, then installed the
+              concierge on top of it. Testers used ideas instead of hearing them
+              described.
+            </p>
+          </div>
+          <figure class="wide">
+            <div class="browser browser-sm">
+              <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div>
+              <img src="../images/renude/store-home.webp" width="2000" height="1250" loading="lazy" alt="Solar's homepage, with an Ask Renude bar typing a question beneath the navigation, above the store's own sunscreen hero" />
+            </div>
+            <figcaption class="diagram-caption">The ask bar types its question character by character and sits above the store's hero. Every lower placement got scrolled past in testing.</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -87,49 +135,143 @@
         <div class="reveal">
           <div class="prose">
             <p>
-              The assistant runs as a <strong>browser-side agent loop</strong> on
-              the OpenAI Responses API. It orchestrates 27 client-side tools and
-              streams over SSE through a <strong>stateless Vercel proxy</strong>
-              that owns the prompts and tool schemas.
+              The concierge is a <strong>plugin layered on the host store</strong>.
+              Only two adapter files touch the retailer, and retailer pages only
+              know a named slot, the same contract as a Shopify theme app
+              extension. Turned off, it leaves zero Renude strings in the page.
+            </p>
+            <p>
+              The agent runs <strong>in the browser</strong>: the model decides
+              what the shopper meant and how to phrase it, while tools run
+              against live state, so the profile and bag never leave the device.
+              A <strong>stateless proxy</strong> holds the key, builds the system
+              prompt server-side, validates input, rate-limits per IP, and streams
+              the response back. Tool schemas are generated from the browser's own
+              definitions at build time, so they can't drift.
             </p>
           </div>
           <figure class="wide">
             <div class="diagram diagram--row">
-              <div class="node"><span class="node-k">Agent loop</span><span class="node-v">In the browser, 27 client-side tools</span></div>
+              <div class="node"><span class="node-k">Storefront</span><span class="node-v">Two adapter files and named slots</span></div>
               <span class="wire" aria-hidden="true"></span>
-              <div class="node"><span class="node-k">Vercel proxy</span><span class="node-v">Stateless, server-owned prompts and schemas</span></div>
+              <div class="node"><span class="node-k">Agent loop</span><span class="node-v">In the browser, 27 tools on live state</span></div>
               <span class="wire" aria-hidden="true"></span>
-              <div class="node"><span class="node-k">Responses API</span><span class="node-v">OpenAI, streamed back over SSE</span></div>
+              <div class="node"><span class="node-k">Proxy</span><span class="node-v">Stateless; holds the key, streams SSE</span></div>
               <span class="wire" aria-hidden="true"></span>
-              <div class="node node-out"><span class="node-k">Grounded cards</span><span class="node-v">Every figure comes from a tool run</span></div>
+              <div class="node"><span class="node-k">Responses API</span><span class="node-v">Orchestrates and phrases</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Cards</span><span class="node-v">Emitted by tool runs, never parsed from prose</span></div>
             </div>
-            <figcaption class="diagram-caption">If the model fails, the harness retries, then hands off to a deterministic offline intent router.</figcaption>
+            <figcaption class="diagram-caption">If a round trip fails, the harness retries once, then hands that answer to an offline intent router wired to the same 27 tools, and the panel says so.</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Answers that show their work</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>
+              Testers distrusted a tool that answered the same question two ways,
+              and a retailer's own assistant starts out suspected of selling. So
+              <strong>the model never states a fact it wasn't handed</strong>.
+              Every price, ingredient, and verdict comes from a tool, and cards
+              are drawn by tool runs. The profile reaches tools through a proxy
+              that records which answers each run actually read, so "read from
+              your profile" is a measurement, not the model's account of itself.
+              With no profile saved, it says nothing about "your" skin.
+            </p>
+          </div>
+          <div class="media-grid three tall">
+            <figure>
+              <div class="panel-shot framed"><img src="../images/renude/panel-strength.webp" width="798" height="1800" loading="lazy" alt="Concierge panel: after a fit check, the shopper asks if Night Shift is too strong for sensitive skin. A strength card places its 0.1% retinal between the store's 0.03% and 0.3% options and points to the gentler one." /></div>
+              <figcaption><b>Strength card.</b> Where this concentration sits among what the store sells, and the next step down.</figcaption>
+            </figure>
+            <figure>
+              <div class="panel-shot framed"><img src="../images/renude/panel-swap.webp" width="798" height="1800" loading="lazy" alt="Routine tab with a day and night toggle. Under the cleanser, Swap product asks what the shopper wants instead: cheaper, gentler, lighter texture, richer texture, or something different." /></div>
+              <figcaption><b>Ask before acting.</b> A swap asks what you want instead, then lands on the same card with Undo.</figcaption>
+            </figure>
+            <figure>
+              <div class="panel-shot framed"><img src="../images/renude/phone-strength.webp" width="780" height="1688" loading="lazy" alt="The same conversation on a phone, shown as a bottom sheet over the store, with the strength card and a thread anchor at the top" /></div>
+              <figcaption><b>On phones.</b> The same panel as a bottom sheet; the store stays usable behind it.</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
       <section class="case-section">
         <h2 class="reveal">What I built</h2>
+        <div class="reveal">
+          <div class="cards two">
+            <div class="card">
+              <span class="eyebrow">Entry points</span>
+              <h3>22 doors, each measured</h3>
+              <p>An ask bar, product-card signals, a product-page question block, a "Best for my skin" sort option, a bag review. Each fires seen and clicked separately, because "nobody noticed it" and "nobody cared" need opposite fixes.</p>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Skills</span>
+              <h3>Capabilities with names</h3>
+              <p>Nine skills on a rail that follows the aisle and the conversation. A skill fills the composer instead of sending, so the shopper stays the one who decides.</p>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Consultation depth</span>
+              <h3>Quick, Balanced, Full</h3>
+              <p>One control changes the register of the answer and re-tiers every card already in the thread, without asking again.</p>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Memory</span>
+              <h3>Products, stamps, notes</h3>
+              <p>Saved items, "not for me" stamps, and notes in the shopper's own words that the concierge reads back, synced to the retailer's wishlist through the adapter.</p>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Review summaries</span>
+              <h3>Two phases that can't disagree</h3>
+              <p>Stats are computed first and prose is written over them; the merge step rejects any prose containing a digit. Generated once, stored, and read, never inferred at page view.</p>
+            </div>
+            <div class="card">
+              <span class="eyebrow">Voice</span>
+              <h3>Dictation that works everywhere</h3>
+              <p>Browser speech worked for one tester and hung for the next, so audio is transcribed on the server and lands in the box for review. It never sends on its own.</p>
+            </div>
+          </div>
+          <figure class="wide">
+            <div class="panel-shot"><img src="../images/renude/review-summary.webp" width="1744" height="488" loading="lazy" alt="Review summary on a product page: a one-line takeaway, three themes with counts out of 11 reviews, and a line on how reviewers with sensitive skin rated it" /></div>
+            <figcaption class="diagram-caption">A review summary on a product page, with themes counted from the stats and a line for reviewers like you.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What testing changed</h2>
+        <div class="reveal">
+          <ul class="points">
+            <li><strong>Structured answers read as honest.</strong> The same recommendation as a card felt less like a sales pitch than as a paragraph, so cards replaced prose everywhere.</li>
+            <li><strong>Corner bubbles got ignored</strong> as promo-code widgets and pop-ups got closed on instinct, so the launcher was quieted and the ask bar moved above the hero.</li>
+            <li><strong>Features went unused until they had names.</strong> A skills menu behind a plus button was invisible; a rail of named skills became something testers came back for.</li>
+            <li><strong>People wanted the panel bigger,</strong> which produced a resizable drawer, a movable window, and a draggable phone sheet.</li>
+            <li><strong>Saving was the surprise.</strong> Nobody asked for it in the brief and every tester reached for it, which became the Products tab.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <h2 class="reveal">What I learned</h2>
         <div class="cards two reveal">
           <div class="card">
-            <span class="eyebrow">Grounding</span>
-            <h3>No numbers from model prose</h3>
-            <p>Cards are emitted by tool runs, so every figure the user sees is traceable. I also measured the provenance of the profile fields each tool read.</p>
+            <h3>Show a conclusion, not an invitation.</h3>
+            <p>Entry points that offered to help were walked past. The ones that had already worked something out, like a chip saying "worth a closer look," got used.</p>
           </div>
           <div class="card">
-            <span class="eyebrow">Reliability</span>
-            <h3>Retry, then fall back</h3>
-            <p>When the model fails, the harness retries and then falls back to a deterministic offline intent router, so the assistant keeps working.</p>
+            <h3>Trust comes from provenance and consistency.</h3>
+            <p>Testers believed an answer when they could see which of their own answers it used. Being traceable and predictable mattered more than being clever.</p>
           </div>
           <div class="card">
-            <span class="eyebrow">Security</span>
-            <h3>A hardened server</h3>
-            <p>Server-owned prompts and tool schemas, input validation, and per-IP rate limits. I also added voice input.</p>
+            <h3>Depth is a register, not a word count.</h3>
+            <p>A quick answer and a full one differ in which words are used and what gets named. Once that was clear, one control replaced a set of persona ideas.</p>
           </div>
           <div class="card">
-            <span class="eyebrow">Distribution</span>
-            <h3>Shipped as a plugin</h3>
-            <p>A Shopify-style plugin behind a two-file adapter and a kill switch, with ranking, compatibility, and rule engines built in React 19.</p>
+            <h3>Motion should explain a change.</h3>
+            <p>A grid that visibly reorders reads as the tool having done something. A fake "analyzing" pause reads as theater.</p>
           </div>
         </div>
       </section>
@@ -151,6 +293,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=3"></script>
+  <script src="../site.js?v=4"></script>
 </body>
 </html>

@@ -47,7 +47,6 @@
   /* Media: images and films open from a narrower window as they enter */
   const clips = [];
   $$('.work-media, .case-cover, .panel-shot').forEach(box => {
-    if (box.querySelector('.chat')) return;
     const target = box.querySelector('.browser') || box.querySelector('img, video');
     if (target) { target.classList.add('clip'); clips.push(target); }
   });
@@ -121,36 +120,6 @@
     });
   }, { threshold: 0.6 });
   counters.forEach(c => cio.observe(c.el));
-
-  /* Renude chat illustration plays out like a live exchange, and repeats while visible */
-  $$('.chat').forEach(chat => {
-    const seq = [
-      ...$$('.msg-user', chat),
-      ...$$('.trace span', chat),
-      ...$$('.msg-card', chat),
-      ...$$('.mc-steps li', chat),
-    ];
-    seq.forEach((el, i) => el.style.setProperty('--s', i));
-    chat.classList.add('play');
-
-    let timer = null;
-    const loop = () => {
-      chat.classList.remove('in');
-      timer = setTimeout(() => {
-        chat.classList.add('in');
-        timer = setTimeout(loop, 7000);
-      }, 700);
-    };
-    new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        clearTimeout(timer);
-        if (e.isIntersecting) {
-          chat.classList.add('in');
-          timer = setTimeout(loop, 7000);
-        }
-      });
-    }, { threshold: 0.5 }).observe(chat);
-  });
 
   /* Scroll-linked: reading progress in the nav, gentle parallax on project media */
   const nav = document.querySelector('.nav');

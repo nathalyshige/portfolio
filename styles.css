@@ -45,7 +45,6 @@ img, video { display: block; max-width: 100%; }
   color: var(--ink-3);
 }
 
-.sk { display: block; width: var(--w, 100%); height: 7px; border-radius: 4px; background: rgba(17, 17, 17, 0.1); }
 
 /* Buttons and links */
 .btn {
@@ -159,7 +158,6 @@ img, video { display: block; max-width: 100%; }
 .work-media:hover { transform: translateY(-4px); }
 .work-media > img { width: 100%; height: auto; }
 .work-media.fill video { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); }
-.work-media .chat { margin: 0 auto; width: min(480px, 100%); }
 
 .work-info .eyebrow { margin-bottom: 14px; }
 
@@ -232,79 +230,6 @@ img, video { display: block; max-width: 100%; }
 .browser-sm .browser-bar { height: 20px; padding: 0 8px; }
 .browser-sm .dots { gap: 4px; }
 .browser-sm .dots i { width: 6px; height: 6px; }
-
-/* Renude chat illustration */
-.chat {
-  width: min(380px, 100%);
-  padding: 16px;
-  background: #fff;
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.3);
-}
-
-.msg-user {
-  width: fit-content;
-  max-width: 82%;
-  margin: 0 0 12px auto;
-  padding: 10px 14px;
-  font-size: 13px;
-  line-height: 1.45;
-  background: var(--panel);
-  border-radius: 14px 14px 4px 14px;
-}
-
-.trace { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-
-.trace span {
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--ink-2);
-  padding: 3px 9px;
-  border: 1px solid var(--rule-2);
-  border-radius: 100px;
-}
-
-.trace span::before { content: '✓ '; font-weight: 600; color: var(--ink); }
-
-.msg-card { padding: 14px; background: #fff; border: 1px solid var(--ink); border-radius: 10px; }
-.mc-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 8px; }
-.mc-head b { font-weight: 600; }
-
-.mc-head .src {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink-2);
-  background: var(--panel);
-  padding: 2px 7px;
-  border-radius: 4px;
-}
-
-.mc-steps li {
-  display: grid;
-  grid-template-columns: 20px 84px 1fr;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule);
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.mc-steps i {
-  display: grid;
-  place-items: center;
-  width: 20px; height: 20px;
-  font-size: 11px;
-  font-style: normal;
-  color: #fff;
-  background: var(--ink);
-  border-radius: 50%;
-}
-
-.mc-steps b { font-weight: 600; }
 
 /* Rows */
 .rows li {
@@ -412,7 +337,6 @@ img, video { display: block; max-width: 100%; }
 .case-cover { position: relative; display: block; }
 .case-cover > img { width: 100%; height: auto; }
 .case-cover.fill video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #222; border-radius: var(--radius); }
-.case-cover .chat { margin: 16px auto; width: min(520px, 100%); }
 .cover-caption { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
 
 .case-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 48px 0 8px; }
@@ -527,6 +451,7 @@ img, video { display: block; max-width: 100%; }
 .media-grid video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; background: #222; }
 .panel-shot { display: block; }
 .panel-shot img { width: 100%; height: auto; }
+.framed img { border: 1px solid var(--rule-2); border-radius: 12px; }
 
 .wide { margin-top: 40px; }
 
@@ -610,29 +535,6 @@ img, video { display: block; max-width: 100%; }
   pointer-events: none;
 }
 
-/* Renude chat plays out like a live exchange */
-.chat.play .msg-user,
-.chat.play .trace span,
-.chat.play .msg-card,
-.chat.play .mc-steps li {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
-}
-.chat.play .trace span { transform: translateY(6px) scale(0.9); }
-.chat.play .sk { transform: scaleX(0); transform-origin: left center; transition: transform 0.3s var(--ease); }
-
-.chat.play.in .msg-user,
-.chat.play.in .trace span,
-.chat.play.in .msg-card,
-.chat.play.in .mc-steps li {
-  opacity: 1;
-  transform: none;
-  transition-duration: 0.6s;
-  transition-delay: calc(0.15s + var(--s, 0) * 0.28s);
-}
-.chat.play.in .sk { transform: none; transition-duration: 0.9s; transition-delay: calc(0.75s + var(--s, 0) * 0.28s); }
-
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal { transition: none; }
@@ -683,6 +585,15 @@ img, video { display: block; max-width: 100%; }
 
   .skills { grid-template-columns: 1fr; }
   .media-grid.three, .media-grid.two { grid-template-columns: 1fr; }
+  .media-grid.three.tall {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(72%, 300px);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+  }
+  .media-grid.three.tall > figure { scroll-snap-align: start; }
 
   .press-list a { grid-template-columns: 1fr 24px; gap: 4px 16px; }
   .press-list .arrow { grid-column: 2; grid-row: 1 / 3; align-self: center; }
@@ -692,6 +603,7 @@ img, video { display: block; max-width: 100%; }
 
 @media (max-width: 520px) {
   .facts { grid-template-columns: 1fr; }
+  .cards.two { grid-template-columns: 1fr; }
   .case-meta, .case-stats { grid-template-columns: 1fr; }
   .figures { grid-template-columns: 1fr 1fr; }
   .media-grid.four { grid-template-columns: 1fr; }
