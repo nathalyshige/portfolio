@@ -226,6 +226,7 @@ img, video { display: block; max-width: 100%; }
 }
 
 .browser img { width: 100%; height: auto; }
+.browser video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; background: #FAFAFA; }
 .browser-sm { box-shadow: none; border-radius: 8px; }
 .browser-sm .browser-bar { height: 20px; padding: 0 8px; }
 .browser-sm .dots { gap: 4px; }

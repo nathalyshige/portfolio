@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=6" />
+  <link rel="stylesheet" href="../styles.css?v=7" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -52,10 +52,12 @@
         <div class="case-cover">
           <div class="browser">
             <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div>
-            <img src="../images/renude/store-fit.webp" width="2000" height="1250" alt="Solar, a mock beauty store, with the Renude Beauty Concierge docked beside the Night Shift retinal serum. The shopper asked whether it suits their skin, and the concierge answers with a fit card: worth a closer look, with reasons and a caution about redness." />
+            <video data-autoplay muted loop playsinline preload="metadata" poster="../images/renude/concierge-poster.jpg" data-still="../images/renude/store-fit.webp" aria-label="Motion piece: on the Night Shift product page, the store's ask bar types a question, the cursor opens the Beauty Concierge, the shopper asks whether the product suits their skin, the answer streams in, and a fit card lands with reasons and a caution about redness.">
+              <source src="../images/renude/concierge.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
-        <figcaption class="cover-caption">The live prototype on a product page: a fit check answered from the shopper's saved profile, with the reasons and the caution on a card.</figcaption>
+        <figcaption class="cover-caption">A fit check on a product page, animated from screens of the live prototype: the ask bar, the concierge opening, and an answer with its card.</figcaption>
       </figure>
 
       <ul class="case-stats">
@@ -293,6 +295,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=4"></script>
+  <script src="../site.js?v=5"></script>
 </body>
 </html>

@@ -5,7 +5,10 @@
   /* Videos: play only while on screen; under reduced motion, give controls instead */
   const films = $$('video[data-autoplay]');
   if (reduceMotion) {
-    films.forEach(v => { v.controls = true; });
+    films.forEach(v => {
+      v.controls = true;
+      if (v.dataset.still) v.poster = v.dataset.still;
+    });
   } else {
     const vio = new IntersectionObserver((entries) => {
       entries.forEach(e => {
