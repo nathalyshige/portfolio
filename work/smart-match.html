@@ -47,13 +47,12 @@
 
     <div class="container">
       <figure class="reveal">
-        <div class="case-cover">
-          <div class="browser">
-            <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="url">givingconnection.org/smart_match</span></div>
-            <img src="../images/smart-match/landing.webp" width="2000" height="1026" alt="The live Smart Match landing page on givingconnection.org: Welcome to Smart Match, takes 3 to 5 minutes, personalized nonprofit matches" />
-          </div>
+        <div class="case-cover fill r16-10">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/smart-match/match-poster.jpg" data-still="../images/smart-match/match-still.webp" aria-label="Film of Smart Match on givingconnection.org. From the landing page, the quiz is answered: volunteering, food security and housing, and a free-text line about food drives and tutoring. A diagram shows hard filters narrowing 928 nonprofits, embeddings finding the closest to the free text, and attribute rules re-ranking the live results, from Salvation Army of Nashville at 86% down. The results page shows each match with its score and the answers it met, How we matched you lists what matched and what is not stated, and a service filter narrows the list.">
+            <source src="../images/smart-match/match.mp4" type="video/mp4" />
+          </video>
         </div>
-        <figcaption class="cover-caption">Smart Match, live in production on Giving Connection.</figcaption>
+        <figcaption class="cover-caption">The whole flow, cut from screens of the live site. Each part is broken down below.</figcaption>
       </figure>
 
       <ul class="case-stats">
@@ -131,20 +130,58 @@
       </section>
 
       <section class="case-section stack">
-        <h2 class="reveal">In production</h2>
-        <div class="media-grid three reveal">
-          <figure>
-            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-support.webp" width="1400" height="875" loading="lazy" alt="Quiz step: How can we support you today? Seeking help, donating, or volunteering" /></div>
-            <figcaption><b>Who you are.</b> Seeking help, donating, or volunteering.</figcaption>
-          </figure>
-          <figure>
-            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-causes.webp" width="1400" height="875" loading="lazy" alt="Quiz step: Which causes are close to your heart? A grid of cause cards with three selected" /></div>
-            <figcaption><b>What you care about.</b> Causes become structured filters.</figcaption>
-          </figure>
-          <figure>
-            <div class="browser browser-sm"><div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div><img src="../images/smart-match/step-own-words.webp" width="1400" height="875" loading="lazy" alt="Quiz step: Anything else we should know? A free-text answer before Find my matches" /></div>
-            <figcaption><b>In your own words.</b> Free text, matched semantically.</figcaption>
-          </figure>
+        <h2 class="reveal">Feature by feature</h2>
+        <div class="features">
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-quiz.jpg" data-still="../images/smart-match/f-quiz.jpg" aria-label="The quiz in a browser window: volunteering is chosen, then food security and housing, a run of steps from format to time, and a free-text answer typed before Find my matches">
+              <source src="../images/smart-match/f-quiz.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Branching quiz</span>
+              <h3>A few questions, not a search box</h3>
+              <p>Who you are decides the path: seeking help, donating, and volunteering each get their own questions. Causes become structured filters, and a free-text answer at the end is matched by meaning rather than keywords.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-pipe.jpg" data-still="../images/smart-match/f-pipe.jpg" aria-label="A diagram: 928 dots thin out under hard rules, the rest spread into an embedding space around the free-text answer, and the closest become six ranked rows with live names and scores, each marked with a check">
+              <source src="../images/smart-match/f-pipe.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Matching</span>
+              <h3>Rules, then meaning, then reasons</h3>
+              <p>Hard rules on location, role, and format narrow the field first. Dense retrieval with bge-large-en-v1.5 finds what sits closest to the person's own words across 928 embedded nonprofits, and 26 config-driven attribute rules re-rank what is left. The dots are a diagram; the names and scores at the end are the live results.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-results.jpg" data-still="../images/smart-match/f-results.jpg" aria-label="The results page loads, six match cards rise in with their scores, and the page scrolls to the Why this match chips">
+              <source src="../images/smart-match/f-results.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Results</span>
+              <h3>Ranked, with reasons</h3>
+              <p>Each match carries its score and the answers it met, so a Great Match label always comes with the why.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-explain.jpg" data-still="../images/smart-match/f-explain.jpg" aria-label="How we matched you opens: five answers marked as partial matches and two marked not stated, highlighted in turn">
+              <source src="../images/smart-match/f-explain.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Transparency</span>
+              <h3>Honest about the gaps</h3>
+              <p>How we matched you lists everything the person said mattered and how the results measure up. Not stated means a nonprofit has not published it, not that the answer is no, and the page says so.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-filter.jpg" data-still="../images/smart-match/f-filter.jpg" aria-label="The service dialog opens over the results, Clothing Collection is chosen, and the list narrows to the matches that offer it">
+              <source src="../images/smart-match/f-filter.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Filters</span>
+              <h3>Narrow by service</h3>
+              <p>An optional service filter, with a count beside each service of how many of the matches offer it.</p>
+            </div>
+          </article>
         </div>
       </section>
 
