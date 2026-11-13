@@ -48,13 +48,11 @@
 
     <div class="container">
       <figure class="reveal">
-        <div class="case-cover">
-          <div class="browser">
-            <div class="browser-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span></div>
-            <img src="../images/kuri-overview.webp" width="2880" height="1616" alt="Kuri Saúde dashboard showing critical, expired, and soon-to-expire insurer documents above a searchable document list" />
-          </div>
+        <div class="case-cover fill r16-10">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/kuri/kuri-poster.jpg" data-still="../images/kuri-overview.webp" aria-label="Film of the Kuri Saúde pipeline, drawn as an illustration: insurer contracts arrive as scanned pages, one page is straightened and read word by word, the insurer, procedure code, rule and validity dates are highlighted and lifted out, different spellings and date formats collapse into one value and map onto a structured table, and the analyst dashboard builds itself with the expired Sulamérica document highlighted.">
+            <source src="../images/kuri/kuri.mp4" type="video/mp4" />
+          </video>
         </div>
-        <figcaption class="cover-caption">The analyst dashboard: critical, expired, and soon-to-expire documents, with every insurer document searchable.</figcaption>
       </figure>
 
       <ul class="case-stats">
@@ -131,6 +129,53 @@
             <li>Structures documents into clean tables and centralizes information by insurer.</li>
             <li>Powers a new internal dashboard for analysts.</li>
           </ul>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Step by step</h2>
+        <div class="prose reveal"><p>The documents in these clips are illustrations. The dashboard is rebuilt from the original design.</p></div>
+        <div class="features">
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-scan.jpg" data-still="../images/kuri/f-scan.jpg" aria-label="A pile of scanned contract pages, then one page straightened while a scan line passes and every word gets a detection box">
+              <source src="../images/kuri/f-scan.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">OCR</span>
+              <h3>Scanned pages become text</h3>
+              <p>Pricing tables and negotiation rules arrive as paper or inconsistent PDFs. OCR digitizes each page so every line can be read.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-extract.jpg" data-still="../images/kuri/f-extract.jpg" aria-label="The insurer, procedure code, adjustment rule and validity dates are highlighted on the page and lift off as labeled chips">
+              <source src="../images/kuri/f-extract.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">LLM extraction</span>
+              <h3>The fields that matter, pulled out</h3>
+              <p>An LLM reads the text and pulls out the rules, insurers, procedure codes, and dates analysts need to resolve claim denials.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-map.jpg" data-still="../images/kuri/f-map.jpg" aria-label="Three spellings of SulAmérica collapse into one value, three date formats into one date, and each field is wired into a structured table">
+              <source src="../images/kuri/f-map.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Normalization</span>
+              <h3>One clean value per field</h3>
+              <p>Insurers spell the same thing many ways. Normalization collapses the variants and date formats into one value, and structuring stores each field in a searchable table.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-dash.jpg" data-still="../images/kuri/f-dash.jpg" aria-label="The analyst dashboard builds: the three counters count up, documents slide into the list, and the expired Sulamérica document and the Vencidos card are highlighted">
+              <source src="../images/kuri/f-dash.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Dashboard</span>
+              <h3>What needs action comes first</h3>
+              <p>Analysts open on critical, expired, and soon-to-expire documents, with every insurer document searchable below.</p>
+            </div>
+          </article>
         </div>
       </section>
 
