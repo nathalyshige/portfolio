@@ -338,6 +338,7 @@ img, video { display: block; max-width: 100%; }
 .case-cover { position: relative; display: block; }
 .case-cover > img { width: 100%; height: auto; }
 .case-cover.fill video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #222; border-radius: var(--radius); }
+.case-cover.fill.r16-10 video { aspect-ratio: 16 / 10; background: #EFEEEB; }
 .cover-caption { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
 
 .case-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 48px 0 8px; }
