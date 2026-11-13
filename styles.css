@@ -358,6 +358,38 @@ img, video { display: block; max-width: 100%; }
 .case-section.stack { grid-template-columns: 1fr; gap: 28px; }
 .case-section.stack > h2 { position: static; }
 
+/* Diagram motion */
+.diagram { position: relative; }
+.flow-dot { position: absolute; left: 0; top: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--ink);
+            box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.10); opacity: 0; pointer-events: none; z-index: 3; }
+.flow-dot.vec { width: 18px; height: 6px; margin: -3px 0 0 -9px; border-radius: 3px; background: repeating-linear-gradient(90deg, var(--ink) 0 3px, transparent 3px 5px); box-shadow: none; }
+.flow-dot.faint { background: #9A9A9A; box-shadow: none; }
+.node { transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s var(--ease); }
+.node.lit { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 10px 28px rgba(17, 17, 17, 0.10); transform: translateY(-2px); }
+.node-out.lit { box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.16), 0 12px 30px rgba(17, 17, 17, 0.18); }
+.arch-wire { transition: color 0.3s; }
+.arch-wire.lit { color: var(--ink); }
+
+/* Scoring motion */
+.score-fig .weights span { transform-origin: 0 50%; transition: transform 0.9s var(--ease) calc(var(--i, 0) * 0.35s), opacity 0.3s; }
+.js .score-fig:not(.filled) .weights span { transform: scaleX(0); }
+.formula .term { border-radius: 4px; padding: 1px 3px; margin: 0 -3px; transition: background 0.3s, color 0.3s, opacity 0.3s; }
+.formula .term.hot { background: rgba(17, 60, 123, 0.10); }
+.formula .term.dim, .weights span.dim, .weights-key span.dim { opacity: 0.35; }
+.card[data-part] { transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s, transform 0.3s var(--ease); }
+.card[data-part].hot { border-color: #113C7B; box-shadow: 0 0 0 1px #113C7B, 0 12px 30px rgba(17, 60, 123, 0.10); transform: translateY(-2px); }
+.card[data-part].dim { opacity: 0.55; }
+.weights span[data-part], .weights-key span[data-part], .formula .term, .card[data-part] { cursor: default; }
+
+/* Data bars grow in */
+.bars .bar { transform-origin: 0 50%; transition: transform 0.9s var(--ease) calc(0.15s + var(--i, 0) * 0.09s); }
+.js .reveal:not(.in) .bars .bar { transform: scaleX(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-dot { display: none; }
+  .js .score-fig:not(.filled) .weights span, .js .reveal:not(.in) .bars .bar { transform: none; }
+}
+
 /* Case study section menu */
 .toc { position: fixed; left: 22px; top: 50%; z-index: 40; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 10px 8px;
        border-radius: 12px; transform: translateY(-50%); opacity: 0; visibility: hidden; transition: opacity 0.35s var(--ease), visibility 0.35s, background 0.2s, box-shadow 0.2s; }
