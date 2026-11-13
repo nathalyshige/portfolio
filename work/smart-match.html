@@ -201,32 +201,32 @@
               <div class="arch-group">
                 <p class="arch-label">Rails 7.2 app</p>
                 <div class="arch-row">
-                  <div class="node"><span class="node-k"><code>SmartMatchController</code></span><span class="node-v">Five routes; branches on seeker, volunteer and donor</span></div>
-                  <div class="node"><span class="node-k"><code>QuizToUserIntentConverter</code></span><span class="node-v">Answers into a UserIntent: type, state, city, travel, causes, preferences</span></div>
-                  <div class="node node-out"><span class="node-k"><code>ComprehensiveRecommendationService</code></span><span class="node-v">Filter by state, build the query text, score, rank the top 10</span></div>
+                  <div class="node"><span class="node-k">Quiz controller</span><span class="node-v">Five routes; branches on seeker, volunteer and donor</span></div>
+                  <div class="node"><span class="node-k">Intent converter</span><span class="node-v">Turns answers into a profile: type, state, city, travel, causes, preferences</span></div>
+                  <div class="node node-out"><span class="node-k">Recommendation service</span><span class="node-v">Filter by state, build the query text, score, rank the top 10</span></div>
                 </div>
               </div>
               <span class="arch-wire" aria-hidden="true">query text out, vector back</span>
               <div class="arch-split">
                 <div class="arch-group">
                   <p class="arch-label">Python, conda env</p>
-                  <div class="node"><span class="node-k"><code>generate_user_embedding.py</code></span><span class="node-v">BGE-large turns the query into 1024 numbers</span></div>
+                  <div class="node"><span class="node-k">Query embedding</span><span class="node-v">BGE-large turns the query into 1024 numbers</span></div>
                   <p class="arch-label arch-label--gap">Offline pipeline</p>
-                  <div class="node"><span class="node-k"><code>generate_enhanced_bge_matrix.py</code></span><span class="node-v">Cleans, labels and embeds the 928-row catalog in batches of 16</span></div>
+                  <div class="node"><span class="node-k">Matrix builder</span><span class="node-v">Cleans, labels and embeds the 928-row catalog in batches of 16</span></div>
                 </div>
                 <div class="arch-group">
                   <p class="arch-label">Files the service reads</p>
-                  <div class="node"><span class="node-k"><code>enhanced_bge_nonprofits_matrix.json</code></span><span class="node-v">928 nonprofits &times; 1024 dimensions, 29 MB</span></div>
-                  <div class="node"><span class="node-k"><code>matching_rules.yml</code></span><span class="node-v">Weights, synonyms, cause mappings, 26 attribute rules</span></div>
-                  <div class="node"><span class="node-k"><code>city_centroids.yml</code></span><span class="node-v">Coordinates for 243 cities</span></div>
+                  <div class="node"><span class="node-k">Embedding matrix</span><span class="node-v">928 nonprofits &times; 1024 dimensions, 29 MB</span></div>
+                  <div class="node"><span class="node-k">Matching rules</span><span class="node-v">Weights, synonyms, cause mappings, 26 attribute rules</span></div>
+                  <div class="node"><span class="node-k">City coordinates</span><span class="node-v">Coordinates for 243 cities</span></div>
                 </div>
               </div>
             </div>
-            <figcaption class="diagram-caption">Read from the recommendation-system branch. If the service raises, the controller falls back to the app's PostGIS search.</figcaption>
+            <figcaption class="diagram-caption">If the service fails, the controller falls back to the app's PostGIS search.</figcaption>
           </figure>
           <ol class="flow">
             <li><b>Quiz.</b> One step at a time; the answers live in the Rails session, so the quiz survives a reload and the Back button.</li>
-            <li><b>Intent.</b> <code>QuizToUserIntentConverter</code> maps quiz causes to config keys and builds a UserIntent.</li>
+            <li><b>Intent.</b> The answers become a profile, with quiz causes mapped to the config's cause keys.</li>
             <li><b>Validation.</b> With no causes selected, the service stops early.</li>
             <li><b>Filtering.</b> Keep the nonprofits in the person's state.</li>
             <li><b>Query text.</b> Causes expanded with synonyms, plus language, accessibility needs and city, written as one string.</li>
@@ -241,7 +241,7 @@
       <section class="case-section stack">
         <h2 class="reveal">Scoring</h2>
         <div class="reveal">
-          <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in <code>config/matching_rules.yml</code>, so tuning needs no code change.</p></div>
+          <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in a config file, so tuning needs no code change.</p></div>
           <figure class="score-fig">
             <p class="formula"><span>final</span> = 0.70 &times; similarity + 0.20 &times; attribute bonus + 0.10 &times; distance</p>
             <div class="weights" role="img" aria-label="Score weights: similarity 70 percent, attribute bonus 20 percent, distance 10 percent">
@@ -274,7 +274,6 @@
                 <div class="bar-row" title="Other states: 47 nonprofits"><dt>Other states</dt><dd><span class="bar" style="width:8.2%"></span><span class="bar-val">47</span></dd></div>
                 <div class="bar-row" title="No state listed: 34 nonprofits"><dt>No state listed</dt><dd><span class="bar" style="width:5.9%"></span><span class="bar-val">34</span></dd></div>
               </dl>
-              <figcaption class="diagram-caption">giving_connection_scraped_data.csv, counted by state</figcaption>
             </figure>
             <ul class="tiles">
               <li><b>1,024</b><span>numbers per nonprofit vector</span></li>
@@ -291,7 +290,7 @@
       <section class="case-section stack">
         <h2 class="reveal">Embedding pipeline</h2>
         <div class="reveal">
-          <div class="prose"><p>One batch job, <code>generate_enhanced_bge_matrix.py</code>, turns the scraped catalog into the matrix the service ranks against.</p></div>
+          <div class="prose"><p>One batch job turns the scraped catalog into the matrix the service ranks against.</p></div>
           <figure>
             <div class="diagram diagram--row">
               <div class="node"><span class="node-k">Extract</span><span class="node-v">Read the scraped CSV: 928 rows with name, URL, mission, causes, city, state and address</span></div>
@@ -317,7 +316,7 @@
             <div><dt>Embedding runtime</dt><dd>Python 3.11 in a conda environment</dd></div>
             <div><dt>ML libraries</dt><dd>sentence-transformers, PyTorch, NumPy, scikit-learn</dd></div>
             <div><dt>Model</dt><dd>BAAI/bge-large-en-v1.5: 1024 dimensions, 512-token input</dd></div>
-            <div><dt>Ruby to Python</dt><dd><code>Open3.capture3</code> calling <code>conda run</code></dd></div>
+            <div><dt>Ruby to Python</dt><dd>A Ruby subprocess (Open3) that runs the conda environment</dd></div>
             <div><dt>Storage</dt><dd>JSON matrix, CSV, YAML config</dd></div>
             <div><dt>Testing</dt><dd>RSpec, FactoryBot, Capybara; 14 controller tests</dd></div>
           </dl>
