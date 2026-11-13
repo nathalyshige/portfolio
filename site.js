@@ -19,6 +19,49 @@
     films.forEach(v => vio.observe(v));
   }
 
+  /* Case studies: a side menu of sections that marks where the reader is */
+  const navSecs = $$('[data-nav]');
+  if (navSecs.length > 2) {
+    const toc = document.createElement('nav');
+    toc.className = 'toc';
+    toc.setAttribute('aria-label', 'Sections');
+    const links = navSecs.map(sec => {
+      if (!sec.id) sec.id = 's-' + sec.dataset.nav.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const a = document.createElement('a');
+      a.href = '#' + sec.id;
+      a.innerHTML = '<i aria-hidden="true"></i><span></span>';
+      a.querySelector('span').textContent = sec.dataset.nav;
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const y = sec === navSecs[0] ? 0 : sec.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: reduceMotion ? 'auto' : 'smooth' });
+        history.replaceState(null, '', '#' + sec.id);
+      });
+      toc.appendChild(a);
+      return a;
+    });
+    document.body.appendChild(toc);
+    let current = -1, ticking = false;
+    const update = () => {
+      ticking = false;
+      const line = window.innerHeight * 0.35;
+      let idx = 0;
+      navSecs.forEach((sec, i) => { if (sec.getBoundingClientRect().top <= line) idx = i; });
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) idx = navSecs.length - 1;
+      if (idx !== current) {
+        links.forEach((a, i) => {
+          a.classList.toggle('on', i === idx);
+          if (i === idx) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+        });
+        current = idx;
+      }
+      toc.classList.toggle('show', window.scrollY > 160);
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
   if (reduceMotion) {
     $$('.reveal').forEach(el => el.classList.add('in'));
     return;

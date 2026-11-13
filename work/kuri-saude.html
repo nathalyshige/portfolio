@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=11" />
+  <link rel="stylesheet" href="../styles.css?v=12" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -26,7 +26,7 @@
   </header>
 
   <main>
-    <section class="case-hero">
+    <section class="case-hero" data-nav="Overview">
       <div class="container">
         <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
         <p class="eyebrow reveal">Kuri Saúde · 2023</p>
@@ -48,8 +48,8 @@
     <div class="container">
       <figure class="reveal">
         <div class="case-cover fill r16-10">
-          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/kuri/kuri-poster.jpg" data-still="../images/kuri-overview.webp" aria-label="Film of the Kuri Saúde pipeline, drawn as an illustration: insurer contracts arrive as scanned pages, one page is straightened and read word by word, the insurer, procedure code, rule and validity dates are highlighted and lifted out, different spellings and date formats collapse into one value and map onto a structured table, and the analyst dashboard builds itself with the expired Sulamérica document highlighted.">
-            <source src="../images/kuri/kuri.mp4" type="video/mp4" />
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/kuri/kuri-poster.jpg?v=2" data-still="../images/kuri-dashboard-en.webp" aria-label="Film of the Kuri Saúde pipeline, drawn as an illustration: insurer contracts arrive as scanned pages, one page is straightened and read word by word, the insurer, procedure code, rule and validity dates are highlighted and lifted out, different spellings and date formats collapse into one value and map onto a structured table, and the analyst dashboard builds itself with the expired Sulamérica document highlighted.">
+            <source src="../images/kuri/kuri.mp4?v=2" type="video/mp4" />
           </video>
         </div>
       </figure>
@@ -61,7 +61,7 @@
         <li class="reveal"><b>3 + 10</b><span>hospitals and insurers using it</span></li>
       </ul>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Problem">
         <h2 class="reveal">The problem</h2>
         <div class="prose reveal">
           <p>
@@ -77,7 +77,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Opportunity">
         <h2 class="reveal">The opportunity</h2>
         <div class="prose reveal">
           <p>
@@ -88,7 +88,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="My role">
         <h2 class="reveal">My role</h2>
         <div class="cards reveal">
           <div class="card">
@@ -106,7 +106,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Pipeline">
         <h2 class="reveal">The pipeline</h2>
         <div class="reveal">
           <figure>
@@ -131,13 +131,13 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Step by step">
         <h2 class="reveal">Step by step</h2>
         <div class="prose reveal"><p>The documents in these clips are illustrations. The dashboard is rebuilt from the original design.</p></div>
         <div class="features">
           <article class="feature reveal">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-scan.jpg" data-still="../images/kuri/f-scan.jpg" aria-label="A pile of scanned contract pages, then one page straightened while a scan line passes and every word gets a detection box">
-              <source src="../images/kuri/f-scan.mp4" type="video/mp4" />
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-scan.jpg?v=2" data-still="../images/kuri/f-scan.jpg?v=2" aria-label="A pile of scanned contract pages, then one page straightened while a scan line passes and every word gets a detection box">
+              <source src="../images/kuri/f-scan.mp4?v=2" type="video/mp4" />
             </video>
             <div class="feature-text">
               <span class="eyebrow">OCR</span>
@@ -146,8 +146,8 @@
             </div>
           </article>
           <article class="feature reveal">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-extract.jpg" data-still="../images/kuri/f-extract.jpg" aria-label="The insurer, procedure code, adjustment rule and validity dates are highlighted on the page and lift off as labeled chips">
-              <source src="../images/kuri/f-extract.mp4" type="video/mp4" />
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-extract.jpg?v=2" data-still="../images/kuri/f-extract.jpg?v=2" aria-label="The insurer, procedure code, adjustment rule and validity dates are highlighted on the page and lift off as labeled chips">
+              <source src="../images/kuri/f-extract.mp4?v=2" type="video/mp4" />
             </video>
             <div class="feature-text">
               <span class="eyebrow">LLM extraction</span>
@@ -156,8 +156,8 @@
             </div>
           </article>
           <article class="feature reveal">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-map.jpg" data-still="../images/kuri/f-map.jpg" aria-label="Three spellings of SulAmérica collapse into one value, three date formats into one date, and each field is wired into a structured table">
-              <source src="../images/kuri/f-map.mp4" type="video/mp4" />
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-map.jpg?v=2" data-still="../images/kuri/f-map.jpg?v=2" aria-label="Three spellings of SulAmérica collapse into one value, three date formats into one date, and each field is wired into a structured table">
+              <source src="../images/kuri/f-map.mp4?v=2" type="video/mp4" />
             </video>
             <div class="feature-text">
               <span class="eyebrow">Normalization</span>
@@ -166,8 +166,8 @@
             </div>
           </article>
           <article class="feature reveal">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-dash.jpg" data-still="../images/kuri/f-dash.jpg" aria-label="The analyst dashboard builds: the three counters count up, documents slide into the list, and the expired Sulamérica document and the Vencidos card are highlighted">
-              <source src="../images/kuri/f-dash.mp4" type="video/mp4" />
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/kuri/f-dash.jpg?v=2" data-still="../images/kuri/f-dash.jpg?v=2" aria-label="The analyst dashboard builds: the three counters count up, documents slide into the list, and the expired Sulamérica document and the Expired card are highlighted">
+              <source src="../images/kuri/f-dash.mp4?v=2" type="video/mp4" />
             </video>
             <div class="feature-text">
               <span class="eyebrow">Dashboard</span>
@@ -178,7 +178,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Learnings">
         <h2 class="reveal">What I learned</h2>
         <div class="prose reveal">
           <p>
@@ -208,6 +208,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=5"></script>
+  <script src="../site.js?v=6"></script>
 </body>
 </html>

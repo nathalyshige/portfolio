@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=11" />
+  <link rel="stylesheet" href="../styles.css?v=12" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -26,7 +26,7 @@
   </header>
 
   <main>
-    <section class="case-hero">
+    <section class="case-hero" data-nav="Overview">
       <div class="container">
         <a class="back" href="../index.html#work"><span aria-hidden="true">←</span> All work</a>
         <p class="eyebrow reveal">Giving Connection · 2025</p>
@@ -60,7 +60,7 @@
         <li class="reveal"><b>26</b><span>config-driven attribute rules in re-ranking</span></li>
       </ul>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Problem">
         <h2 class="reveal">The problem</h2>
         <div class="prose reveal">
           <p>
@@ -75,7 +75,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Opportunity">
         <h2 class="reveal">The opportunity</h2>
         <div class="prose reveal">
           <p>
@@ -86,7 +86,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="My role">
         <h2 class="reveal">My role</h2>
         <div class="cards reveal">
           <div class="card">
@@ -104,7 +104,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="How it works">
         <h2 class="reveal">How it works</h2>
         <div class="reveal">
           <figure>
@@ -127,7 +127,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Features">
         <h2 class="reveal">Feature by feature</h2>
         <div class="features">
           <article class="feature reveal">
@@ -183,7 +183,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Architecture">
         <h2 class="reveal">Architecture</h2>
         <div class="reveal">
           <div class="prose"><p>Rails runs the quiz, filters, scores and ranks. Python does one job: it turns text into vectors. The embedding matrix is the only link between the offline pipeline and live ranking.</p></div>
@@ -237,7 +237,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Scoring">
         <h2 class="reveal">Scoring</h2>
         <div class="reveal">
           <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in a config file, so tuning needs no code change.</p></div>
@@ -259,7 +259,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Data">
         <h2 class="reveal">Data</h2>
         <div class="reveal">
           <div class="data-grid">
@@ -286,7 +286,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Embeddings">
         <h2 class="reveal">Embedding pipeline</h2>
         <div class="reveal">
           <div class="prose"><p>One batch job turns the scraped catalog into the matrix the service ranks against.</p></div>
@@ -305,7 +305,7 @@
         </div>
       </section>
 
-      <section class="case-section stack">
+      <section class="case-section stack" data-nav="Stack">
         <h2 class="reveal">Stack and techniques</h2>
         <div class="reveal stack-grid">
           <dl class="stack-list">
@@ -335,7 +335,7 @@
         </div>
       </section>
 
-      <section class="case-section">
+      <section class="case-section" data-nav="Learnings">
         <h2 class="reveal">What I learned</h2>
         <div class="cards two reveal">
           <div class="card">
@@ -366,6 +366,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=5"></script>
+  <script src="../site.js?v=6"></script>
 </body>
 </html>
