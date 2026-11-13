@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=13" />
+  <link rel="stylesheet" href="../styles.css?v=14" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -187,37 +187,42 @@
         <h2 class="reveal">Architecture</h2>
         <div class="reveal">
           <div class="prose"><p>Rails runs the quiz, filters, scores and ranks. Python does one job: it turns text into vectors. The embedding matrix is the only link between the offline pipeline and live ranking.</p></div>
+          <figure class="clip-fig">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-arch.jpg" data-still="../images/smart-match/f-arch.jpg" aria-label="One request, end to end, for a volunteer in Nashville who picks hunger and housing. The quiz answers become a profile in Rails, the 928 nonprofits are filtered to the 575 in Tennessee, the causes expand into a query sentence, Python embeds it into 1,024 numbers, every candidate is compared by cosine similarity, and the top 10, led by Salvation Army of Nashville, appear as cards with a like and a dislike.">
+              <source src="../images/smart-match/f-arch.mp4" type="video/mp4" />
+            </video>
+          </figure>
           <figure class="arch-fig">
-            <div class="diagram arch" data-arch>
+            <div class="diagram arch">
               <div class="arch-group">
                 <p class="arch-label">Browser</p>
                 <div class="arch-row">
-                  <div class="node" data-k="quiz"><span class="node-k">Quiz</span><span class="node-v">Stimulus controller, three Slim quiz paths, answers kept in the Rails session</span></div>
-                  <div class="node" data-k="results"><span class="node-k">Results page</span><span class="node-v">10 cards built from ViewComponents, with a like and dislike on each</span></div>
+                  <div class="node"><span class="node-k">Quiz</span><span class="node-v">Stimulus controller, three Slim quiz paths, answers kept in the Rails session</span></div>
+                  <div class="node"><span class="node-k">Results page</span><span class="node-v">10 cards built from ViewComponents, with a like and dislike on each</span></div>
                 </div>
               </div>
-              <span class="arch-wire" data-w="answers" aria-hidden="true">answers</span>
+              <span class="arch-wire" aria-hidden="true">answers</span>
               <div class="arch-group">
                 <p class="arch-label">Rails 7.2 app</p>
                 <div class="arch-row">
-                  <div class="node" data-k="controller"><span class="node-k">Quiz controller</span><span class="node-v">Five routes; branches on seeker, volunteer and donor</span></div>
-                  <div class="node" data-k="intent"><span class="node-k">Intent converter</span><span class="node-v">Turns answers into a profile: type, state, city, travel, causes, preferences</span></div>
-                  <div class="node node-out" data-k="service"><span class="node-k">Recommendation service</span><span class="node-v">Filter by state, build the query text, score, rank the top 10</span></div>
+                  <div class="node"><span class="node-k">Quiz controller</span><span class="node-v">Five routes; branches on seeker, volunteer and donor</span></div>
+                  <div class="node"><span class="node-k">Intent converter</span><span class="node-v">Turns answers into a profile: type, state, city, travel, causes, preferences</span></div>
+                  <div class="node node-out"><span class="node-k">Recommendation service</span><span class="node-v">Filter by state, build the query text, score, rank the top 10</span></div>
                 </div>
               </div>
-              <span class="arch-wire" data-w="query" aria-hidden="true">query text out, vector back</span>
+              <span class="arch-wire" aria-hidden="true">query text out, vector back</span>
               <div class="arch-split">
                 <div class="arch-group">
                   <p class="arch-label">Python, conda env</p>
-                  <div class="node" data-k="embed"><span class="node-k">Query embedding</span><span class="node-v">BGE-large turns the query into 1024 numbers</span></div>
+                  <div class="node"><span class="node-k">Query embedding</span><span class="node-v">BGE-large turns the query into 1024 numbers</span></div>
                   <p class="arch-label arch-label--gap">Offline pipeline</p>
-                  <div class="node" data-k="builder"><span class="node-k">Matrix builder</span><span class="node-v">Cleans, labels and embeds the 928-row catalog in batches of 16</span></div>
+                  <div class="node"><span class="node-k">Matrix builder</span><span class="node-v">Cleans, labels and embeds the 928-row catalog in batches of 16</span></div>
                 </div>
                 <div class="arch-group">
                   <p class="arch-label">Files the service reads</p>
-                  <div class="node" data-k="matrix"><span class="node-k">Embedding matrix</span><span class="node-v">928 nonprofits &times; 1024 dimensions, 29 MB</span></div>
-                  <div class="node" data-k="rules"><span class="node-k">Matching rules</span><span class="node-v">Weights, synonyms, cause mappings, 26 attribute rules</span></div>
-                  <div class="node" data-k="cities"><span class="node-k">City coordinates</span><span class="node-v">Coordinates for 243 cities</span></div>
+                  <div class="node"><span class="node-k">Embedding matrix</span><span class="node-v">928 nonprofits &times; 1024 dimensions, 29 MB</span></div>
+                  <div class="node"><span class="node-k">Matching rules</span><span class="node-v">Weights, synonyms, cause mappings, 26 attribute rules</span></div>
+                  <div class="node"><span class="node-k">City coordinates</span><span class="node-v">Coordinates for 243 cities</span></div>
                 </div>
               </div>
             </div>
@@ -241,19 +246,24 @@
         <h2 class="reveal">Scoring</h2>
         <div class="reveal">
           <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in a config file, so tuning needs no code change.</p></div>
+          <figure class="clip-fig">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-score.jpg" data-still="../images/smart-match/f-score.jpg" aria-label="A worked example of the score. Similarity: the cosine between the query and nonprofit vectors, 0.80, times a 1.05 content boost, gives 0.84. Attributes: two preferences the person asked for are met, adding 0.06 and 0.05 for 0.11. Distance: 4.1 miles falls in the 5 mile bucket, 0.95. Weighted and added, the score is 0.705, a strong match.">
+              <source src="../images/smart-match/f-score.mp4" type="video/mp4" />
+            </video>
+          </figure>
           <figure class="score-fig" data-score>
-            <p class="formula"><span>final</span> = <span class="term" data-part="sim">0.70 &times; similarity</span> + <span class="term" data-part="attr">0.20 &times; attribute bonus</span> + <span class="term" data-part="dist">0.10 &times; distance</span></p>
+            <p class="formula"><span>final</span> = 0.70 &times; similarity + 0.20 &times; attribute bonus + 0.10 &times; distance</p>
             <div class="weights" role="img" aria-label="Score weights: similarity 70 percent, attribute bonus 20 percent, distance 10 percent">
-              <span data-part="sim" style="flex:70;background:#113C7B;--i:0" title="Similarity, 0.70"></span><span data-part="attr" style="flex:20;background:#3F6CB3;--i:1" title="Attribute bonus, 0.20"></span><span data-part="dist" style="flex:10;background:#8EAEDD;--i:2" title="Distance, 0.10"></span>
+              <span style="flex:70;background:#113C7B;--i:0" title="Similarity, 0.70"></span><span style="flex:20;background:#3F6CB3;--i:1" title="Attribute bonus, 0.20"></span><span style="flex:10;background:#8EAEDD;--i:2" title="Distance, 0.10"></span>
             </div>
             <div class="weights-key">
-              <span data-part="sim" style="flex:70"><i style="background:#113C7B"></i><b>0.70</b> Similarity</span><span data-part="attr" style="flex:20"><i style="background:#3F6CB3"></i><b>0.20</b> Attributes</span><span data-part="dist" style="flex:10"><i style="background:#8EAEDD"></i><b>0.10</b> Distance</span>
+              <span style="flex:70"><i style="background:#113C7B"></i><b>0.70</b> Similarity</span><span style="flex:20"><i style="background:#3F6CB3"></i><b>0.20</b> Attributes</span><span style="flex:10"><i style="background:#8EAEDD"></i><b>0.10</b> Distance</span>
             </div>
           </figure>
           <div class="cards">
-            <div class="card" data-part="sim"><span class="eyebrow">Similarity</span><h3>Cosine, on BGE vectors</h3><p>The query and each nonprofit are embedded separately, and the score is the cosine between them, nudged up for nonprofits that list several causes.</p></div>
-            <div class="card" data-part="attr"><span class="eyebrow">Attribute bonus</span><h3>26 rules, capped at 0.20</h3><p>12 for seekers, 7 for volunteers and 7 for donors, worth 0.04 to 0.08 each: LGBTQ+ affirming 0.08, wheelchair access 0.07, sliding-scale pricing 0.06.</p></div>
-            <div class="card" data-part="dist"><span class="eyebrow">Distance</span><h3>Haversine, in buckets</h3><p>Miles to 243 city centroids, scored from 1.00 within 2 miles down to 0.70 past 25.</p></div>
+            <div class="card"><span class="eyebrow">Similarity</span><h3>Cosine, on BGE vectors</h3><p>The query and each nonprofit are embedded separately, and the score is the cosine between them, nudged up for nonprofits that list several causes.</p></div>
+            <div class="card"><span class="eyebrow">Attribute bonus</span><h3>26 rules, capped at 0.20</h3><p>12 for seekers, 7 for volunteers and 7 for donors, worth 0.04 to 0.08 each: LGBTQ+ affirming 0.08, wheelchair access 0.07, sliding-scale pricing 0.06.</p></div>
+            <div class="card"><span class="eyebrow">Distance</span><h3>Haversine, in buckets</h3><p>Miles to 243 city centroids, scored from 1.00 within 2 miles down to 0.70 past 25.</p></div>
           </div>
           <p class="score-note">Results are labeled by match strength: 0.7 and up is strong, 0.4 moderate, 0.2 weak.</p>
         </div>
@@ -290,6 +300,11 @@
         <h2 class="reveal">Embedding pipeline</h2>
         <div class="reveal">
           <div class="prose"><p>One batch job turns the scraped catalog into the matrix the service ranks against.</p></div>
+          <figure class="clip-fig">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-etl.jpg" data-still="../images/smart-match/f-etl.jpg" aria-label="The embedding pipeline. The scraped catalog scrolls to Feeding Nashville, regex picks out its Mission, Vision and Services, and the row becomes one labeled string. Strings go through BGE-large in batches of 16, 58 batches in all, and the vectors fill a matrix of 928 rows by 1,024 numbers.">
+              <source src="../images/smart-match/f-etl.mp4" type="video/mp4" />
+            </video>
+          </figure>
           <figure>
             <div class="diagram diagram--row">
               <div class="node"><span class="node-k">Extract</span><span class="node-v">Read the scraped CSV: 928 rows with name, URL, mission, causes, city, state and address</span></div>
@@ -366,6 +381,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=8"></script>
+  <script src="../site.js?v=9"></script>
 </body>
 </html>
