@@ -364,7 +364,7 @@ img, video { display: block; max-width: 100%; }
 
 /* Explainer clips */
 .clip-fig { margin: 28px 0 8px; }
-.clip-fig video { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); background: #EFEEEB; }
+.clip-fig iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: var(--radius); background: #EFEEEB; overflow: hidden; }
 
 /* Data bars grow in */
 .bars .bar { transform-origin: 0 50%; transition: transform 0.9s var(--ease) calc(0.15s + var(--i, 0) * 0.09s); }

@@ -19,6 +19,18 @@
     films.forEach(v => vio.observe(v));
   }
 
+  /* Walkthroughs: the first step plays when one comes into view, then the reader moves through the rest */
+  $$('.clip-fig iframe').forEach(f => {
+    const kick = () => { try { f.contentWindow.xpStart && f.contentWindow.xpStart(); } catch (err) { /* not ready */ } };
+    const wio = new IntersectionObserver(entries => {
+      if (!entries.some(e => e.isIntersecting)) return;
+      wio.disconnect();
+      kick();
+      f.addEventListener('load', kick, { once: true });
+    }, { threshold: 0.4 });
+    wio.observe(f);
+  });
+
   /* Case studies: a side menu of sections that marks where the reader is */
   const navSecs = $$('[data-nav]');
   if (navSecs.length > 2) {

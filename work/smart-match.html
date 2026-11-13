@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=14" />
+  <link rel="stylesheet" href="../styles.css?v=15" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -188,9 +188,7 @@
         <div class="reveal">
           <div class="prose"><p>Rails runs the quiz, filters, scores and ranks. Python does one job: it turns text into vectors. The embedding matrix is the only link between the offline pipeline and live ranking.</p></div>
           <figure class="clip-fig">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-arch.jpg" data-still="../images/smart-match/f-arch.jpg" aria-label="One request, end to end, for a volunteer in Nashville who picks hunger and housing. The quiz answers become a profile in Rails, the 928 nonprofits are filtered to the 575 in Tennessee, the causes expand into a query sentence, Python embeds it into 1,024 numbers, every candidate is compared by cosine similarity, and the top 10, led by Salvation Army of Nashville, appear as cards with a like and a dislike.">
-              <source src="../images/smart-match/f-arch.mp4" type="video/mp4" />
-            </video>
+            <iframe src="../explainers/smart-match/?x=arch" title="Step-by-step walkthrough: one request, end to end" loading="lazy"></iframe>
           </figure>
           <figure class="arch-fig">
             <div class="diagram arch">
@@ -247,9 +245,7 @@
         <div class="reveal">
           <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in a config file, so tuning needs no code change.</p></div>
           <figure class="clip-fig">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-score.jpg" data-still="../images/smart-match/f-score.jpg" aria-label="A worked example of the score. Similarity: the cosine between the query and nonprofit vectors, 0.80, times a 1.05 content boost, gives 0.84. Attributes: two preferences the person asked for are met, adding 0.06 and 0.05 for 0.11. Distance: 4.1 miles falls in the 5 mile bucket, 0.95. Weighted and added, the score is 0.705, a strong match.">
-              <source src="../images/smart-match/f-score.mp4" type="video/mp4" />
-            </video>
+            <iframe src="../explainers/smart-match/?x=score" title="Step-by-step walkthrough: a worked scoring example" loading="lazy"></iframe>
           </figure>
           <figure class="score-fig" data-score>
             <p class="formula"><span>final</span> = 0.70 &times; similarity + 0.20 &times; attribute bonus + 0.10 &times; distance</p>
@@ -301,9 +297,7 @@
         <div class="reveal">
           <div class="prose"><p>One batch job turns the scraped catalog into the matrix the service ranks against.</p></div>
           <figure class="clip-fig">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-etl.jpg" data-still="../images/smart-match/f-etl.jpg" aria-label="The embedding pipeline. The scraped catalog scrolls to Feeding Nashville, regex picks out its Mission, Vision and Services, and the row becomes one labeled string. Strings go through BGE-large in batches of 16, 58 batches in all, and the vectors fill a matrix of 928 rows by 1,024 numbers.">
-              <source src="../images/smart-match/f-etl.mp4" type="video/mp4" />
-            </video>
+            <iframe src="../explainers/smart-match/?x=etl" title="Step-by-step walkthrough: the embedding pipeline" loading="lazy"></iframe>
           </figure>
           <figure>
             <div class="diagram diagram--row">
@@ -381,6 +375,6 @@
     </div>
   </footer>
 
-  <script src="../site.js?v=9"></script>
+  <script src="../site.js?v=10"></script>
 </body>
 </html>
