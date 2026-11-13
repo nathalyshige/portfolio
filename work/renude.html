@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=8" />
+  <link rel="stylesheet" href="../styles.css?v=10" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -50,11 +50,11 @@
     <div class="container">
       <figure class="reveal">
         <div class="case-cover fill r16-10">
-          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/renude/concierge-poster.jpg" data-still="../images/renude/concierge-still.webp" aria-label="Feature film of the Renude Beauty Concierge. Seven of the 22 entry points lift off the store's pages. A question from the product page is answered while three tool calls resolve, and a fit card lands. Nine named skills fan out from the rail. The depth control moves from Balanced to Quick to Full and the card re-tiers in place. A routine swap asks what the shopper wants instead and lands with Undo. Saved products show Liked it and Not for me stamps with notes. Voice input listens, then places the transcript in the box. A review summary highlights its counted themes. It ends on the concierge on desktop and phone.">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/renude/concierge-poster.jpg" data-still="../images/renude/concierge-still.webp" aria-label="Feature film of the Renude Beauty Concierge. Seven of the 22 entry points lift off the store's pages. The skincare grid reorders itself against the shopper's profile. A product-page question is answered while three tool calls resolve, and a fit card lands. The panel follows the shopper from aisle to aisle, floats as a window, is dragged across the products and folds to its title bar. Nine named skills fan out of the rail, occasion planning builds a beach-wedding plan across skin, makeup and hair, and a travel question returns a carry-on edit. Shade matching and a wash-day plan show makeup and hair. The depth control re-tiers a card, a routine swap lands with Undo, saved products carry stamps and notes, voice input fills the box, and a review summary highlights its counted themes. It ends on the concierge on desktop and phone.">
             <source src="../images/renude/concierge.mp4" type="video/mp4" />
           </video>
         </div>
-        <figcaption class="cover-caption">Cut from screens of the live prototype: entry points, the agent's tools, skills, depth, swaps, memory, voice, and review summaries.</figcaption>
+        <figcaption class="cover-caption">The whole concierge in one minute, cut from screens of the live prototype. Each feature is broken down below.</figcaption>
       </figure>
 
       <ul class="case-stats">
@@ -198,45 +198,119 @@
         </div>
       </section>
 
-      <section class="case-section">
-        <h2 class="reveal">What I built</h2>
-        <div class="reveal">
-          <div class="cards two">
-            <div class="card">
+      <section class="case-section stack">
+        <h2 class="reveal">Feature by feature</h2>
+        <div class="features">
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-entry.jpg" data-still="../images/renude/f-entry.jpg" aria-label="The store's pages tilted into a wall, with seven entry points lifting off them: the self-typing ask bar, category banner, signal chip, search that takes a question, ingredient strip, product question block, and the prompt after adding to bag">
+              <source src="../images/renude/f-entry.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
               <span class="eyebrow">Entry points</span>
               <h3>22 doors, each measured</h3>
-              <p>An ask bar, product-card signals, a product-page question block, a "Best for my skin" sort option, a bag review. Each fires seen and clicked separately, because "nobody noticed it" and "nobody cared" need opposite fixes.</p>
+              <p>An ask bar that types its own question, signal chips on product cards, a product-page question block, a search box that takes questions, a bag review. Each fires seen and clicked separately, because "nobody noticed it" and "nobody cared" need opposite fixes.</p>
             </div>
-            <div class="card">
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-reorder.jpg" data-still="../images/renude/f-reorder.jpg" aria-label="The skincare grid after Personalize these products: cards glide into a new order and the concierge panel slides in with Results reordered and the products moved down">
+              <source src="../images/renude/f-reorder.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Personalized grid</span>
+              <h3>The grid reorders itself</h3>
+              <p>"Personalize these products" ranks the aisle against the shopper's profile. Cards glide to their new places instead of jumping, and the panel lists what moved down and why, so the tool is seen doing the work.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-agent.jpg" data-still="../images/renude/f-agent.jpg" aria-label="A question asked from the product page: the panel opens, three tool calls resolve one after another, and the answer streams in above a fit card">
+              <source src="../images/renude/f-agent.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Agent</span>
+              <h3>Tools behind every answer</h3>
+              <p>The model works out what the shopper meant and phrases the reply. Every fact comes from a tool run on live state: the product on screen, the saved profile, a compatibility check. The card is drawn by the tool, never parsed out of prose.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-follow.jpg" data-still="../images/renude/f-follow.jpg" aria-label="The panel stays docked as the store moves from a product page to the makeup and haircare aisles, then undocks into a window, is dragged across the products, and folds to its title bar">
+              <source src="../images/renude/f-follow.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Follows you</span>
+              <h3>It goes where you go</h3>
+              <p>The conversation stays put while the shopper moves between aisles, and the skill rail follows them. The panel docks, floats as a window that can be dragged off the products, or folds down to its title bar. Testers asked for more room, and this is what came of it.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-skills.jpg" data-still="../images/renude/f-skills.jpg" aria-label="Nine named skills fan out of the rail; then Occasion planning plans a beach wedding across skin, makeup and hair with two warnings, and a travel question returns a seven-day carry-on edit">
+              <source src="../images/renude/f-skills.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
               <span class="eyebrow">Skills</span>
-              <h3>Capabilities with names</h3>
-              <p>Nine skills on a rail that follows the aisle and the conversation. A skill fills the composer instead of sending, so the shopper stays the one who decides.</p>
+              <h3>Named skills, real plans</h3>
+              <p>Nine skills sit on a rail, and picking one fills the box instead of sending. Occasion planning turns a beach wedding into one plan across skin, makeup and hair with the clashes flagged. A week in Lisbon becomes a carry-on edit from the saved routine.</p>
             </div>
-            <div class="card">
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-aisles.jpg" data-still="../images/renude/f-aisles.jpg" aria-label="With the rail on Makeup, a shade question is answered from the saved undertone; with the rail on Hair, Wash day returns a routine and three products">
+              <source src="../images/renude/f-aisles.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Beyond skincare</span>
+              <h3>Makeup and hair, too</h3>
+              <p>Each vertical has its own short profile. Shade matching works from the undertone and depth the shopper states, never from a photo, and wash day builds on hair texture and what they are dealing with.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-depth.jpg" data-still="../images/renude/f-depth.jpg" aria-label="The depth slider moves from Balanced to Quick, folding the card to its verdict, then to Full, which adds the specification and what was read from the profile">
+              <source src="../images/renude/f-depth.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
               <span class="eyebrow">Consultation depth</span>
               <h3>Quick, Balanced, Full</h3>
               <p>One control changes the register of the answer and re-tiers every card already in the thread, without asking again.</p>
             </div>
-            <div class="card">
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-swap.jpg" data-still="../images/renude/f-swap.jpg" aria-label="In the routine, Swap product opens a question about what to use instead; choosing Richer texture swaps the cleanser and shows the reason with Undo">
+              <source src="../images/renude/f-swap.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Routine</span>
+              <h3>Asks before it acts</h3>
+              <p>A swap asks what the shopper wants instead: cheaper, gentler, a lighter or richer texture. Then it lands on the same card with the reason and an Undo.</p>
+            </div>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-memory.jpg" data-still="../images/renude/f-memory.jpg" aria-label="The Products tab: saved products slide in, one stamped Not for me with a note, one stamped Liked it with a note">
+              <source src="../images/renude/f-memory.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
               <span class="eyebrow">Memory</span>
               <h3>Products, stamps, notes</h3>
               <p>Saved items, "not for me" stamps, and notes in the shopper's own words that the concierge reads back, synced to the retailer's wishlist through the adapter.</p>
             </div>
-            <div class="card">
-              <span class="eyebrow">Review summaries</span>
-              <h3>Two phases that can't disagree</h3>
-              <p>Stats are computed first and prose is written over them; the merge step rejects any prose containing a digit. Generated once, stored, and read, never inferred at page view.</p>
-            </div>
-            <div class="card">
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-voice.jpg" data-still="../images/renude/f-voice.jpg" aria-label="The microphone is tapped, the box shows Listening with a pulsing ring, then the transcribed question appears in the box, unsent">
+              <source src="../images/renude/f-voice.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
               <span class="eyebrow">Voice</span>
               <h3>Dictation that works everywhere</h3>
               <p>Browser speech worked for one tester and hung for the next, so audio is transcribed on the server and lands in the box for review. It never sends on its own.</p>
             </div>
-          </div>
-          <figure class="wide">
-            <div class="panel-shot"><img src="../images/renude/review-summary.webp" width="1744" height="488" loading="lazy" alt="Review summary on a product page: a one-line takeaway, three themes with counts out of 11 reviews, and a line on how reviewers with sensitive skin rated it" /></div>
-            <figcaption class="diagram-caption">A review summary on a product page, with themes counted from the stats and a line for reviewers like you.</figcaption>
-          </figure>
+          </article>
+          <article class="feature reveal">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/renude/f-reviews.jpg" data-still="../images/renude/f-reviews.jpg" aria-label="A review summary on a product page: its three counted themes and the line for reviewers with sensitive skin highlight in turn">
+              <source src="../images/renude/f-reviews.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-text">
+              <span class="eyebrow">Review summaries</span>
+              <h3>Two phases that can't disagree</h3>
+              <p>Stats are computed first and prose is written over them; the merge step rejects any prose containing a digit. Generated once, stored, and read, never inferred at page view.</p>
+            </div>
+          </article>
         </div>
       </section>
 
