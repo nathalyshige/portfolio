@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=10" />
+  <link rel="stylesheet" href="../styles.css?v=11" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -48,11 +48,10 @@
     <div class="container">
       <figure class="reveal">
         <div class="case-cover fill r16-10">
-          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/smart-match/match-poster.jpg" data-still="../images/smart-match/match-still.webp" aria-label="Film of Smart Match on givingconnection.org. From the landing page, the quiz is answered: volunteering, food security and housing, and a free-text line about food drives and tutoring. A diagram shows hard filters narrowing 928 nonprofits, embeddings finding the closest to the free text, and attribute rules re-ranking the live results, from Salvation Army of Nashville at 86% down. The results page shows each match with its score and the answers it met, How we matched you lists what matched and what is not stated, and a service filter narrows the list.">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/smart-match/match-poster.jpg" data-still="../images/smart-match/match-still.webp" aria-label="Film of Smart Match on givingconnection.org. From the landing page, the quiz is answered: volunteering, food security and housing, and a free-text line about food drives and tutoring. A diagram shows a location filter narrowing 928 nonprofits, embeddings finding the closest to the free text, and a weighted score ranking the live results, from Salvation Army of Nashville at 86% down. The results page shows each match with its score and the answers it met, How we matched you lists what matched and what is not stated, and a service filter narrows the list.">
             <source src="../images/smart-match/match.mp4" type="video/mp4" />
           </video>
         </div>
-        <figcaption class="cover-caption">The whole flow, cut from screens of the live site. Each part is broken down below.</figcaption>
       </figure>
 
       <ul class="case-stats">
@@ -138,18 +137,18 @@
             </video>
             <div class="feature-text">
               <span class="eyebrow">Branching quiz</span>
-              <h3>A few questions, not a search box</h3>
-              <p>Who you are decides the path: seeking help, donating, and volunteering each get their own questions. Causes become structured filters, and a free-text answer at the end is matched by meaning rather than keywords.</p>
+              <h3>A quiz that branches by who you are</h3>
+              <p>The first question decides the path. Seekers answer 12 steps across 36 causes, and volunteers and donors get shorter paths with 14. Causes become structured filters, and the free-text answer at the end is embedded and matched by meaning.</p>
             </div>
           </article>
           <article class="feature reveal">
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-pipe.jpg" data-still="../images/smart-match/f-pipe.jpg" aria-label="A diagram: 928 dots thin out under hard rules, the rest spread into an embedding space around the free-text answer, and the closest become six ranked rows with live names and scores, each marked with a check">
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/smart-match/f-pipe.jpg" data-still="../images/smart-match/f-pipe.jpg" aria-label="A diagram: 928 dots thin out under the location filter, the rest spread into an embedding space around the free-text answer, and the closest become six ranked rows with live names and scores, each marked with a check">
               <source src="../images/smart-match/f-pipe.mp4" type="video/mp4" />
             </video>
             <div class="feature-text">
               <span class="eyebrow">Matching</span>
               <h3>Rules, then meaning, then reasons</h3>
-              <p>Hard rules on location, role, and format narrow the field first. Dense retrieval with bge-large-en-v1.5 finds what sits closest to the person's own words across 928 embedded nonprofits, and 26 config-driven attribute rules re-rank what is left. The dots are a diagram; the names and scores at the end are the live results.</p>
+              <p>A location filter narrows the field first. Dense retrieval with bge-large-en-v1.5 finds what sits closest to the person's own words across 928 embedded nonprofits, and a weighted score ranks what is left. The dots are a diagram; the names and scores at the end are the live results.</p>
             </div>
           </article>
           <article class="feature reveal">
@@ -169,7 +168,7 @@
             <div class="feature-text">
               <span class="eyebrow">Transparency</span>
               <h3>Honest about the gaps</h3>
-              <p>How we matched you lists everything the person said mattered and how the results measure up. Not stated means a nonprofit has not published it, not that the answer is no, and the page says so.</p>
+              <p>How we matched you lists everything the person said mattered and how the results measure up. When a nonprofit hasn't published something, the page marks it Not stated and suggests asking them directly.</p>
             </div>
           </article>
           <article class="feature reveal">
@@ -182,6 +181,159 @@
               <p>An optional service filter, with a count beside each service of how many of the matches offer it.</p>
             </div>
           </article>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Architecture</h2>
+        <div class="reveal">
+          <div class="prose"><p>Rails runs the quiz, filters, scores and ranks. Python does one job: it turns text into vectors. The embedding matrix is the only link between the offline pipeline and live ranking.</p></div>
+          <figure class="arch-fig">
+            <div class="diagram arch">
+              <div class="arch-group">
+                <p class="arch-label">Browser</p>
+                <div class="arch-row">
+                  <div class="node"><span class="node-k">Quiz</span><span class="node-v">Stimulus controller, three Slim quiz paths, answers kept in the Rails session</span></div>
+                  <div class="node"><span class="node-k">Results page</span><span class="node-v">10 cards built from ViewComponents, with a like and dislike on each</span></div>
+                </div>
+              </div>
+              <span class="arch-wire" aria-hidden="true">answers</span>
+              <div class="arch-group">
+                <p class="arch-label">Rails 7.2 app</p>
+                <div class="arch-row">
+                  <div class="node"><span class="node-k"><code>SmartMatchController</code></span><span class="node-v">Five routes; branches on seeker, volunteer and donor</span></div>
+                  <div class="node"><span class="node-k"><code>QuizToUserIntentConverter</code></span><span class="node-v">Answers into a UserIntent: type, state, city, travel, causes, preferences</span></div>
+                  <div class="node node-out"><span class="node-k"><code>ComprehensiveRecommendationService</code></span><span class="node-v">Filter by state, build the query text, score, rank the top 10</span></div>
+                </div>
+              </div>
+              <span class="arch-wire" aria-hidden="true">query text out, vector back</span>
+              <div class="arch-split">
+                <div class="arch-group">
+                  <p class="arch-label">Python, conda env</p>
+                  <div class="node"><span class="node-k"><code>generate_user_embedding.py</code></span><span class="node-v">BGE-large turns the query into 1024 numbers</span></div>
+                  <p class="arch-label arch-label--gap">Offline pipeline</p>
+                  <div class="node"><span class="node-k"><code>generate_enhanced_bge_matrix.py</code></span><span class="node-v">Cleans, labels and embeds the 928-row catalog in batches of 16</span></div>
+                </div>
+                <div class="arch-group">
+                  <p class="arch-label">Files the service reads</p>
+                  <div class="node"><span class="node-k"><code>enhanced_bge_nonprofits_matrix.json</code></span><span class="node-v">928 nonprofits &times; 1024 dimensions, 29 MB</span></div>
+                  <div class="node"><span class="node-k"><code>matching_rules.yml</code></span><span class="node-v">Weights, synonyms, cause mappings, 26 attribute rules</span></div>
+                  <div class="node"><span class="node-k"><code>city_centroids.yml</code></span><span class="node-v">Coordinates for 243 cities</span></div>
+                </div>
+              </div>
+            </div>
+            <figcaption class="diagram-caption">Read from the recommendation-system branch. If the service raises, the controller falls back to the app's PostGIS search.</figcaption>
+          </figure>
+          <ol class="flow">
+            <li><b>Quiz.</b> One step at a time; the answers live in the Rails session, so the quiz survives a reload and the Back button.</li>
+            <li><b>Intent.</b> <code>QuizToUserIntentConverter</code> maps quiz causes to config keys and builds a UserIntent.</li>
+            <li><b>Validation.</b> With no causes selected, the service stops early.</li>
+            <li><b>Filtering.</b> Keep the nonprofits in the person's state.</li>
+            <li><b>Query text.</b> Causes expanded with synonyms, plus language, accessibility needs and city, written as one string.</li>
+            <li><b>Query embedding.</b> BGE with its retrieval prefix, "Represent this sentence for searching relevant passages:".</li>
+            <li><b>Scoring.</b> Every candidate gets the weighted score below.</li>
+            <li><b>Ranking.</b> Sort, keep the top 10, and write each one's reason, listing the causes it serves.</li>
+            <li><b>Display and feedback.</b> The set is labeled by its best score, and each card takes a like or a dislike.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Scoring</h2>
+        <div class="reveal">
+          <div class="prose"><p>Each nonprofit's score blends three parts, with every weight set in <code>config/matching_rules.yml</code>, so tuning needs no code change.</p></div>
+          <figure class="score-fig">
+            <p class="formula"><span>final</span> = 0.70 &times; similarity + 0.20 &times; attribute bonus + 0.10 &times; distance</p>
+            <div class="weights" role="img" aria-label="Score weights: similarity 70 percent, attribute bonus 20 percent, distance 10 percent">
+              <span style="flex:70;background:#113C7B" title="Similarity, 0.70"></span><span style="flex:20;background:#3F6CB3" title="Attribute bonus, 0.20"></span><span style="flex:10;background:#8EAEDD" title="Distance, 0.10"></span>
+            </div>
+            <div class="weights-key">
+              <span style="flex:70"><i style="background:#113C7B"></i><b>0.70</b> Similarity</span><span style="flex:20"><i style="background:#3F6CB3"></i><b>0.20</b> Attributes</span><span style="flex:10"><i style="background:#8EAEDD"></i><b>0.10</b> Distance</span>
+            </div>
+          </figure>
+          <div class="cards">
+            <div class="card"><span class="eyebrow">Similarity</span><h3>Cosine, on BGE vectors</h3><p>The query and each nonprofit are embedded separately, and the score is the cosine between them, nudged up for nonprofits that list several causes.</p></div>
+            <div class="card"><span class="eyebrow">Attribute bonus</span><h3>26 rules, capped at 0.20</h3><p>12 for seekers, 7 for volunteers and 7 for donors, worth 0.04 to 0.08 each: LGBTQ+ affirming 0.08, wheelchair access 0.07, sliding-scale pricing 0.06.</p></div>
+            <div class="card"><span class="eyebrow">Distance</span><h3>Haversine, in buckets</h3><p>Miles to 243 city centroids, scored from 1.00 within 2 miles down to 0.70 past 25.</p></div>
+          </div>
+          <p class="score-note">Results are labeled by match strength: 0.7 and up is strong, 0.4 moderate, 0.2 weak.</p>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Data</h2>
+        <div class="reveal">
+          <div class="data-grid">
+            <figure class="bars-fig">
+              <p class="bars-title">928 nonprofits, by state</p>
+              <p class="bars-sub">Tennessee and New Jersey hold Giving Connection's two communities, Nashville and Atlantic City.</p>
+              <dl class="bars">
+                <div class="bar-row" title="Tennessee: 575 nonprofits"><dt>Tennessee</dt><dd><span class="bar" style="width:100%"></span><span class="bar-val">575</span></dd></div>
+                <div class="bar-row" title="New Jersey: 196 nonprofits"><dt>New Jersey</dt><dd><span class="bar" style="width:34.1%"></span><span class="bar-val">196</span></dd></div>
+                <div class="bar-row" title="California: 76 nonprofits"><dt>California</dt><dd><span class="bar" style="width:13.2%"></span><span class="bar-val">76</span></dd></div>
+                <div class="bar-row" title="Other states: 47 nonprofits"><dt>Other states</dt><dd><span class="bar" style="width:8.2%"></span><span class="bar-val">47</span></dd></div>
+                <div class="bar-row" title="No state listed: 34 nonprofits"><dt>No state listed</dt><dd><span class="bar" style="width:5.9%"></span><span class="bar-val">34</span></dd></div>
+              </dl>
+              <figcaption class="diagram-caption">giving_connection_scraped_data.csv, counted by state</figcaption>
+            </figure>
+            <ul class="tiles">
+              <li><b>1,024</b><span>numbers per nonprofit vector</span></li>
+              <li><b>29 MB</b><span>embedding matrix</span></li>
+              <li><b>62%</b><span>of nonprofits list more than one cause</span></li>
+              <li><b>44</b><span>cause synonym lists for query expansion</span></li>
+              <li><b>31</b><span>mappings from scraped cause labels to quiz categories</span></li>
+              <li><b>10</b><span>ranked matches per request</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Embedding pipeline</h2>
+        <div class="reveal">
+          <div class="prose"><p>One batch job, <code>generate_enhanced_bge_matrix.py</code>, turns the scraped catalog into the matrix the service ranks against.</p></div>
+          <figure>
+            <div class="diagram diagram--row">
+              <div class="node"><span class="node-k">Extract</span><span class="node-v">Read the scraped CSV: 928 rows with name, URL, mission, causes, city, state and address</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Transform</span><span class="node-v">Clean the text, pull Mission, Vision and Services out with regex, and join one labeled string per nonprofit</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node"><span class="node-k">Embed</span><span class="node-v">BGE-large in batches of 16, CLS pooling, L2-normalized</span></div>
+              <span class="wire" aria-hidden="true"></span>
+              <div class="node node-out"><span class="node-k">Load</span><span class="node-v">A JSON matrix: each nonprofit's details plus its 1024-number vector</span></div>
+            </div>
+            <figcaption class="diagram-caption">Each string reads Organization, Mission, Vision, Services, Causes, Location, Address, so the model sees the same structure for every nonprofit.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section stack">
+        <h2 class="reveal">Stack and techniques</h2>
+        <div class="reveal stack-grid">
+          <dl class="stack-list">
+            <div><dt>Web framework</dt><dd>Ruby on Rails 7.2, Ruby 3.2, Puma</dd></div>
+            <div><dt>Frontend</dt><dd>Hotwire (Turbo and Stimulus), Tailwind CSS, ViewComponent, Slim and ERB</dd></div>
+            <div><dt>Database</dt><dd>PostgreSQL with PostGIS</dd></div>
+            <div><dt>Embedding runtime</dt><dd>Python 3.11 in a conda environment</dd></div>
+            <div><dt>ML libraries</dt><dd>sentence-transformers, PyTorch, NumPy, scikit-learn</dd></div>
+            <div><dt>Model</dt><dd>BAAI/bge-large-en-v1.5: 1024 dimensions, 512-token input</dd></div>
+            <div><dt>Ruby to Python</dt><dd><code>Open3.capture3</code> calling <code>conda run</code></dd></div>
+            <div><dt>Storage</dt><dd>JSON matrix, CSV, YAML config</dd></div>
+            <div><dt>Testing</dt><dd>RSpec, FactoryBot, Capybara; 14 controller tests</dd></div>
+          </dl>
+          <ul class="tech-list">
+            <li><b>Dense semantic retrieval</b> with a bi-encoder: query and nonprofits embedded separately, compared by cosine.</li>
+            <li><b>Asymmetric retrieval:</b> BGE's instruction prefix on the query only.</li>
+            <li><b>Structured document text:</b> labeled fields joined before encoding.</li>
+            <li><b>Query expansion</b> from 44 synonym lists.</li>
+            <li><b>Label harmonization:</b> 35 scraped cause labels mapped onto quiz categories.</li>
+            <li><b>Hybrid ranking:</b> a hard filter, then semantic similarity, then a config-weighted score.</li>
+            <li><b>Configuration over code:</b> weights, synonyms, mappings and rules all in YAML.</li>
+            <li><b>Branching intake:</b> one opening question routes to three quiz paths.</li>
+            <li><b>Explainable results:</b> a reason per match and match-strength labels.</li>
+            <li><b>Explicit feedback:</b> a like or dislike per result, stored with the answers.</li>
+            <li><b>Graceful degradation:</b> a service error falls back to PostGIS search.</li>
+          </ul>
         </div>
       </section>
 
