@@ -460,7 +460,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .feature { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
 .feature:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); }
 .feature:nth-child(even) video { order: 2; }
-.feature video { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); background: #EFEEEB; }
+.feature video { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius); background: #fff; }
 .feature .eyebrow { display: block; margin-bottom: 10px; }
 .feature h3 { font-size: clamp(19px, 1.8vw, 22px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 10px; }
 .feature p { font-size: 15.5px; color: var(--ink-2); line-height: 1.6; max-width: 46ch; }
