@@ -7,10 +7,10 @@
 <title>Nura walkthrough</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=block" rel="stylesheet">
 <style>
-  :root { --acc: #7A4A1C; --acc2: #B0783F; --acc3: #E5BA7E; --teal: #B0783F; --ink: #1F1B16; --ink2: #6B6158; --ink3: #9A9087; }
+  :root { --acc: #7A4A1C; --acc2: #B0783F; --acc3: #E5BA7E; --teal: #B0783F; --ink: #141316; --ink2: #5E5C64; --ink3: #8A8F9C; }
   html, body { margin: 0; background: #fff; overflow: hidden; }
   #stage { position: relative; width: 1440px; height: 900px; overflow: hidden; font-family: Inter, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
-  .bgfill { position: absolute; inset: 0; background: radial-gradient(120% 95% at 62% 42%, #FBF8F3 0%, #F1E9DE 100%); }
+  .bgfill { position: absolute; inset: 0; background: radial-gradient(120% 95% at 62% 42%, #F8F8F8 0%, #EFEFEF 100%); }
   .o { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
   .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 18px 48px rgba(30,24,36,.09); }
   .mono { font-family: 'JetBrains Mono', monospace; }
@@ -25,7 +25,7 @@
   .grp { display: flex; flex-direction: column; gap: 10px; }
   .grp > i { font: 600 12.5px/1 Inter; letter-spacing: 0.14em; color: var(--ink3); font-style: normal; padding-bottom: 9px; border-bottom: 1.5px solid rgba(122,74,28,.16); white-space: nowrap; }
   .grp > div { display: flex; gap: 8px; }
-  .pill { position: relative; margin: 0; box-sizing: content-box; -webkit-appearance: none; appearance: none; height: 38px; padding: 0 17px; border-radius: 19px; background: #fff; border: 1px solid rgba(122,74,28,.18); font: 500 17px/38px Inter, sans-serif; color: #9A9087; overflow: hidden; white-space: nowrap; cursor: default; }
+  .pill { position: relative; margin: 0; box-sizing: content-box; -webkit-appearance: none; appearance: none; height: 38px; padding: 0 17px; border-radius: 19px; background: #fff; border: 1px solid rgba(122,74,28,.18); font: 500 17px/38px Inter, sans-serif; color: #8A8F9C; overflow: hidden; white-space: nowrap; cursor: default; }
   .pill b { position: absolute; inset: 0; background: var(--acc); opacity: 0; }
   .pill span { position: relative; }
   .kick { display: flex; align-items: center; gap: 10px; font: 600 13px/1 Inter; letter-spacing: 0.16em; color: var(--acc); z-index: 6; }
@@ -236,7 +236,7 @@ function renderRail(u) {
   PILLS.forEach((p, i) => {
     const s = STEPS[i]; const done = u >= s.t1 - 0.02;
     const k = P(u, s.t0 - 0.1, s.t0 + 0.2) * (1 - P(u, s.t1 - 0.1, s.t1 + 0.2));
-    const base = done ? '#7A4A1C' : '#9A9087';
+    const base = done ? '#7A4A1C' : '#8A8F9C';
     p.firstChild.style.opacity = k; p.lastChild.style.color = mixc(base, '#ffffff', k);
     p.style.borderColor = done ? 'rgba(122,74,28,.45)' : 'rgba(122,74,28,.18)';
   });
@@ -259,12 +259,12 @@ const THDN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 
 /* =================== NURA: shared drawing =================== */
-const K = { ink: '#1F1B16', ink2: '#6B6158', ink3: '#9A9087', acc: '#7A4A1C', acc2: '#B0783F', acc3: '#E5BA7E', warn: '#B4553F', warnBg: '#F6E3DD', ok: '#4F7D5C', okBg: '#E2EDE4', mute: '#F2ECE4', tube: '#E3D7C7' };
+const K = { ink: '#141316', ink2: '#5E5C64', ink3: '#8A8F9C', acc: '#7A4A1C', acc2: '#B0783F', acc3: '#E5BA7E', warn: '#B4553F', warnBg: '#F6E3DD', ok: '#4F7D5C', okBg: '#E2EDE4', mute: '#EDEDED', tube: '#D9D9D9' };
 function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 function panel(x, y, w, h, a = 1, hl = 0) {
   if (a <= 0.003) return;
   ctx.save(); ctx.globalAlpha = a;
-  ctx.shadowColor = 'rgba(70,45,20,0.10)'; ctx.shadowBlur = 44; ctx.shadowOffsetY = 16;
+  ctx.shadowColor = 'rgba(20,20,20,0.08)'; ctx.shadowBlur = 44; ctx.shadowOffsetY = 16;
   ctx.fillStyle = '#fff'; rr(x, y, w, h, 18); ctx.fill(); ctx.restore();
   if (hl > 0.01) { ctx.save(); ctx.globalAlpha = a * hl; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; rr(x + 1, y + 1, w - 2, h - 2, 17); ctx.stroke(); ctx.restore(); }
 }
@@ -281,6 +281,21 @@ function poly(pts, col, w, a = 1, dash = null, off = 0) {
   ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); ctx.restore();
 }
 function checkMark(x, y, r, a, col = K.ok) { if (a <= 0.003) return; dot(x, y, r, col, a); poly([[x - r * 0.42, y + r * 0.02], [x - r * 0.1, y + r * 0.34], [x + r * 0.45, y - r * 0.3]], '#fff', r * 0.24, a); }
+// Nura's scanner: a white dome with a gold-ringed sensing face, pointed at a target
+function scanner(x, y, tx, ty, R, a) {
+  if (a <= 0.003) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(Math.atan2(ty - y, tx - x) - Math.PI / 2);
+  const H = R * 0.92;
+  ctx.shadowColor = 'rgba(20,20,20,.18)'; ctx.shadowBlur = R * 0.7; ctx.shadowOffsetY = R * 0.22;
+  const g = ctx.createLinearGradient(-R, -H, R, 0); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#DEDAD4');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-R, 0); ctx.bezierCurveTo(-R, -H * 1.28, R, -H * 1.28, R, 0); ctx.closePath(); ctx.fill();
+  ctx.shadowColor = 'transparent'; ctx.strokeStyle = 'rgba(20,20,20,.3)'; ctx.lineWidth = 1.3; ctx.stroke();
+  const gr = ctx.createLinearGradient(-R, 0, R, 0); gr.addColorStop(0, '#E3BE86'); gr.addColorStop(0.5, '#C8975A'); gr.addColorStop(1, '#A87238');
+  ctx.fillStyle = gr; ctx.beginPath(); ctx.ellipse(0, 0, R, R * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#F4EFE8'; ctx.beginPath(); ctx.ellipse(0, 0, R * 0.8, R * 0.145, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3A322A'; ctx.beginPath(); ctx.ellipse(0, 0, R * 0.5, R * 0.085, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
 function footnote(s) { txt(s, 120, 884, '400 14px Inter', K.ink3, 1); }
 
 // Canonical face mesh from MediaPipe (Apache License 2.0): 468 vertices, their UV layout, 898 triangles
@@ -416,11 +431,9 @@ function rSession(u) {
   if (sweep > 0 && sweep < 1) { const g = Math.sin(sweep * Math.PI); poly([[FX - 125, sy], [FX + 125, sy]], K.acc2, 3, pf * g); poly([[FX - 125, sy], [FX + 125, sy]], K.acc3, 12, pf * g * 0.25); }
   // the wand touches the right cheek
   const kw = P(u, 1.0, 1.45, E.io3) * (1 - P(u, 2.1, 2.5, E.io3));
-  const tip = at(H3.V[425], fv), wx = lerp(356, tip[0] + 3, kw), wy = lerp(668, tip[1] + 5, kw);
-  ctx.save(); ctx.globalAlpha = pf; ctx.translate(wx, wy); ctx.rotate(-0.55);
-  ctx.fillStyle = '#EDE3D5'; rr(-12, 0, 24, 100, 12); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.35)'; ctx.lineWidth = 1.5; rr(-12, 0, 24, 100, 12); ctx.stroke();
-  ctx.fillStyle = K.acc2; rr(-12, 0, 24, 14, 7); ctx.fill(); ctx.restore();
-  if (kw > 0.95) { const pr = (u * 1.6) % 1; ctx.save(); ctx.globalAlpha = pf * (1 - pr) * 0.8; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(wx, wy, 8 + pr * 22, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  const tip = at(H3.V[425], fv), wx = lerp(366, tip[0] + 20, kw), wy = lerp(748, tip[1] + 18, kw);
+  scanner(wx, wy, tip[0] - 14, tip[1] - 12, 32, pf);
+  if (kw > 0.95) { const pr = (u * 1.6) % 1; ctx.save(); ctx.globalAlpha = pf * (1 - pr) * 0.8; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(tip[0], tip[1], 6 + pr * 20, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
   // readings, against your own baseline
   const RD = [['Moisture', 'wand', 0.36, 0.55, 1.55], ['Sebum', 'wand', 0.5, 0.48, 1.7], ['Redness', 'camera', 0.64, 0.45, 1.3], ['Texture', 'camera', 0.47, 0.5, 1.9]];
   RD.forEach(([n, src, v, base, t], i) => {
@@ -431,7 +444,7 @@ function rSession(u) {
     ctx.fillStyle = K.ink; ctx.globalAlpha = pf * P(u, t + 0.2, t + 0.5); ctx.fillRect(x + 116 * base - 1, y + 29, 2, 20); ctx.restore();
   });
   txt('Bars against your own baseline (the tick)', 148, 808, '400 13px Inter', K.ink3, pf * P(u, 1.6, 2.0));
-  chipT('~50 s', 522, 302, K.acc, '#F5EBDD', pf * P(u, 0.6, 1.0) * (1 - P(u, 15.35, 15.5)), 'right');
+  chipT('~50 s', 522, 302, K.acc, '#F1F1F1', pf * P(u, 0.6, 1.0) * (1 - P(u, 15.35, 15.5)), 'right');
   // apply: three points on the face, then spread
   [151, 205, 425].map(k => { const q = at(H3.V[k], fv); return [q[0] - FX, q[1] - FY]; }).forEach(([dx, dy], i) => {
     const kd = P(u, 14.7 + i * 0.12, 14.95 + i * 0.12, E.back), ks = P(u, 15.2, 15.9, E.out3);
@@ -448,7 +461,7 @@ function rSession(u) {
     const on = chosen(i) ? kc(i) : 0, dim = chosen(i) ? 1 : 1 - 0.55 * P(u, 3.6, 4.0);
     const now = ORDER.map((idx, j) => (idx === i ? win(u, actT(j) + 0.38, actT(j) + 0.45, actT(j) + 0.7, actT(j) + 0.8) : 0)).reduce((a, b) => a + b, 0);
     if (now > 0) dot(x, y, 34, K.acc3, pd * now * 0.6);
-    ctx.save(); ctx.globalAlpha = pd * dim; ctx.fillStyle = on > 0.5 ? K.acc3 : '#F4EEE6'; ctx.strokeStyle = on > 0.5 ? K.acc2 : 'rgba(31,27,22,.25)'; ctx.lineWidth = 2;
+    ctx.save(); ctx.globalAlpha = pd * dim; ctx.fillStyle = on > 0.5 ? K.acc3 : '#F4F4F4'; ctx.strokeStyle = on > 0.5 ? K.acc2 : 'rgba(20,20,22,.25)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
     txt(String(i + 1), x, y + 5, '600 14px Inter', on > 0.5 ? K.acc : K.ink3, pd * dim, 'center');
     const lx = DX + Math.cos(ang) * (CR + 46), ly = DY + Math.sin(ang) * (CR + 46) + 5;
@@ -456,23 +469,23 @@ function rSession(u) {
     if (!atStation) txt(CARTS[i], lx, ly, (on > 0.5 ? '600' : '500') + ' 13px Inter', on > 0.5 ? K.acc : K.ink2, pd * dim, Math.abs(Math.cos(ang)) < 0.3 ? 'center' : Math.cos(ang) > 0 ? 'left' : 'right');
   }
   chipT(`${ORDER.filter(i => kc(i) > 0.5).length || 4} of 8 chosen`, 992, 302, '#fff', K.acc, pd * P(u, 3.6, 3.9) * (1 - P(u, 7.6, 7.9)), 'right');
-  chipT('8 + 2', 992, 302, K.acc, '#F5EBDD', pd * (1 - P(u, 3.55, 3.75) + P(u, 7.7, 8.0)), 'right');
+  chipT('8 + 2', 992, 302, K.acc, '#F1F1F1', pd * (1 - P(u, 3.55, 3.75) + P(u, 7.7, 8.0)), 'right');
   // station and shared piston
   ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = K.ink2; ctx.beginPath(); ctx.moveTo(DX, DY + CR + 28); ctx.lineTo(DX - 8, DY + CR + 40); ctx.lineTo(DX + 8, DY + CR + 40); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#E8DED1'; rr(DX - 26, 608, 52, 14, 5); ctx.fill(); ctx.restore();
+  ctx.fillStyle = '#E2E2E2'; rr(DX - 26, 608, 52, 14, 5); ctx.fill(); ctx.restore();
   txt('Shared ceramic piston', DX, 640, '500 13px Inter', K.ink2, pd, 'center');
   // bases
   const sLvl = 1 - 0.12 * P(u, 5.9, 7.3);
   [['Serum', 616, sLvl], ['Moisturizer', 726, 1]].forEach(([n, x, lv]) => {
-    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#F7F1E8'; rr(x, 664, 96, 92, 16); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.2)'; ctx.lineWidth = 1.5; rr(x, 664, 96, 92, 16); ctx.stroke();
+    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#F6F6F6'; rr(x, 664, 96, 92, 16); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.2)'; ctx.lineWidth = 1.5; rr(x, 664, 96, 92, 16); ctx.stroke();
     ctx.fillStyle = '#EADBC4'; rr(x + 6, 664 + 92 - 86 * lv, 84, 86 * lv - 6, 12); ctx.fill(); ctx.restore();
     txt(n, x + 48, 780, '500 13px Inter', K.ink2, pd, 'center');
   });
   const baseOn = win(u, 5.8, 5.95, 7.25, 7.45);
   if (baseOn > 0) { ctx.save(); ctx.globalAlpha = pd * baseOn; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2.5; rr(616, 664, 96, 92, 16); ctx.stroke(); ctx.restore(); }
-  dot(868, 710, 10, '#E8DED1', pd); ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(868, 710, 10, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  dot(868, 710, 10, '#E2E2E2', pd); ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(868, 710, 10, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
   txt('Valve', 868, 740, '500 13px Inter', K.ink2, pd, 'center');
-  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#E8DED1'; rr(902, 702, 52, 16, 5); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#E2E2E2'; rr(902, 702, 52, 16, 5); ctx.fill(); ctx.restore();
   txt('Base piston', 928, 740, '500 13px Inter', K.ink2, pd, 'center');
   poly([[712, 710], [858, 710]], K.tube, 3, pd); poly([[878, 710], [902, 710]], K.tube, 3, pd);
   // tubes to the nozzle
@@ -493,13 +506,13 @@ function rSession(u) {
   layers.forEach(([h, col]) => { if (h <= 0) return; ctx.fillStyle = blend > 0 ? mixc(col, mixCol, blend) : col; ctx.fillRect(BX - 100, top - h, 200, h + 0.5); top -= h; });
   ctx.restore();
   if (blend > 0 && blend < 1) { ctx.save(); ctx.globalAlpha = pb * Math.sin(blend * Math.PI) * 0.8; ctx.strokeStyle = '#C9A27A'; ctx.lineWidth = 2; ctx.beginPath(); for (let a = 0; a < 9; a += 0.15) { const r = 4 + a * 7, x = BX + Math.cos(a + u * 9) * r, y = top + 4 + Math.sin(a + u * 9) * r * 0.18; a ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
-  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(31,27,22,.55)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(BX, RIM, 96, BOT - RIM + 4, 0, 0, Math.PI); ctx.stroke(); ctx.beginPath(); ctx.moveTo(BX - 104, RIM); ctx.lineTo(BX + 104, RIM); ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(20,20,22,.55)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(BX, RIM, 96, BOT - RIM + 4, 0, 0, Math.PI); ctx.stroke(); ctx.beginPath(); ctx.moveTo(BX - 104, RIM); ctx.lineTo(BX + 104, RIM); ctx.stroke(); ctx.restore();
   // base stream, then drops
   if (baseOn > 0) poly([[BX, 346], [BX, top]], '#E8D8BF', 4, pb * baseOn);
   ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.45, actT(j) + 0.66, E.in3); if (k > 0 && k < 1) dot(BX, lerp(352, top, k), 6, ACOL[j], pb); });
   // platen and readout
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#DCCFBF'; rr(1090, 668, 190, 12, 6); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#FBF8F3'; rr(1088, 700, 194, 100, 14); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#D6D6D6'; rr(1090, 668, 190, 12, 6); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#F6F6F6'; rr(1088, 700, 194, 100, 14); ctx.fill(); ctx.restore();
   caps('ON THE SCALE', 1106, 726, pb);
   txt(massAt(u).toFixed(2) + ' g', 1106, 766, '600 30px "JetBrains Mono"', K.ink, pb);
   txt('intended 2.40 g', 1106, 788, '500 13px Inter', K.ink2, pb * P(u, 11.9, 12.2));
@@ -566,24 +579,22 @@ function rVision(u) {
   const vw = V3(yaw, HX, HY, HS, kA, AX, AY, AW, AH);
   // the subject, as a faint outline while it is captured
   const ghost = P(u, 0.1, 0.5) * (1 - P(u, 5.8, 6.4));
-  wire(V3(0, HX, HY, HS), '#A8927A', 1, ghost * 0.55);
+  wire(V3(0, HX, HY, HS), '#A9A9A9', 1, ghost * 0.55);
   // orbit, phone and frames
   const orb = P(u, 0.3, 0.6) * (1 - P(u, 5.9, 6.5));
   if (orb > 0) { ctx.save(); ctx.globalAlpha = orb * 0.45; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.4; ctx.setLineDash([3, 7]); ctx.beginPath(); ctx.ellipse(HX, HY, 400, 150, 0, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke(); ctx.restore(); }
   const kp = P(u, 0.4, 2.5, E.io3), phOp = P(u, 0.3, 0.5) * (1 - P(u, 2.6, 3.0));
   if (phOp > 0) {
     const a = lerp(-1.05, 1.05, kp), x = HX + 400 * Math.sin(a), y = HY + 150 * Math.cos(a);
-    ctx.save(); ctx.globalAlpha = phOp; ctx.translate(x, y); ctx.rotate(-a * 0.5);
-    ctx.shadowColor = 'rgba(40,25,10,.25)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; ctx.fillStyle = '#2A2520'; rr(-28, -52, 56, 104, 12); ctx.fill(); ctx.shadowColor = 'transparent';
-    ctx.fillStyle = '#3E3832'; rr(-23, -45, 46, 90, 8); ctx.fill(); dot(0, -38, 3.5, '#9A9087', 1); ctx.restore();
+    scanner(x, y, HX, HY - 30, 46, phOp);
   }
   const stripA = P(u, 0.4, 0.7) * (1 - P(u, 3.0, 3.5));
   if (stripA > 0) {
     N2.cams.forEach((c, i) => {
       const k = P(kp, i / 11 - 0.02, i / 11 + 0.04); if (k <= 0) return;
       const x = 245 + i * 80, y = 796;
-      ctx.save(); ctx.globalAlpha = stripA * k; ctx.fillStyle = '#fff'; rr(x, y, 70, 46, 8); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.14)'; ctx.lineWidth = 1; rr(x, y, 70, 46, 8); ctx.stroke();
-      ctx.strokeStyle = '#B9A58C'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(x + 35 - Math.sin(c.a) * 11, y + 23, 11, 15, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.globalAlpha = stripA * k; ctx.fillStyle = '#fff'; rr(x, y, 70, 46, 8); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.14)'; ctx.lineWidth = 1; rr(x, y, 70, 46, 8); ctx.stroke();
+      ctx.strokeStyle = '#B4B4B4'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(x + 35 - Math.sin(c.a) * 11, y + 23, 11, 15, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
     });
     ctx.save(); ctx.globalAlpha = stripA; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.6; ctx.beginPath();
     for (let x = 245; x <= 245 + 950 * kp; x += 4) { const t = (x - 245) / 950, y = 772 + 8 * Math.sin(t * 19) * Math.cos(t * 5) + 3.5 * Math.sin(t * 53); x === 245 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
@@ -604,7 +615,7 @@ function rVision(u) {
   }
   // reconstruction as stipple, then the mesh, the flat map, and back
   const kS = P(u, 5.8, 7.3), sA = 1 - 0.35 * P(u, 8.1, 8.5) * (1 - P(u, 16.4, 17.0)) - 0.3 * P(u, 17.0, 17.4);
-  if (kA > 0) { ctx.save(); ctx.globalAlpha = kA; ctx.shadowColor = 'rgba(70,45,20,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14; ctx.fillStyle = '#fff'; rr(AX - 24, AY - 18, AW + 48, AH + 36, 18); ctx.fill(); ctx.restore(); }
+  if (kA > 0) { ctx.save(); ctx.globalAlpha = kA; ctx.shadowColor = 'rgba(20,20,20,0.08)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14; ctx.fillStyle = '#fff'; rr(AX - 24, AY - 18, AW + 48, AH + 36, 18); ctx.fill(); ctx.restore(); }
   if (kS > 0) cloud(vw, sA * (1 - 0.55 * P(u, 8.2, 9.0)) * (1 - 0.4 * kA), kS, 1.5);
   const kM = P(u, 8.2, 9.2), mA = kM * (1 - P(u, 12.9, 13.3) * 0.6);
   wire(vw, K.acc, 1.1, mA, kM);
@@ -698,7 +709,7 @@ function rSafety(u) {
     txt(r.n, 150, y + 6, '600 17px Inter', K.ink, rowA);
     if (r.out && r.out[1] === 'Allergen' && drain > 0) { ctx.save(); ctx.globalAlpha = a0 * drain; ctx.strokeStyle = K.warn; ctx.lineWidth = 2; rr(254, y - 6, 14, 11, 2); ctx.stroke(); ctx.beginPath(); ctx.arc(261, y - 7, 5, Math.PI, 0); ctx.stroke(); ctx.restore(); }
     ctx.save(); ctx.globalAlpha = rowA; ctx.fillStyle = K.mute; rr(X0, y - 8, TW, 16, 8); ctx.fill();
-    if (r.out && r.out[1] === 'Expired' && drain > 0) { ctx.save(); ctx.beginPath(); rr(X0, y - 8, TW, 16, 8); ctx.clip(); ctx.strokeStyle = 'rgba(31,27,22,.18)'; ctx.lineWidth = 2; for (let x = X0 - 20; x < X0 + TW; x += 10) { ctx.beginPath(); ctx.moveTo(x, y + 10); ctx.lineTo(x + 16, y - 10); ctx.stroke(); } ctx.restore(); }
+    if (r.out && r.out[1] === 'Expired' && drain > 0) { ctx.save(); ctx.beginPath(); rr(X0, y - 8, TW, 16, 8); ctx.clip(); ctx.strokeStyle = 'rgba(20,20,22,.18)'; ctx.lineWidth = 2; for (let x = X0 - 20; x < X0 + TW; x += 10) { ctx.beginPath(); ctx.moveTo(x, y + 10); ctx.lineTo(x + 16, y - 10); ctx.stroke(); } ctx.restore(); }
     const shown = lerp(v, Math.min(v, r.c), clip) * (1 - drain);
     ctx.fillStyle = K.acc2; if (shown > 0.003) { rr(X0, y - 8, TW * shown, 16, 8); ctx.fill(); }
     if (over && capT > 0 && v > r.c) { const ex = (1 - clip); ctx.globalAlpha = rowA * ex; ctx.fillStyle = K.warn; rr(X0 + TW * r.c, y - 8 + clip * 18, TW * (v - r.c), 16, 8); ctx.fill(); }
@@ -714,7 +725,7 @@ function rSafety(u) {
   // right panel: inputs, then the plan
   const inA = P(u, 0.2, 0.5) * (1 - P(u, 2.6, 2.9));
   caps('INPUTS', 1056, 306, inA);
-  ['Today’s scan', 'PM session', 'Your history', 'Sleep, opt-in', 'UV index, opt-in'].forEach((s, i) => chipT(s, 1056, 352 + i * 44, K.acc, '#F5EBDD', inA * P(u, 0.3 + i * 0.1, 0.55 + i * 0.1)));
+  ['Today’s scan', 'PM session', 'Your history', 'Sleep, opt-in', 'UV index, opt-in'].forEach((s, i) => chipT(s, 1056, 352 + i * 44, K.acc, '#F1F1F1', inA * P(u, 0.3 + i * 0.1, 0.55 + i * 0.1)));
   if (inA > 0) { poly([[1175, 570], [1175, 610]], K.ink3, 2, inA * P(u, 0.9, 1.1)); ctx.save(); ctx.globalAlpha = inA * P(u, 0.95, 1.2); ctx.fillStyle = K.ink; rr(1056, 620, 240, 64, 14); ctx.fill(); ctx.restore(); txt('Recommendation model', 1176, 658, '600 16px Inter', '#fff', inA * P(u, 0.95, 1.2), 'center'); }
   const plA = P(u, 2.7, 3.0);
   caps('DISPENSE PLAN', 1056, 306, plA);
@@ -723,7 +734,7 @@ function rSafety(u) {
   RULES.forEach(([n, t], i) => { const k = P(u, t, t + 0.25); const y = 440 + i * 34; txt(n, 1084, y, '500 16px Inter', k > 0.5 ? K.ink : K.ink3, plA); if (k > 0) checkMark(1065, y - 5, 9, plA * k); else dot(1065, y - 5, 9, K.mute, plA); });
   const sc = P(u, 13.8, 14.2);
   if (sc > 0) {
-    ctx.save(); ctx.globalAlpha = sc; ctx.fillStyle = '#FBF8F3'; rr(1050, 662, 250, 140, 14); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.globalAlpha = sc; ctx.fillStyle = '#F6F6F6'; rr(1050, 662, 250, 140, 14); ctx.fill(); ctx.restore();
     caps('ON THE SCALE', 1068, 690, sc);
     const m = 1.2 * P(u, 14.0, 14.9, E.out3);
     txt('planned 1.20 g', 1068, 718, '500 14px Inter', K.ink2, sc);
