@@ -265,7 +265,7 @@ function panel(x, y, w, h, a = 1, hl = 0) {
   if (a <= 0.003) return;
   ctx.save(); ctx.globalAlpha = a;
   ctx.fillStyle = '#F4F4F4'; rr(x, y, w, h, 18); ctx.fill(); ctx.restore();
-  if (hl > 0.01) { ctx.save(); ctx.globalAlpha = a * hl; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; rr(x + 1, y + 1, w - 2, h - 2, 17); ctx.stroke(); ctx.restore(); }
+  if (hl > 0.01) { ctx.save(); ctx.globalAlpha = a * hl * 0.55; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.2; rr(x + 0.6, y + 0.6, w - 1.2, h - 1.2, 17.4); ctx.stroke(); ctx.restore(); }
 }
 function txt(s, x, y, font, col, a = 1, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = font; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
 function caps(s, x, y, a = 1, col = K.ink3, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = '600 13px Inter'; ctx.letterSpacing = '1.8px'; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
@@ -280,6 +280,28 @@ function poly(pts, col, w, a = 1, dash = null, off = 0) {
   ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); ctx.restore();
 }
 function checkMark(x, y, r, a, col = K.ok) { if (a <= 0.003) return; dot(x, y, r, col, a); poly([[x - r * 0.42, y + r * 0.02], [x - r * 0.1, y + r * 0.34], [x + r * 0.45, y - r * 0.3]], '#fff', r * 0.24, a); }
+function metal(x, y, w, h, r, a, warm = false) {
+  if (a <= 0.003) return; const g = ctx.createLinearGradient(x, y, x, y + h);
+  if (warm) { g.addColorStop(0, '#F1DDB8'); g.addColorStop(0.5, '#D1A766'); g.addColorStop(1, '#A97A3E'); } else { g.addColorStop(0, '#FBFBFB'); g.addColorStop(0.55, '#D9D9D9'); g.addColorStop(1, '#BEBEBE'); }
+  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = g; rr(x, y, w, h, r); ctx.fill(); ctx.restore();
+}
+function along(pts, f) { const seg = []; let L = 0; for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push(l); L += l; } let d = f * L; for (let i = 1; i < pts.length; i++) { if (d <= seg[i - 1]) { const k = d / seg[i - 1]; return [lerp(pts[i - 1][0], pts[i][0], k), lerp(pts[i - 1][1], pts[i][1], k)]; } d -= seg[i - 1]; } return pts[pts.length - 1]; }
+// glowing drops moving along a tube
+function flow(pts, a, t) {
+  if (a <= 0.003) return; poly(pts, '#E3C08A', 2, a * 0.7);
+  for (let k = 0; k < 7; k++) { const [x, y] = along(pts, (t * 0.8 + k / 7) % 1); const g = ctx.createRadialGradient(x, y, 0, x, y, 10); g.addColorStop(0, 'rgba(214,160,84,0.5)'); g.addColorStop(1, 'rgba(214,160,84,0)'); ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 10, 0, 6.2832); ctx.fill(); ctx.restore(); dot(x, y, 2.6, '#C08A45', a); }
+}
+function drop(x, y, r, col, a) { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, y - r * 2.2); ctx.bezierCurveTo(x + r * 0.6, y - r, x + r, y - r * 0.4, x + r, y); ctx.arc(x, y, r, 0, Math.PI); ctx.bezierCurveTo(x - r, y - r * 0.4, x - r * 0.6, y - r, x, y - r * 2.2); ctx.fill(); ctx.restore(); }
+function pouch(x, y, w, h, lv, a, on, label) {
+  if (a <= 0.003) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.shadowColor = 'rgba(0,0,0,.10)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+  const path = () => { ctx.beginPath(); ctx.moveTo(x + 14, y); ctx.lineTo(x + w - 14, y); ctx.quadraticCurveTo(x + w + 3, y + h * 0.5, x + w - 8, y + h); ctx.lineTo(x + 8, y + h); ctx.quadraticCurveTo(x - 3, y + h * 0.5, x + 14, y); ctx.closePath(); };
+  path(); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.save(); path(); ctx.clip(); const top = y + h - (h - 14) * lv; const g = ctx.createLinearGradient(0, top, 0, y + h); g.addColorStop(0, '#F4EADB'); g.addColorStop(1, '#E2CDA9'); ctx.fillStyle = g; ctx.fillRect(x - 6, top, w + 12, y + h - top); ctx.restore();
+  path(); ctx.strokeStyle = on > 0 ? `rgba(176,120,63,${0.25 + 0.6 * on})` : 'rgba(20,20,22,.12)'; ctx.lineWidth = on > 0 ? 1.8 : 1; ctx.stroke();
+  ctx.restore(); metal(x + w / 2 - 9, y - 7, 18, 9, 3, a);
+  txt(label, x + w / 2, y + h + 22, '500 13px Inter', K.ink2, a, 'center');
+}
 function footnote(s) { txt(s, 120, 884, '400 14px Inter', K.ink3, 1); }
 
 // Canonical face mesh from MediaPipe (Apache License 2.0): 468 vertices, their UV layout, 898 triangles
@@ -445,70 +467,80 @@ function rSession(u) {
   });
   chipT('~90 s, start to finish', 522, 302, '#fff', K.acc, aF * P(u, 15.5, 15.85), 'right');
   // ---- cartridges and bases
-  const DX = 800, DY = 474, CR = 90, rot = drumRot(u), chosen = i => ORDER.includes(i);
+  const DX = 800, DY = 462, CR = 80, rot = drumRot(u), chosen = i => ORDER.includes(i);
   const kc = i => P(u, 3.6 + ORDER.indexOf(i) * 0.15, 3.95 + ORDER.indexOf(i) * 0.15);
-  ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.tube; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(DX, DY, CR + 36, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pd;
+  let g = ctx.createRadialGradient(DX - 34, DY - 44, 10, DX, DY, CR + 40); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#E7E7E7');
+  ctx.shadowColor = 'rgba(0,0,0,.10)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(DX, DY, CR + 36, 0, 6.2832); ctx.fill();
+  ctx.shadowColor = 'transparent'; ctx.strokeStyle = 'rgba(20,20,22,.08)'; ctx.lineWidth = 1; ctx.stroke();
+  g = ctx.createRadialGradient(DX - 6, DY - 8, 2, DX, DY, 24); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#CDCDCD'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(DX, DY, 20, 0, 6.2832); ctx.fill();
+  ctx.restore();
+  const LIQ = ['#F3E2C2', '#E8CFA6', '#F1D8CB', '#EBC98F'];
   for (let i = 0; i < 8; i++) {
     const ang = Math.PI / 2 + i * Math.PI / 4 + rot, x = DX + Math.cos(ang) * CR, y = DY + Math.sin(ang) * CR;
-    const on = chosen(i) ? kc(i) : 0, dim = chosen(i) ? 1 : 1 - 0.55 * P(u, 3.6, 4.0);
+    const sel = chosen(i) ? kc(i) : 0, dim = chosen(i) ? 1 : 1 - 0.45 * P(u, 3.6, 4.0);
     const now = ORDER.map((idx, j) => (idx === i ? win(u, actT(j) + 0.38, actT(j) + 0.45, actT(j) + 0.7, actT(j) + 0.8) : 0)).reduce((a, b) => a + b, 0);
-    if (now > 0) dot(x, y, 34, K.acc3, pd * now * 0.6);
-    ctx.save(); ctx.globalAlpha = pd * dim; ctx.fillStyle = on > 0.5 ? K.acc3 : '#FFFFFF'; ctx.strokeStyle = on > 0.5 ? K.acc2 : 'rgba(20,20,22,.25)'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
-    txt(String(i + 1), x, y + 5, '600 14px Inter', on > 0.5 ? K.acc : K.ink3, pd * dim, 'center');
-    const lx = DX + Math.cos(ang) * (CR + 46), ly = DY + Math.sin(ang) * (CR + 46) + 5;
-    const atStation = Math.cos(ang - Math.PI / 2) > 0.93;
-    if (!atStation) txt(CARTS[i], lx, ly, (on > 0.5 ? '600' : '500') + ' 13px Inter', on > 0.5 ? K.acc : K.ink2, pd * dim, Math.abs(Math.cos(ang)) < 0.3 ? 'center' : Math.cos(ang) > 0 ? 'left' : 'right');
+    if (now > 0) { const h = ctx.createRadialGradient(x, y, 0, x, y, 44); h.addColorStop(0, 'rgba(214,160,84,0.55)'); h.addColorStop(1, 'rgba(214,160,84,0)'); ctx.save(); ctx.globalAlpha = pd * now; ctx.fillStyle = h; ctx.beginPath(); ctx.arc(x, y, 44, 0, 6.2832); ctx.fill(); ctx.restore(); }
+    ctx.save(); ctx.globalAlpha = pd * dim; ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 7; ctx.shadowOffsetY = 3;
+    g = ctx.createLinearGradient(x, y - 21, x, y + 21);
+    if (sel > 0.5) { g.addColorStop(0, '#F3E1BF'); g.addColorStop(0.5, '#D2A86A'); g.addColorStop(1, '#A87A3E'); } else { g.addColorStop(0, '#FFFFFF'); g.addColorStop(0.55, '#DEDEDE'); g.addColorStop(1, '#C4C4C4'); }
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 21, 0, 6.2832); ctx.fill(); ctx.shadowColor = 'transparent';
+    const j = ORDER.indexOf(i), lc = sel > 0.5 ? LIQ[j] : '#F2F2F2';
+    g = ctx.createRadialGradient(x - 4, y - 5, 1, x, y, 15); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, lc); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 14.5, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, 18, Math.PI * 1.1, Math.PI * 1.5); ctx.stroke();
+    ctx.restore();
+    txt(String(i + 1), x, y + 4.5, '600 12px Inter', sel > 0.5 ? '#6B4520' : K.ink3, pd * dim, 'center');
+    const lx = DX + Math.cos(ang) * (CR + 54), ly = DY + Math.sin(ang) * (CR + 54) + 5;
+    if (Math.cos(ang - Math.PI / 2) <= 0.93) txt(CARTS[i], lx, ly, (sel > 0.5 ? '600' : '500') + ' 13px Inter', sel > 0.5 ? K.ink : K.ink3, pd * dim, Math.abs(Math.cos(ang)) < 0.3 ? 'center' : Math.cos(ang) > 0 ? 'left' : 'right');
   }
   chipT(`${ORDER.filter(i => kc(i) > 0.5).length || 4} of 8 chosen`, 992, 302, '#fff', K.acc, pd * P(u, 3.6, 3.9) * (1 - P(u, 7.6, 7.9)), 'right');
   chipT('8 + 2', 992, 302, K.acc, '#FFFFFF', pd * (1 - P(u, 3.55, 3.75) + P(u, 7.7, 8.0)), 'right');
-  // station and shared piston
-  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = K.ink2; ctx.beginPath(); ctx.moveTo(DX, DY + CR + 28); ctx.lineTo(DX - 8, DY + CR + 40); ctx.lineTo(DX + 8, DY + CR + 40); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#CFCFCF'; rr(DX - 26, 608, 52, 14, 5); ctx.fill(); ctx.restore();
-  txt('Shared ceramic piston', DX, 640, '500 13px Inter', K.ink2, pd, 'center');
-  // bases
-  const sLvl = 1 - 0.12 * P(u, 5.9, 7.3);
-  [['Serum', 616, sLvl], ['Moisturizer', 726, 1]].forEach(([n, x, lv]) => {
-    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#FFFFFF'; rr(x, 664, 96, 92, 16); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.2)'; ctx.lineWidth = 1.5; rr(x, 664, 96, 92, 16); ctx.stroke();
-    ctx.fillStyle = '#EADBC4'; rr(x + 6, 664 + 92 - 86 * lv, 84, 86 * lv - 6, 12); ctx.fill(); ctx.restore();
-    txt(n, x + 48, 780, '500 13px Inter', K.ink2, pd, 'center');
-  });
-  const baseOn = win(u, 5.8, 5.95, 7.25, 7.45);
-  if (baseOn > 0) { ctx.save(); ctx.globalAlpha = pd * baseOn; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2.5; rr(616, 664, 96, 92, 16); ctx.stroke(); ctx.restore(); }
-  dot(868, 710, 10, '#CFCFCF', pd); ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(868, 710, 10, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-  txt('Valve', 868, 740, '500 13px Inter', K.ink2, pd, 'center');
-  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#CFCFCF'; rr(902, 702, 52, 16, 5); ctx.fill(); ctx.restore();
-  txt('Base piston', 928, 740, '500 13px Inter', K.ink2, pd, 'center');
-  poly([[712, 710], [858, 710]], K.tube, 3, pd); poly([[878, 710], [902, 710]], K.tube, 3, pd);
-  // tubes to the nozzle
-  const T1 = [[DX + 26, 615], [1031, 615], [1031, 330], [1166, 330]], T2 = [[954, 710], [1041, 710], [1041, 340], [1166, 340]];
-  poly(T1, K.tube, 3, Math.min(pd, pb) + 0.2); poly(T2, K.tube, 3, Math.min(pd, pb) + 0.2);
-  if (baseOn > 0) { poly([[712, 710], [858, 710]], K.acc2, 3, baseOn, [8, 8], -u * 60); poly([[878, 710], [902, 710]], K.acc2, 3, baseOn, [8, 8], -u * 60); poly(T2, K.acc2, 3, baseOn, [8, 8], -u * 60); }
-  ORDER.forEach((_, j) => { const f = win(u, actT(j) + 0.38, actT(j) + 0.45, actT(j) + 0.6, actT(j) + 0.7); if (f > 0) poly(T1, K.acc2, 3, f, [8, 8], -u * 80); });
-  // ---- bowl and scale
-  const BX = 1185, RIM = 600, BOT = 656;
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = K.ink2; rr(BX - 20, 320, 40, 26, 6); ctx.fill(); ctx.restore();
-  txt('Nozzle', BX, 312 + 0, '500 13px Inter', K.ink3, pb * 0, 'center');
-  // layers inside the bowl
-  const hb = 26 * P(u, 5.9, 7.3, E.lin);
-  const layers = [[hb, '#EFE3D0']]; ORDER.forEach((_, j) => layers.push([6 * P(u, actT(j) + 0.62, actT(j) + 0.74), ACOL[j]]));
-  const blend = P(u, 13.8, 14.6, E.io3), mixCol = '#E6D3B4';
-  ctx.save(); ctx.beginPath(); ctx.ellipse(BX, RIM, 92, BOT - RIM, 0, 0, Math.PI); ctx.closePath(); ctx.clip();
-  let top = BOT; ctx.globalAlpha = pb;
-  layers.forEach(([h, col]) => { if (h <= 0) return; ctx.fillStyle = blend > 0 ? mixc(col, mixCol, blend) : col; ctx.fillRect(BX - 100, top - h, 200, h + 0.5); top -= h; });
-  ctx.restore();
-  if (blend > 0 && blend < 1) { ctx.save(); ctx.globalAlpha = pb * Math.sin(blend * Math.PI) * 0.8; ctx.strokeStyle = '#C9A27A'; ctx.lineWidth = 2; ctx.beginPath(); for (let a = 0; a < 9; a += 0.15) { const r = 4 + a * 7, x = BX + Math.cos(a + u * 9) * r, y = top + 4 + Math.sin(a + u * 9) * r * 0.18; a ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
-  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(20,20,22,.55)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(BX, RIM, 96, BOT - RIM + 4, 0, 0, Math.PI); ctx.stroke(); ctx.beginPath(); ctx.moveTo(BX - 104, RIM); ctx.lineTo(BX + 104, RIM); ctx.stroke(); ctx.restore();
-  // base stream, then drops
-  if (baseOn > 0) poly([[BX, 346], [BX, top]], '#E8D8BF', 4, pb * baseOn);
-  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.45, actT(j) + 0.66, E.in3); if (k > 0 && k < 1) dot(BX, lerp(352, top, k), 6, ACOL[j], pb); });
-  // platen and readout
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#BDBDBD'; rr(1090, 668, 190, 12, 6); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#FFFFFF'; rr(1088, 700, 194, 100, 14); ctx.fill(); ctx.restore();
-  caps('ON THE SCALE', 1106, 726, pb);
-  txt(massAt(u).toFixed(2) + ' g', 1106, 766, '600 30px "JetBrains Mono"', K.ink, pb);
-  txt('intended 2.40 g', 1106, 788, '500 13px Inter', K.ink2, pb * P(u, 11.9, 12.2));
-  checkMark(1256, 754, 14, pb * clamp(P(u, 12.3, 12.6, E.back)));
+  // the station and the shared piston
+  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = K.ink2; ctx.beginPath(); ctx.moveTo(DX, DY + CR + 26); ctx.lineTo(DX - 6, DY + CR + 36); ctx.lineTo(DX + 6, DY + CR + 36); ctx.closePath(); ctx.fill(); ctx.restore();
+  metal(DX - 24, DY + CR + 42, 48, 12, 6, pd);
+  txt('Shared ceramic piston', DX, DY + CR + 74, '500 13px Inter', K.ink2, pd, 'center');
+  // bases: two sealed pouches, a selector valve and the base piston
+  const sLvl = 1 - 0.14 * P(u, 5.9, 7.3), baseOn = win(u, 5.8, 5.95, 7.25, 7.45);
+  [['Serum', 612, sLvl, baseOn], ['Moisturizer', 718, 1, 0]].forEach(([n, x, lv, on]) => pouch(x, 676, 88, 98, lv, pd, on, n));
+  const PIPE = '#D4D4D4';
+  poly([[656, 676], [656, 660], [850, 660], [850, 714]], PIPE, 2, pd); poly([[762, 676], [762, 660]], PIPE, 2, pd);
+  ctx.save(); ctx.globalAlpha = pd; g = ctx.createRadialGradient(847, 720, 1, 850, 723, 10); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#BDBDBD'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(850, 723, 9, 0, 6.2832); ctx.fill(); ctx.restore();
+  poly([[859, 723], [896, 723]], PIPE, 2, pd); metal(896, 716, 44, 14, 7, pd);
+  txt('Valve', 850, 754, '500 13px Inter', K.ink2, pd, 'center'); txt('Base piston', 922, 754, '500 13px Inter', K.ink2, pd, 'center');
+  // tubes to the nozzle, with the dose flowing through them
+  const T1 = [[DX + 24, DY + CR + 48], [1031, DY + CR + 48], [1031, 330], [1169, 330]], T2 = [[940, 723], [1041, 723], [1041, 342], [1169, 342]];
+  const ta = Math.min(pd, pb) + 0.2; poly(T1, PIPE, 2, ta); poly(T2, PIPE, 2, ta);
+  if (baseOn > 0) { flow([[656, 676], [656, 660], [850, 660], [850, 714]], baseOn, u); flow(T2, baseOn, u); }
+  ORDER.forEach((_, j) => flow(T1, win(u, actT(j) + 0.36, actT(j) + 0.42, actT(j) + 0.62, actT(j) + 0.7), u * 1.4));
+  // ---- the dish on its scale
+  const BX = 1185, RIM = 604;
+  ctx.save(); ctx.globalAlpha = pb; g = ctx.createLinearGradient(BX - 16, 0, BX + 16, 0); g.addColorStop(0, '#E9E9E9'); g.addColorStop(0.5, '#FFFFFF'); g.addColorStop(1, '#D5D5D5'); ctx.fillStyle = g; rr(BX - 16, 312, 32, 30, 8); ctx.fill(); ctx.restore();
+  metal(BX - 9, 340, 18, 8, 3, pb, true);
+  metal(1092, 676, 186, 10, 5, pb);
+  ctx.save(); ctx.globalAlpha = pb * 0.5; ctx.filter = 'blur(6px)'; ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(BX, 668, 92, 8, 0, 0, 6.2832); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; g = ctx.createLinearGradient(0, RIM, 0, RIM + 58); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#E2E2E2'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(BX, RIM, 106, 60, 0, 0, Math.PI); ctx.fill();
+  ctx.fillStyle = '#FBFBFB'; ctx.beginPath(); ctx.ellipse(BX, RIM, 106, 25, 0, 0, 6.2832); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.12)'; ctx.lineWidth = 1; ctx.stroke();
+  g = ctx.createRadialGradient(BX, RIM + 4, 10, BX, RIM, 96); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#E6E6E6'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(BX, RIM + 1, 94, 21, 0, 0, 6.2832); ctx.fill(); ctx.restore();
+  // the pool grows with the dose, each active swirling in on top, then all of it blends
+  const vol = clamp(massAt(u) / 2.4), blend = P(u, 13.8, 14.6, E.io3), MIX = '#EEDFC4';
+  if (vol > 0.002) {
+    const rx = 82 * Math.sqrt(vol), ry = rx * 0.2;
+    ctx.save(); ctx.globalAlpha = pb; g = ctx.createRadialGradient(BX - rx * 0.3, RIM - 2, 2, BX, RIM + 2, rx); g.addColorStop(0, '#FBF4E8'); g.addColorStop(1, blend > 0 ? mixc('#EBDCC3', MIX, blend) : '#EBDCC3'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(BX, RIM + 2, rx, ry, 0, 0, 6.2832); ctx.fill(); ctx.restore();
+    ORDER.forEach((_, j) => {
+      const k = P(u, actT(j) + 0.62, actT(j) + 0.8, E.out3) * (1 - blend); if (k <= 0) return;
+      const ox = [-20, 18, -4, 26][j], oy = [1, -1, 3, 1][j];
+      ctx.save(); ctx.globalAlpha = pb * 0.95 * k; ctx.fillStyle = ACOL[j]; ctx.beginPath(); ctx.ellipse(BX + ox, RIM + 2 + oy, 20 * k, 4.5 * k, 0, 0, 6.2832); ctx.fill(); ctx.restore();
+    });
+    if (blend > 0 && blend < 1) { ctx.save(); ctx.globalAlpha = pb * Math.sin(blend * Math.PI) * 0.55; ctx.strokeStyle = '#D2B48A'; ctx.lineWidth = 1.4; ctx.beginPath(); for (let a = 0; a < 9; a += 0.12) { const r = 3 + a * 6.5, x = BX + Math.cos(a + u * 8) * r, y = RIM + 2 + Math.sin(a + u * 8) * r * 0.2; a ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
+  }
+  if (baseOn > 0) { ctx.save(); ctx.globalAlpha = pb * baseOn; g = ctx.createLinearGradient(0, 348, 0, RIM); g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#EADBC2'); ctx.strokeStyle = g; ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(BX, 349); ctx.lineTo(BX, RIM); ctx.stroke(); ctx.restore(); }
+  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.45, actT(j) + 0.66, E.in3); if (k > 0 && k < 1) drop(BX, lerp(352, RIM - 4, k), 5.5, ACOL[j], pb); });
+  // readout
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#FFFFFF'; rr(1086, 706, 198, 100, 14); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.07)'; ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
+  caps('ON THE SCALE', 1104, 732, pb);
+  txt(massAt(u).toFixed(2) + ' g', 1104, 772, '600 30px "JetBrains Mono"', K.ink, pb);
+  txt('intended 2.40 g', 1104, 794, '500 13px Inter', K.ink2, pb * P(u, 11.9, 12.2));
+  checkMark(1258, 760, 14, pb * clamp(P(u, 12.3, 12.6, E.back)));
   footnote('Schematic, not to scale. Values are illustrative.');
 }
 
@@ -572,9 +604,9 @@ function rVision(u) {
   // the subject, as a faint outline while it is captured
   const ghost = P(u, 0.1, 0.5) * (1 - P(u, 5.8, 6.4));
   const kp = P(u, 0.4, 2.5, E.io3), phOp = P(u, 0.3, 0.5) * (1 - P(u, 2.6, 3.0));
-  const gx = HX + 200 * Math.sin(lerp(-1.05, 1.05, kp)), gy = HY - 10 + 46 * Math.sin(kp * Math.PI * 2);
-  if (phOp > 0) { const gl = ctx.createRadialGradient(gx, gy, 0, gx, gy, 190); gl.addColorStop(0, 'rgba(214,160,84,0.5)'); gl.addColorStop(1, 'rgba(214,160,84,0)'); ctx.save(); ctx.globalAlpha = phOp; ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(gx, gy, 190, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-  wire(V3(0, HX, HY, HS), '#6E6E6E', 1, ghost * 0.6, 1, phOp > 0 ? (p, q) => { const w = Math.exp(-(((q[0] - gx) ** 2 + (q[1] - gy) ** 2) / (120 * 120))) * phOp; return w > 0.08 ? [K.acc, w] : null; } : null);
+  const gx = HX + 125 * Math.sin(lerp(-1.05, 1.05, kp)), gy = HY - 10 + 40 * Math.sin(kp * Math.PI * 2);
+  if (phOp > 0) { const gl = ctx.createRadialGradient(gx, gy, 0, gx, gy, 78); gl.addColorStop(0, 'rgba(214,160,84,0.4)'); gl.addColorStop(1, 'rgba(214,160,84,0)'); ctx.save(); ctx.globalAlpha = phOp; ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(gx, gy, 78, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+  wire(V3(0, HX, HY, HS), '#6E6E6E', 1, ghost * 0.6, 1, phOp > 0 ? (p, q) => { const w = Math.exp(-(((q[0] - gx) ** 2 + (q[1] - gy) ** 2) / (60 * 60))) * phOp; return w > 0.08 ? [K.acc2, w * 0.7] : null; } : null);
   const stripA = P(u, 0.4, 0.7) * (1 - P(u, 3.0, 3.5));
   if (stripA > 0) {
     N2.cams.forEach((c, i) => {
