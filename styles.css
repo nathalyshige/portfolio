@@ -362,6 +362,21 @@ img, video { display: block; max-width: 100%; }
 .score-fig .weights span { transform-origin: 0 50%; transition: transform 0.9s var(--ease) calc(var(--i, 0) * 0.35s); }
 .js .score-fig:not(.filled) .weights span { transform: scaleX(0); }
 
+/* Spec tables */
+.table-wrap { margin: 28px 0; overflow-x: auto; }
+.spec { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14.5px; }
+.spec caption { caption-side: top; text-align: left; font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.spec th { text-align: left; font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); padding: 0 20px 10px 0; border-bottom: 1px solid var(--ink); }
+.spec td { padding: 14px 20px 14px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); line-height: 1.55; }
+.spec td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.spec td:last-child, .spec th:last-child { padding-right: 0; }
+.tag-s { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; background: var(--panel); color: var(--ink-3); white-space: nowrap; }
+.tag-s.on { background: var(--ink); color: #fff; }
+.table-note { margin-top: 12px; font-size: 13.5px; color: var(--ink-3); }
+.tiles.four { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 24px; }
+.table-wrap + .cards, .clip-fig + .cards { margin-top: 28px; }
+@media (max-width: 760px) { .tiles.four { grid-template-columns: 1fr 1fr; } .spec td:first-child { white-space: normal; } }
+
 /* Explainer clips */
 .clip-fig { margin: 28px 0 8px; }
 .clip-fig iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: var(--radius); background: #EFEEEB; overflow: hidden; }

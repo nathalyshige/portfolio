@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nura · Nathaly Shige</title>
-  <meta name="description" content="Nura, a countertop AI skincare device that reads your skin and formulates a fresh, personalized dose. Designed and built by Nathaly Shige." />
+  <meta name="description" content="Nura, a countertop skincare device that scans your skin and layers a fresh, personalized dose. Designed end to end by Nathaly Shige, with computer vision that measures skin in 3D." />
   <meta name="theme-color" content="#FFFFFF" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=16" />
+  <link rel="stylesheet" href="../styles.css?v=17" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -32,17 +32,17 @@
         <p class="eyebrow reveal">Nura · Project</p>
         <h1 class="reveal">A countertop device that reads your skin and formulates fresh skincare.</h1>
         <p class="lede reveal">
-          Nura reads how your skin is changing, along with signals like sleep
-          and stress, and doses a personalized serum and moisturizer from eight
-          NFC-tracked active cartridges. I designed it end to end, from 100+
-          interviews through industrial design, the companion app, and a 3D
-          skin model.
+          Nura scans your skin before each session, adds signals like sleep and
+          stress if you opt in, and layers a fresh dose from eight sealed active
+          cartridges and two bases. I designed it end to end, from 100+ interviews
+          through industrial design, the companion app, and the computer vision
+          that measures skin in 3D.
         </p>
         <dl class="case-meta reveal">
           <div><dt>Role</dt><dd>End-to-end product, design, and engineering</dd></div>
           <div><dt>Research</dt><dd>100+ user and expert interviews</dd></div>
           <div><dt>Type</dt><dd>Beauty-tech embodied AI hardware</dd></div>
-          <div><dt>Stack</dt><dd>HealthKit, structure from motion, NFC</dd></div>
+          <div><dt>Stack</dt><dd>3D computer vision, firmware dosing rules, ceramic piston fluidics, HealthKit</dd></div>
         </dl>
       </div>
     </section>
@@ -54,14 +54,13 @@
             <source src="../images/nura/hero.mp4" type="video/mp4" />
           </video>
         </div>
-        <figcaption class="cover-caption">Product film of the device.</figcaption>
       </figure>
 
       <ul class="case-stats">
         <li class="reveal"><b>100+</b><span>user and expert interviews behind the requirements</span></li>
-        <li class="reveal"><b>8</b><span>NFC-tracked active cartridges</span></li>
+        <li class="reveal"><b>8 + 2</b><span>sealed active cartridges and bases</span></li>
         <li class="reveal"><b>5</b><span>skin layers measured against your own baseline</span></li>
-        <li class="reveal"><b>~1M</b><span>primitives in the on-device 3D skin model</span></li>
+        <li class="reveal"><b>~1M</b><span>primitives in the 3D skin reconstruction</span></li>
       </ul>
 
       <section class="case-section" data-nav="Idea">
@@ -73,6 +72,12 @@
             you. Nura keeps its components separate, so what you put on your skin
             can change when your skin does.
           </p>
+          <p>
+            Today the computer vision runs end to end on real captures, and the
+            device is designed through industrial design, mechanical layout,
+            schematics, and a preliminary bill of materials. A working prototype
+            comes next.
+          </p>
         </div>
       </section>
 
@@ -80,8 +85,8 @@
         <h2 class="reveal">How it works</h2>
         <div class="media-grid four reveal">
           <figure>
-            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/sensor-poster.jpg" aria-label="Close-up of Nura's top-mounted skin sensor"><source src="../images/nura/sensor.mp4" type="video/mp4" /></video>
-            <figcaption><b>01 Reads your skin.</b> A few seconds across the sensor.</figcaption>
+            <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/sensor-poster.jpg" aria-label="Close-up of Nura's skin sensor"><source src="../images/nura/sensor.mp4" type="video/mp4" /></video>
+            <figcaption><b>01 Reads your skin.</b> A scan before every session.</figcaption>
           </figure>
           <figure>
             <video data-autoplay muted loop playsinline preload="none" poster="../images/nura/signals-poster.jpg" aria-label="A person typing at a laptop while wearing a smartwatch"><source src="../images/nura/signals.mp4" type="video/mp4" /></video>
@@ -109,7 +114,7 @@
           <div class="card">
             <span class="eyebrow">Hardware</span>
             <h3>Industrial design to BOM</h3>
-            <p>I led the industrial design, schematics, and bill of materials for the device and its eight-cartridge system.</p>
+            <p>I led the industrial design, mechanical architecture, schematics, and preliminary bill of materials for the device and its cartridge system.</p>
           </div>
           <div class="card">
             <span class="eyebrow">App</span>
@@ -117,9 +122,9 @@
             <p>I designed and built the app, from UX flows to UI and design system, personalizing routines from HealthKit biomarkers (sleep, stress, HRV), environmental data, and skin scans.</p>
           </div>
           <div class="card">
-            <span class="eyebrow">3D skin model</span>
+            <span class="eyebrow">Computer vision</span>
             <h3>Measured against your own skin</h3>
-            <p>On-device reconstruction using structure from motion and a ~1M-primitive Gaussian model measures five skin layers against your own baseline.</p>
+            <p>I built the vision pipeline: structure from motion, a ~1M-primitive 3D reconstruction, a canonical skin map, and five skin layers measured against your own baseline.</p>
           </div>
         </div>
       </section>
@@ -134,10 +139,124 @@
             <span class="wire" aria-hidden="true"></span>
             <div class="node"><span class="node-k">Dosing</span><span class="node-v">Deterministic, in firmware</span></div>
             <span class="wire" aria-hidden="true"></span>
-            <div class="node node-out"><span class="node-k">8 cartridges</span><span class="node-v">Personalized serum and moisturizer</span></div>
+            <div class="node node-out"><span class="node-k">8 + 2 cartridges</span><span class="node-v">Actives layered over a serum or moisturizer base</span></div>
           </div>
           <figcaption class="diagram-caption">ML is confined to personalization; dosing stays deterministic in firmware.</figcaption>
         </figure>
+      </section>
+
+      <section class="case-section stack" data-nav="Session">
+        <h2 class="reveal">A session, about 90 seconds</h2>
+        <div class="reveal">
+          <div class="prose"><p>The sensing and the dispensing sit in one object. Fixed illumination and a fixed focal distance make each session comparable with the last, and the formula can change the same day the skin does.</p></div>
+          <figure class="clip-fig">
+            <iframe src="../explainers/nura/?x=session" title="Step-by-step walkthrough: one session, from scan to application" loading="lazy"></iframe>
+          </figure>
+          <ul class="tiles four">
+            <li><b>~90 s</b><span>a full session: scan, dispense, apply</span></li>
+            <li><b>&lt;45 dB</b><span>while dispensing, measured at one meter</span></li>
+            <li><b>8 + 2</b><span>sealed active cartridges and bag-in-box bases</span></li>
+            <li><b>&plusmn;1%</b><span>documented accuracy of the pump class, to be measured on Nura's own fluid path</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="Hardware">
+        <h2 class="reveal">Hardware and fluidics</h2>
+        <div class="reveal">
+          <div class="prose">
+            <p>Eight sealed, syringe-style cartridges sit in a Geneva-indexed rotary drum driven by a stepper. One ceramic piston, shared across all eight positions, dispenses whichever cartridge is at the station. A second ceramic piston with a selector valve draws from two collapsing bag-in-box pouches, a serum and a moisturizer.</p>
+            <p>There is no mixing chamber and no shared standing fluid path. The base goes into the bowl first, then each active in an order the firmware sets for compatibility, and the user blends with their fingertips, the way people already layer serums.</p>
+          </div>
+          <div class="table-wrap">
+            <table class="spec">
+              <caption>Choosing the pump</caption>
+              <thead><tr><th>Option</th><th>Assessment</th><th>Decision</th></tr></thead>
+              <tbody>
+                <tr><td>Ceramic piston</td><td>Seal-less, handles roughly 100 to 50,000 cP without shearing emulsions, about &plusmn;1% over 100M+ cycles, stepper-driven at 35 to 45 dB.</td><td><span class="tag-s on">Selected</span></td></tr>
+                <tr><td>Gear pump</td><td>Shears emulsions, so it can't handle cream or serum viscosities.</td><td><span class="tag-s">Excluded</span></td></tr>
+                <tr><td>Peristaltic</td><td>Tubing fails within roughly 500 to 2,000 hours, so it would need several replacements over five years.</td><td><span class="tag-s">Excluded</span></td></tr>
+                <tr><td>Solenoid or diaphragm</td><td>Limited to around 1,000 cP, too thin for the moisturizer base.</td><td><span class="tag-s">Excluded</span></td></tr>
+                <tr><td>Pneumatic</td><td>Compressor noise rules it out for a bathroom counter.</td><td><span class="tag-s">Excluded</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cards two">
+            <div class="card"><span class="eyebrow">Lifetime</span><h3>A fourfold margin</h3><p>Twice-daily use adds up to about 22,000 cycles over the device's life, against 100M+ documented cycles for the pump class.</p></div>
+            <div class="card"><span class="eyebrow">Inventory</span><h3>Tracked without tags</h3><p>The piston encoder records plunger travel per actuation, so firmware knows what is left in every slot. The app warns at 20% and prompts a reorder around day 28.</p></div>
+            <div class="card"><span class="eyebrow">Contamination</span><h3>A closed fluid path</h3><p>Sealed single-use cartridges, pouches that never admit air, 50 to 100 &micro;L of suckback at the end of each stroke, recessed nozzles, and keyed collars that only fit the right slot.</p></div>
+            <div class="card"><span class="eyebrow">Sensing</span><h3>A wand and a face camera</h3><p>The wand carries macro optics, white and UV light behind a cross-polarized filter, and a capacitive moisture ring, over BLE. A full-face camera sits behind a physical shutter.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="Vision">
+        <h2 class="reveal">How the vision pipeline reads skin</h2>
+        <div class="reveal">
+          <div class="prose"><p>The aim is comparable measurement over time. Seven ordinary computer vision stages put every capture of a face into the same coordinate system, so two captures can be compared patch by patch. The pipeline runs end to end on real captures, locally, with nothing uploaded.</p></div>
+          <figure class="clip-fig">
+            <iframe src="../explainers/nura/?x=vision" title="Step-by-step walkthrough: the seven stages of the vision pipeline" loading="lazy"></iframe>
+          </figure>
+          <div class="cards two">
+            <div class="card"><span class="eyebrow">Layers</span><h3>Five regional layers</h3><p>Redness, pigmentation, fine lines, under-eye, and texture, each in its own color space and spatial scale so shadows, highlights, and skin grain don't score. Each is read against the face's own median, so it holds across skin tones.</p></div>
+            <div class="card"><span class="eyebrow">Lesions</span><h3>Proposal and scoring kept apart</h3><p>A generous multi-scale proposal on redness and darkness channels, then a small, strongly regularized model trained on human labels. Four classes: acne, post-acne mark, pore, and nothing. Pores are the hard case.</p></div>
+            <div class="card"><span class="eyebrow">Ground truth</span><h3>Labels from people</h3><p>A local labeling tool works on the flat skin map or the 3D reconstruction, since a mark can be invisible on one and obvious on the other. Every reported number is out-of-fold under stratified cross-validation across seeds.</p></div>
+            <div class="card"><span class="eyebrow">Output</span><h3>Comparative by design</h3><p>Moisture and sebum are read physically at the wand tip. What you see compares today with your own previous sessions, with no 0-to-100 skin score.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="Safety">
+        <h2 class="reveal">Dosing and safety</h2>
+        <div class="reveal">
+          <div class="prose"><p>Machine learning lives only in the personalization layer. Dosing is deterministic and enforced in firmware, so the model recommends inside limits it cannot exceed, and a scale under the bowl checks every session.</p></div>
+          <figure class="clip-fig">
+            <iframe src="../explainers/nura/?x=safety" title="Step-by-step walkthrough: how firmware rules bound the model's suggested doses" loading="lazy"></iframe>
+          </figure>
+          <div class="table-wrap">
+            <table class="spec">
+              <caption>Failure modes and how the design closes them</caption>
+              <thead><tr><th>Failure mode</th><th>Mitigation</th></tr></thead>
+              <tbody>
+                <tr><td>Wrong dose from the model</td><td>Deterministic rule engine, firmware ceilings, and a weight check every session.</td></tr>
+                <tr><td>Dose volume off specification</td><td>Dispense testing on a physical prototype before the bill of materials is frozen.</td></tr>
+                <tr><td>Allergy missed</td><td>A hard exclusion set at onboarding, with no override.</td></tr>
+                <tr><td>Wrong cartridge in a slot</td><td>Keyed collars, plus an identity check when a cartridge goes in.</td></tr>
+                <tr><td>Drips or clogs between sessions</td><td>Suckback, recessed tips, a parked platen, and accelerated cycling tests for every formulation class.</td></tr>
+                <tr><td>Actives degrading</td><td>Stabilized derivatives, opaque sleeves, and a 90-day firmware expiry.</td></tr>
+                <tr><td>Scan data exposure</td><td>On-device processing wherever possible, explicit consent, and a defined retention policy.</td></tr>
+              </tbody>
+            </table>
+            <p class="table-note">Each mitigation is designed in and still needs validation on a physical prototype.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="Stack">
+        <h2 class="reveal">Stack and techniques</h2>
+        <div class="reveal stack-grid">
+          <dl class="stack-list">
+            <div><dt>Reconstruction</dt><dd>Structure from motion, a differentiable 3D model of ~1M primitives, on Apple Silicon</dd></div>
+            <div><dt>Skin map</dt><dd>Canonical face mesh with a fixed UV layout in millimeters, texture atlas at ~0.07 mm per texel</dd></div>
+            <div><dt>Detection</dt><dd>Multi-scale lesion proposal, a small regularized scoring model</dd></div>
+            <div><dt>Firmware</dt><dd>Deterministic dosing rules, encoder-based inventory, 90-day cartridge expiry</dd></div>
+            <div><dt>Fluidics</dt><dd>Ceramic piston pumps, a Geneva-indexed drum on a stepper, a selector valve, bag-in-box bases</dd></div>
+            <div><dt>Sensing</dt><dd>BLE wand with macro optics, white and UV light, a cross-polarized filter, a capacitive moisture ring</dd></div>
+            <div><dt>Verification</dt><dd>A scale under the bowl platen</dd></div>
+            <div><dt>App inputs</dt><dd>HealthKit (sleep, stress, cycle), UV index, air quality, humidity</dd></div>
+          </dl>
+          <ul class="tech-list">
+            <li><b>Metric reconstruction:</b> device motion synced to the frames, and a 6-DoF pose for every frame.</li>
+            <li><b>Canonical parameterization:</b> the same square millimeter of skin is addressable in every capture.</li>
+            <li><b>Best-view texturing:</b> each triangle from its sharpest, most frontal frames, with lighting separated from color.</li>
+            <li><b>Measurement on the atlas:</b> each patch of skin appears once, so nothing is counted twice across views.</li>
+            <li><b>Lifting to 3D:</b> template matching and triangulation, with sub-2-pixel median placement.</li>
+            <li><b>Self-referenced layers:</b> each read against the face's own median or a reference region.</li>
+            <li><b>Out-of-fold evaluation</b> under stratified cross-validation across multiple seeds.</li>
+            <li><b>A deterministic safety layer,</b> with ML confined to recommending inside it.</li>
+            <li><b>Gravimetric verification</b> of each session's dispensed mass.</li>
+          </ul>
+        </div>
       </section>
 
       <section class="case-section stack" data-nav="Earlier version">
@@ -169,11 +288,19 @@
         <div class="cards two reveal">
           <div class="card">
             <h3>AI works best when the experience feels human.</h3>
-            <p>People trust a diagnostic not because it's technical, but because they feel guided and understood. Designing warmth and clarity into the flow mattered as much as model accuracy.</p>
+            <p>People trust a diagnostic when they feel guided and understood. Designing warmth and clarity into the flow mattered as much as model accuracy.</p>
           </div>
           <div class="card">
             <h3>Personalization lives beyond the model.</h3>
             <p>The best recommendations come from combining vision, lifestyle, environment, and behavior into one system. The intelligence emerges from how those pieces interact.</p>
+          </div>
+          <div class="card">
+            <h3>Check what a good score is measuring.</h3>
+            <p>An earlier, better-looking score turned out to be reading a shortcut in a biased label set, so I discarded it. Several plausible features and one whole 3D layer were built, measured, and pulled when the data didn't support them.</p>
+          </div>
+          <div class="card">
+            <h3>Labels are the binding constraint.</h3>
+            <p>The learning curve is still climbing as labels are added, while swapping the model class moves results less than seed-to-seed noise. More labeled positives help more than a bigger model.</p>
           </div>
         </div>
       </section>

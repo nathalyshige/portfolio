@@ -1,0 +1,774 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nura walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+  :root { --acc: #7A4A1C; --acc2: #B0783F; --acc3: #E5BA7E; --teal: #B0783F; --ink: #1F1B16; --ink2: #6B6158; --ink3: #9A9087; }
+  html, body { margin: 0; background: #fff; overflow: hidden; }
+  #stage { position: relative; width: 1440px; height: 900px; overflow: hidden; font-family: Inter, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .bgfill { position: absolute; inset: 0; background: radial-gradient(120% 95% at 62% 42%, #FBF8F3 0%, #F1E9DE 100%); }
+  .o { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 18px 48px rgba(30,24,36,.09); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  #cv { position: absolute; left: 0; top: 0; width: 1440px; height: 900px; z-index: 5; pointer-events: none; }
+  #heads { position: absolute; left: 120px; top: 134px; width: 1200px; z-index: 6; }
+  .head { position: absolute; left: 0; top: 0; width: 1200px; }
+  .head h1 { margin: 0; font: 600 46px/1.08 Inter, sans-serif; letter-spacing: -0.03em; }
+  .head p { margin: 14px 0 0; font: 400 22px/1.4 Inter, sans-serif; color: var(--ink2); }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+  .w > span { display: inline-block; }
+  #rail { position: absolute; left: 120px; top: 40px; display: flex; gap: 26px; z-index: 6; }
+  .grp { display: flex; flex-direction: column; gap: 10px; }
+  .grp > i { font: 600 12.5px/1 Inter; letter-spacing: 0.14em; color: var(--ink3); font-style: normal; padding-bottom: 9px; border-bottom: 1.5px solid rgba(122,74,28,.16); white-space: nowrap; }
+  .grp > div { display: flex; gap: 8px; }
+  .pill { position: relative; margin: 0; box-sizing: content-box; -webkit-appearance: none; appearance: none; height: 38px; padding: 0 17px; border-radius: 19px; background: #fff; border: 1px solid rgba(122,74,28,.18); font: 500 17px/38px Inter, sans-serif; color: #9A9087; overflow: hidden; white-space: nowrap; cursor: default; }
+  .pill b { position: absolute; inset: 0; background: var(--acc); opacity: 0; }
+  .pill span { position: relative; }
+  .kick { display: flex; align-items: center; gap: 10px; font: 600 13px/1 Inter; letter-spacing: 0.16em; color: var(--acc); z-index: 6; }
+  .kick i { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); }
+  #cursor { position: absolute; left: 0; top: 0; width: 26px; height: 26px; z-index: 8; opacity: 0; }
+  .ring { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 2px solid var(--acc); opacity: 0; z-index: 8; }
+  #clipFade { z-index: 9; }
+
+  /* arch */
+  .quiz { width: 720px; overflow: hidden; }
+  .qbar { height: 54px; display: flex; align-items: center; gap: 8px; padding: 0 22px; border-bottom: 1px solid #EEF0F3; }
+  .qbar > i { width: 11px; height: 11px; border-radius: 50%; background: #E3E5EA; }
+  .qbar > b { margin-left: 12px; font: 600 16px Inter; }
+  .prog { margin-left: auto; width: 170px; height: 6px; border-radius: 3px; background: #EEF0F3; overflow: hidden; }
+  .prog > em { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; transform: scaleX(0); }
+  .qb { padding: 30px 40px 38px; }
+  .qq + .qq { margin-top: 28px; }
+  .qq > p { margin: 0 0 14px; font: 600 20px/1.25 Inter; }
+  .chips { display: flex; gap: 10px; }
+  .chip, .fly { position: relative; display: inline-flex; align-items: center; height: 46px; padding: 0 16px; border-radius: 23px; border: 1.5px solid #D5DAE3; background: #fff; font: 500 17px/1 Inter; color: #3B4A63; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
+  .chip b { position: absolute; inset: -1.5px; background: var(--acc); opacity: 0; }
+  .chip span { position: relative; }
+  .fly { position: absolute; background: var(--acc); border-color: var(--acc); color: #fff; z-index: 4; }
+  .prof { width: 440px; padding: 22px 30px 14px; box-sizing: border-box; }
+  .cap { margin: 0 0 12px; font: 600 13px/1 Inter; letter-spacing: 0.14em; color: var(--ink3); }
+  .pr { position: relative; display: flex; align-items: center; min-height: 56px; border-top: 1px solid #EEF0F3; }
+  .pr > s { position: absolute; inset: 4px -14px; border-radius: 10px; background: rgba(17,60,123,.07); opacity: 0; }
+  .pr > span { position: relative; width: 96px; flex: none; font: 500 18px Inter; color: var(--ink2); }
+  .pr > div { position: relative; display: flex; gap: 8px; }
+  .tag { font: 500 16px/1 'JetBrains Mono'; font-style: normal; color: var(--acc); background: #EEF2F8; border-radius: 8px; padding: 9px 11px; opacity: 0; }
+  .qry { width: 880px; height: 240px; padding: 20px 26px; box-sizing: border-box; overflow: hidden; }
+  .qt { margin: 0; font: 500 20px/33px 'JetBrains Mono'; color: var(--ink); }
+  .pre { margin: 0; font: 500 17px/30px 'JetBrains Mono'; color: var(--teal); }
+  .caret { display: inline-block; width: 2px; height: 22px; background: var(--ink); vertical-align: -4px; margin-left: 1px; }
+  .model { width: 460px; height: 170px; box-sizing: border-box; padding: 24px 30px; border-radius: 18px; background: #17161A; color: #fff; }
+  .model .cap { color: #6FD0D3; }
+  .model b { display: block; font: 600 34px/1.1 Inter; letter-spacing: -0.02em; }
+  .model span { display: block; margin-top: 12px; font: 500 16px 'JetBrains Mono'; color: #9AA3B5; }
+  .vnum { font: 500 20px 'JetBrains Mono'; color: var(--ink2); white-space: nowrap; }
+  .vlab { width: 300px; text-align: right; font: 500 18px Inter; color: var(--ink2); }
+  .glab { width: 190px; text-align: right; font: 400 18px/22px Inter; color: var(--ink2); white-space: nowrap; }
+  .glab b { color: var(--ink); font-weight: 600; margin-right: 8px; }
+  .clab { font: 500 18px Inter; color: var(--ink2); white-space: nowrap; }
+  .frame { width: 1240px; height: 600px; border-radius: 16px; background: #F1F2F4; box-shadow: 0 30px 80px rgba(30,24,36,.14); overflow: hidden; }
+  .fbar { height: 44px; background: #fff; display: flex; align-items: center; gap: 8px; padding: 0 18px; border-bottom: 1px solid #E7E9EE; }
+  .fbar i { width: 11px; height: 11px; border-radius: 50%; background: #E3E5EA; }
+  .fbar span { margin-left: 16px; font: 500 15px Inter; color: #8A8F9C; background: #F3F4F6; padding: 6px 14px; border-radius: 8px; }
+  .rrow { position: absolute; left: 0; width: 1200px; height: 44px; box-sizing: border-box; padding: 0 22px 0 64px; display: flex; align-items: center; gap: 18px; background: #fff; border-radius: 12px; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); }
+  .rrow b { font: 600 19px Inter; white-space: nowrap; }
+  .rrow > span { flex: 1; min-width: 0; font: 400 16px Inter; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .th { display: flex; gap: 16px; color: #8A8F9C; opacity: 0; }
+  .th svg { width: 22px; height: 22px; display: block; }
+
+  /* score */
+  .fcard { width: 1200px; height: 92px; display: flex; align-items: center; justify-content: center; gap: 14px; font: 500 26px Inter; color: var(--ink); }
+  .fcard > b { font-weight: 600; }
+  .slot { position: relative; width: 150px; height: 56px; border-radius: 12px; border: 2px dashed #C9D1DE; box-sizing: border-box; }
+  .slot em, .slot strong { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .slot em { font: 400 20px Inter; font-style: normal; color: var(--ink3); }
+  .slot strong { font: 600 28px 'JetBrains Mono'; color: var(--acc); opacity: 0; }
+  .slot u { position: absolute; left: 13px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; opacity: 0; }
+  .tot { font: 600 30px 'JetBrains Mono'; color: var(--acc); opacity: 0; white-space: nowrap; }
+  .comp p { margin: 0; white-space: nowrap; }
+  .comp .lab { font: 500 19px Inter; color: var(--ink2); }
+  .comp .big { font: 600 56px/1.1 'JetBrains Mono'; margin-top: 6px; }
+  .comp .mid { font: 500 34px/1.2 'JetBrains Mono'; margin-top: 30px; }
+  .comp .mid span { font: 400 18px Inter; color: var(--ink2); margin-left: 12px; }
+  .comp .res { font: 600 64px/1.1 'JetBrains Mono'; color: var(--acc); margin-top: 30px; }
+  .comp > * { opacity: 0; }
+  .flyv { font: 600 28px 'JetBrains Mono'; color: var(--acc); z-index: 7; white-space: nowrap; }
+  .rule { position: absolute; left: 0; width: 640px; height: 52px; box-sizing: border-box; padding: 0 16px 0 22px; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; border: 1.5px solid transparent; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); font: 500 18px Inter; }
+  .rule > span { flex: 1; white-space: nowrap; }
+  .rule s { text-decoration: none; font: 600 12px/1 Inter; letter-spacing: 0.1em; color: var(--acc); background: #EEF2F8; padding: 7px 9px; border-radius: 6px; opacity: 0; }
+  .rule b { font: 500 18px 'JetBrains Mono'; color: var(--ink3); width: 64px; text-align: right; }
+  .rule i { width: 26px; height: 26px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; opacity: 0; flex: none; }
+  .meter { width: 420px; }
+  .meter > p { margin: 0 0 16px; font: 500 19px Inter; color: var(--ink2); }
+  .track { position: relative; height: 28px; border-radius: 14px; background: #E4E7EE; }
+  .seg { position: absolute; top: 0; height: 28px; transform-origin: 0 50%; transform: scaleX(0); }
+  .capl { position: absolute; right: -2px; top: -12px; width: 3px; height: 52px; border-radius: 2px; background: var(--ink); }
+  .capt { position: absolute; right: -2px; top: -40px; font: 500 16px Inter; color: var(--ink2); white-space: nowrap; }
+  .mval { margin-top: 34px; font: 600 64px/1 'JetBrains Mono'; color: var(--acc); }
+  .mval span { opacity: 0; }
+  .bk { position: absolute; left: 0; width: 440px; height: 52px; box-sizing: border-box; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 12px; border: 1.5px solid transparent; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); font: 500 18px Inter; color: var(--ink2); }
+  .bk b { font: 600 20px 'JetBrains Mono'; color: var(--ink); }
+  .prods p { margin: 0 0 20px; font: 500 30px/1.2 'JetBrains Mono'; display: flex; align-items: center; gap: 16px; white-space: nowrap; opacity: 0; }
+  .prods i { width: 16px; height: 16px; border-radius: 4px; }
+  .prods b { color: var(--acc); }
+  .sbar { width: 1120px; height: 44px; border-radius: 12px; background: #E4E7EE; position: relative; overflow: hidden; }
+  .sseg { position: absolute; top: 0; height: 100%; transform-origin: 0 50%; transform: scaleX(0); }
+  .tick { position: absolute; top: 0; width: 2px; height: 16px; background: #B5BCC9; }
+  .tickl { position: absolute; top: 24px; font: 500 17px Inter; color: var(--ink2); white-space: nowrap; transform: translateX(-50%); }
+  .mark { font: 600 26px 'JetBrains Mono'; color: var(--acc); white-space: nowrap; }
+  .badge { font: 600 18px/1 Inter; color: #fff; background: var(--acc); padding: 11px 16px; border-radius: 22px; white-space: nowrap; }
+
+  /* etl */
+  .tbl { width: 1200px; height: 560px; overflow: hidden; }
+  .thd { position: relative; z-index: 2; height: 48px; display: flex; align-items: center; padding: 0 24px; background: #F6F7F9; font: 600 13px Inter; letter-spacing: 0.12em; color: var(--ink3); border-radius: 18px 18px 0 0; }
+  .tb { position: absolute; left: 0; top: 48px; width: 1200px; }
+  .tr { position: relative; height: 50px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid #EEF0F3; font: 400 16px Inter; color: var(--ink2); box-sizing: border-box; }
+  .tr > s { position: absolute; inset: 0; background: rgba(17,60,123,.08); border-left: 4px solid var(--acc); opacity: 0; }
+  .tr > span, .thd > span { position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 18px; box-sizing: border-box; flex: none; }
+  .c1 { width: 270px; } .tr .c1 { font-weight: 600; color: var(--ink); } .c2 { width: 500px; } .c3 { width: 190px; } .c4 { width: 122px; } .c5 { width: 70px; }
+  .raw { width: 1200px; box-sizing: border-box; padding: 22px 30px 24px; }
+  .raw .t { margin: 0; font: 400 18px/1.65 Inter; color: var(--ink2); }
+  .sec { border-radius: 5px; padding: 2px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .sec b { color: var(--acc); font-weight: 600; }
+  .lab2 { width: 1200px; box-sizing: border-box; padding: 20px 30px; }
+  .ln { display: flex; align-items: center; gap: 16px; height: 36px; opacity: 0; }
+  .ln em { flex: none; width: 150px; font: 500 15px 'JetBrains Mono'; font-style: normal; color: var(--acc); background: #EEF2F8; border-radius: 7px; padding: 6px 10px; box-sizing: border-box; }
+  .ln span { flex: 1; min-width: 0; font: 400 18px Inter; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini { width: 78px; height: 54px; border-radius: 9px; background: #fff; box-shadow: 0 4px 12px rgba(30,24,36,.08); padding: 12px 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; }
+  .mini i { display: block; height: 5px; border-radius: 3px; background: #DCE2EC; }
+  .mini i:first-child { width: 60%; background: #9FB3D6; }
+  .mini.hl { box-shadow: 0 0 0 2px var(--teal), 0 4px 12px rgba(30,24,36,.08); }
+  .model.sm { width: 300px; height: 180px; }
+  .cnt { width: 300px; text-align: center; font: 500 19px 'JetBrains Mono'; color: var(--ink2); }
+  .axl { font: 500 17px Inter; color: var(--ink2); white-space: nowrap; }
+  .call { font: 600 16px/1 Inter; color: #fff; background: var(--acc); padding: 9px 13px; border-radius: 8px; white-space: nowrap; }
+  #clipFade, #cursor, .ring { pointer-events: none; }
+  .nextb { position: absolute; right: 120px; top: 73px; z-index: 7; display: none; align-items: center; gap: 10px; height: 40px; padding: 0 20px; border-radius: 20px; border: 1px solid var(--acc); background: #fff; color: var(--acc); font: 600 17px/38px Inter, sans-serif; white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; }
+  .nextb:hover { background: var(--acc); color: #fff; }
+  .live body { background: #fff; overflow: hidden; }
+  .live #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .live .nextb { display: flex; }
+  .live .pill { cursor: pointer; }
+  .live .pill:hover { box-shadow: 0 0 0 2px rgba(122,74,28,.25); }
+  .pill:focus-visible, .nextb:focus-visible, .mbar button:focus-visible { outline: 3px solid rgba(176,120,63,.7); outline-offset: 2px; }
+  .mbar { display: none; }
+  .sr { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 639px) {
+    .live .nextb { display: none; }
+    .live .mbar { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 60px; font: 500 14px Inter, sans-serif; color: var(--ink2); }
+    .mbar button { height: 40px; padding: 0 18px; border-radius: 20px; border: 1px solid rgba(122,74,28,.35); background: #fff; color: var(--acc); font: 600 14px Inter, sans-serif; cursor: pointer; }
+    .mbar button:disabled { opacity: 0.35; cursor: default; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bgfill"></div>
+  <div id="rail"></div>
+  <div id="heads"></div>
+  <canvas id="cv"></canvas>
+  <svg id="cursor" viewBox="0 0 22 22"><path d="M3 2 L3 18 L7.2 14.2 L10 20.4 L12.9 19.1 L10.2 13 L16 13 Z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+  <div class="ring" id="click"></div>
+  <div id="clipFade" class="bgfill" style="opacity:0"></div>
+  <button class="nextb" id="nextb" type="button"><span id="nextl">Next</span><b aria-hidden="true">&rarr;</b></button>
+</div>
+<div class="mbar" id="mbar"><button type="button" id="mbPrev">Back</button><span id="mbLab"></span><button type="button" id="mbNext">Next</button></div>
+<p class="sr" id="say" aria-live="polite"></p>
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  lin: k => k, out3: k => 1 - Math.pow(1 - k, 3), out5: k => 1 - Math.pow(1 - k, 5),
+  outExpo: k => k >= 1 ? 1 : 1 - Math.pow(2, -10 * k), in3: k => k * k * k,
+  io3: k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2,
+  io5: k => k < 0.5 ? 16 * k ** 5 : 1 - Math.pow(-2 * k + 2, 5) / 2,
+  back: k => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); },
+};
+const P = (t, a, b, e = E.out3) => e(clamp((t - a) / (b - a)));
+const win = (t, a, b, c, d) => P(t, a, b) * (1 - P(t, c, d, E.io3));
+const show = (el, on) => { const v = on ? '' : 'none'; if (el.style.display !== v) el.style.display = v; };
+const QS = new URLSearchParams(location.search);
+const LIVE = !QS.has('clip');
+const CLIP = QS.get('clip') || QS.get('x') || 'session';
+const stage = $('stage');
+function mk(html, parent = stage) { const t = document.createElement('template'); t.innerHTML = html.trim(); const el = t.content.firstChild; parent.appendChild(el); return el; }
+function put(el, x, y, s = 1, op = 1) { show(el, op > 0.002); el.style.opacity = op; el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mixc = (a, b, k) => { const A = rgb(a), B = rgb(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], clamp(k)))).join(',')})`; };
+const rectOf = el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + r.height / 2 }; };
+let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+/* canvas */
+const cv = $('cv'), ctx = cv.getContext('2d'); const DPR = window.devicePixelRatio || 1;
+cv.width = Math.round(1440 * DPR); cv.height = Math.round(900 * DPR);
+function clearC() { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, 1440, 900); }
+function dot(x, y, r, col, a) { if (a <= 0.005 || r <= 0) return; ctx.globalAlpha = Math.min(1, a); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+function heat(v) { const lim = 0.06, a = Math.pow(Math.min(1, Math.abs(v) / lim), 0.8); const m = [244, 245, 248], c = v >= 0 ? [17, 60, 123] : [22, 163, 168]; return `rgb(${m.map((x, i) => Math.round(x + (c[i] - x) * a)).join(',')})`; }
+
+/* headings, rail */
+function words(t) { return t.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); }
+let STEPS = [], PILLS = [];
+function mkHeads(steps, top) {
+  $('heads').style.top = top + 'px';
+  steps.forEach(s => { s.d = mk(`<div class="head"><h1>${words(s.h)}</h1><p>${words(s.n)}</p></div>`, $('heads')); s.ws = [...s.d.querySelectorAll('.w > span')]; });
+  STEPS = steps;
+}
+function renderHeads(u) {
+  STEPS.forEach((s, i) => {
+    const tin = s.tin ?? (s.t0 + (i === 0 ? 0.3 : 0.06)), tout = i === STEPS.length - 1 ? 1e9 : (s.tout ?? s.t1 - 0.5);
+    const on = u > tin - 0.02 && u < tout + 0.75; show(s.d, on); if (!on) return;
+    s.ws.forEach((w, j) => {
+      const kin = P(u, tin + j * 0.035, tin + j * 0.035 + 0.7, E.outExpo);
+      const kout = P(u, tout + j * 0.01, tout + j * 0.01 + 0.36, E.in3);
+      w.style.transform = `translateY(${(1 - kin) * 110 - kout * 110}%)`;
+    });
+  });
+}
+function mkRail(groups) {
+  groups.forEach(g => { const G = mk(`<div class="grp"><i>${g.label}</i><div></div></div>`, $('rail')); g.items.forEach(it => PILLS.push(mk(`<button type="button" class="pill"><b></b><span>${it}</span></button>`, G.lastChild))); });
+}
+function renderRail(u) {
+  $('rail').style.opacity = P(u, 0.1, 0.45); $('nextb').style.opacity = P(u, 0.1, 0.45);
+  PILLS.forEach((p, i) => {
+    const s = STEPS[i]; const done = u >= s.t1 - 0.02;
+    const k = P(u, s.t0 - 0.1, s.t0 + 0.2) * (1 - P(u, s.t1 - 0.1, s.t1 + 0.2));
+    const base = done ? '#7A4A1C' : '#9A9087';
+    p.firstChild.style.opacity = k; p.lastChild.style.color = mixc(base, '#ffffff', k);
+    p.style.borderColor = done ? 'rgba(122,74,28,.45)' : 'rgba(122,74,28,.18)';
+  });
+}
+
+/* cursor */
+function cursorAt(x, y, op, press) { const el = $('cursor'); el.style.opacity = op; el.style.transform = `translate(${x - 3}px, ${y - 2}px) scale(${press})`; }
+function ringAt(x, y, k) { const el = $('click'); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = k > 0 && k < 1 ? (1 - k) * 0.9 : 0; el.style.transform = `scale(${0.4 + k * 1.5})`; }
+function glide(t, a, b, from, to, bend = 24) { const k = P(t, a, b, E.io3); return [lerp(from[0], to[0], k) + Math.sin(k * Math.PI) * bend * 0.4, lerp(from[1], to[1], k) - Math.sin(k * Math.PI) * bend]; }
+function cursorPath(u, pts, tOn, tOff) {
+  const op = P(u, tOn, tOn + 0.2) * (1 - P(u, tOff, tOff + 0.25));
+  let pos = pts[0].slice(1, 3);
+  for (let i = 1; i < pts.length; i++) { const [t1, x1, y1] = pts[i], [t0, x0, y0] = pts[i - 1]; if (u >= t0) pos = u < t1 ? glide(u, t0 + 0.06, t1 - 0.04, [x0, y0], [x1, y1]) : [x1, y1]; }
+  let press = 1, ring = -1, rp = pos;
+  for (const p of pts) if (p[3]) { if (u > p[0] && u < p[0] + 0.12) press = 0.85; const k = (u - p[0]) / 0.55; if (k > 0 && k < 1) { ring = k; rp = [p[1], p[2]]; } }
+  cursorAt(pos[0], pos[1], op, press); ringAt(rp[0], rp[1], ring);
+}
+const THUP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>';
+const THDN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* =================== NURA: shared drawing =================== */
+const K = { ink: '#1F1B16', ink2: '#6B6158', ink3: '#9A9087', acc: '#7A4A1C', acc2: '#B0783F', acc3: '#E5BA7E', warn: '#B4553F', warnBg: '#F6E3DD', ok: '#4F7D5C', okBg: '#E2EDE4', mute: '#F2ECE4', tube: '#E3D7C7' };
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function panel(x, y, w, h, a = 1, hl = 0) {
+  if (a <= 0.003) return;
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.shadowColor = 'rgba(70,45,20,0.10)'; ctx.shadowBlur = 44; ctx.shadowOffsetY = 16;
+  ctx.fillStyle = '#fff'; rr(x, y, w, h, 18); ctx.fill(); ctx.restore();
+  if (hl > 0.01) { ctx.save(); ctx.globalAlpha = a * hl; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; rr(x + 1, y + 1, w - 2, h - 2, 17); ctx.stroke(); ctx.restore(); }
+}
+function txt(s, x, y, font, col, a = 1, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = font; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
+function caps(s, x, y, a = 1, col = K.ink3, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = '600 13px Inter'; ctx.letterSpacing = '1.8px'; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
+function chipT(s, x, y, col, bg, a = 1, align = 'left', font = '600 14px Inter') {
+  if (a <= 0.003) return 0; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = font;
+  const w = ctx.measureText(s).width + 22, X = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x;
+  ctx.fillStyle = bg; rr(X, y - 16, w, 28, 14); ctx.fill(); ctx.fillStyle = col; ctx.fillText(s, X + 11, y + 3); ctx.restore(); return w;
+}
+function poly(pts, col, w, a = 1, dash = null, off = 0) {
+  if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if (dash) { ctx.setLineDash(dash); ctx.lineDashOffset = off; }
+  ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); ctx.restore();
+}
+function checkMark(x, y, r, a, col = K.ok) { if (a <= 0.003) return; dot(x, y, r, col, a); poly([[x - r * 0.42, y + r * 0.02], [x - r * 0.1, y + r * 0.34], [x + r * 0.45, y - r * 0.3]], '#fff', r * 0.24, a); }
+function footnote(s) { txt(s, 120, 884, '400 14px Inter', K.ink3, 1); }
+
+/* =================== NURA 1: one session =================== */
+const CARTS = ['Hydration', 'Barrier', 'Oil & tone', 'Brighten', 'Firming', 'Calming', 'Antioxidant', 'Renewal'];
+const ORDER = [0, 1, 5, 6];                        // the chosen actives, in the order the firmware dispenses them
+const ACOL = ['#E9CFA4', '#D7B58A', '#C9A27A', '#E2C08F'];
+const N1 = {};
+function buildSession() {
+  mkHeads([
+    { t0: 0, t1: 3.2, h: 'Scan the face', n: 'The wand reads moisture and sebum at its tip while the camera captures the whole face.' },
+    { t0: 3.2, t1: 5.6, h: 'Choose the actives', n: 'The recommendation picks actives and amounts, inside limits the firmware enforces.' },
+    { t0: 5.6, t1: 7.8, h: 'Dispense the base', n: 'A dedicated ceramic piston draws serum, moisturizer or both from sealed pouches.' },
+    { t0: 7.8, t1: 11.7, h: 'Layer the actives', n: 'The drum indexes each chosen cartridge to one shared piston, in an order set for compatibility.' },
+    { t0: 11.7, t1: 13.6, h: 'Weigh the dose', n: 'A scale under the bowl checks the dispensed mass against the intended one.' },
+    { t0: 13.6, t1: 99, h: 'Blend and apply', n: 'Fingertips blend the layers in the bowl, the way people already layer serums.' },
+  ], 134);
+  mkRail([{ label: 'WAND AND CAMERA', items: ['Scan'] }, { label: 'FIRMWARE', items: ['Choose'] }, { label: 'FLUIDICS', items: ['Base', 'Actives'] }, { label: 'SCALE', items: ['Weigh'] }, { label: 'YOU', items: ['Apply'] }]);
+  // drum angle over time: one index move per active, always turning the same way
+  N1.rotT = []; let cur = 0;
+  ORDER.forEach((idx, j) => { const tgt = -idx * Math.PI / 4; N1.rotT.push([8.0 + j * 0.85, cur, tgt]); cur = tgt; });
+}
+const actT = j => 8.0 + j * 0.85;
+function drumRot(u) { let r = 0; N1.rotT.forEach(([t, a, b]) => { if (u >= t) r = lerp(a, b, P(u, t, t + 0.4, E.io3)); }); return r; }
+function massAt(u) { let m = 1.8 * P(u, 5.9, 7.3, E.lin); ORDER.forEach((_, j) => { m += 0.15 * P(u, actT(j) + 0.62, actT(j) + 0.74); }); return m; }
+function drawFace(cx, cy, a) {
+  if (a <= 0.003) return;
+  ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = 'rgba(31,27,22,.55)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.ellipse(cx, cy, 104, 138, 0, 0, Math.PI * 2); ctx.stroke();
+  [[-42, -18], [42, -18]].forEach(([dx, dy]) => { ctx.beginPath(); ctx.arc(cx + dx, cy + dy, 13, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx + dx - 18, cy + dy - 22); ctx.quadraticCurveTo(cx + dx, cy + dy - 30, cx + dx + 18, cy + dy - 22); ctx.stroke(); });
+  ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.quadraticCurveTo(cx - 10, cy + 26, cx - 2, cy + 34); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 26, cy + 66); ctx.quadraticCurveTo(cx, cy + 80, cx + 26, cy + 66); ctx.stroke();
+  ctx.restore();
+}
+const ZONES = [[0, -96, 64, 24, '#E5BA7E'], [-52, 30, 28, 30, '#D98F7A'], [52, 30, 28, 30, '#D98F7A'], [0, 104, 30, 16, '#C9A27A']];
+function rSession(u) {
+  renderHeads(u); renderRail(u); clearC();
+  const act = (a, b) => P(u, a - 0.25, a + 0.15) * (1 - P(u, b - 0.15, b + 0.25));
+  const eF = Math.max(act(0, 3.2), P(u, 13.45, 13.85)), eD = act(3.2, 11.7), eB = P(u, 5.45, 5.85);
+  const aF = P(u, 0.1, 0.5), aD = P(u, 0.2, 0.6), aB = P(u, 0.3, 0.7);
+  const pf = aF * (0.45 + 0.55 * eF), pd = aD * (0.45 + 0.55 * eD), pb = aB * (0.45 + 0.55 * eB);
+  // panels
+  panel(120, 270, 430, 560, aF, eF); panel(580, 270, 440, 560, aD, eD); panel(1050, 270, 270, 560, aB, eB);
+  caps('SKIN', 148, 306, pf); caps('CARTRIDGES AND BASES', 608, 306, pd); caps('BOWL', 1078, 306, pb);
+  // ---- skin panel
+  const FX = 262, FY = 560;
+  const sweep = P(u, 0.5, 2.2, E.io3), sy = lerp(FY - 150, FY + 150, sweep);
+  ZONES.forEach(([dx, dy, rx, ry, col]) => {
+    const k = P(sy, FY + dy - 20, FY + dy + 20);
+    if (k > 0) { ctx.save(); ctx.globalAlpha = pf * k * 0.4; ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(FX + dx, FY + dy, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+  });
+  drawFace(FX, FY, pf);
+  if (sweep > 0 && sweep < 1) { const g = Math.sin(sweep * Math.PI); poly([[FX - 125, sy], [FX + 125, sy]], K.acc2, 3, pf * g); poly([[FX - 125, sy], [FX + 125, sy]], K.acc3, 12, pf * g * 0.25); }
+  // the wand touches the right cheek
+  const kw = P(u, 1.0, 1.45, E.io3) * (1 - P(u, 2.1, 2.5, E.io3));
+  const wx = lerp(356, 322, kw), wy = lerp(668, 612, kw);
+  ctx.save(); ctx.globalAlpha = pf; ctx.translate(wx, wy); ctx.rotate(-0.55);
+  ctx.fillStyle = '#EDE3D5'; rr(-12, 0, 24, 100, 12); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.35)'; ctx.lineWidth = 1.5; rr(-12, 0, 24, 100, 12); ctx.stroke();
+  ctx.fillStyle = K.acc2; rr(-12, 0, 24, 14, 7); ctx.fill(); ctx.restore();
+  if (kw > 0.95) { const pr = (u * 1.6) % 1; ctx.save(); ctx.globalAlpha = pf * (1 - pr) * 0.8; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(wx, wy, 8 + pr * 22, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  // readings, against your own baseline
+  const RD = [['Moisture', 'wand', 0.36, 0.55, 1.55], ['Sebum', 'wand', 0.5, 0.48, 1.7], ['Redness', 'camera', 0.64, 0.45, 1.3], ['Texture', 'camera', 0.47, 0.5, 1.9]];
+  RD.forEach(([n, src, v, base, t], i) => {
+    const y = 380 + i * 92, k = P(u, t, t + 0.45, E.out3), x = 410;
+    txt(n, x, y, '600 17px Inter', K.ink, pf); txt(src, x, y + 20, '400 13px Inter', K.ink3, pf);
+    ctx.save(); ctx.globalAlpha = pf; ctx.fillStyle = K.mute; rr(x, y + 34, 116, 10, 5); ctx.fill();
+    ctx.fillStyle = v < base - 0.08 || v > base + 0.08 ? K.warn : K.acc2; rr(x, y + 34, Math.max(0.1, 116 * v * k), 10, 5); ctx.fill();
+    ctx.fillStyle = K.ink; ctx.globalAlpha = pf * P(u, t + 0.2, t + 0.5); ctx.fillRect(x + 116 * base - 1, y + 29, 2, 20); ctx.restore();
+  });
+  txt('Bars against your own baseline (the tick)', 148, 808, '400 13px Inter', K.ink3, pf * P(u, 1.6, 2.0));
+  chipT('~50 s', 522, 302, K.acc, '#F5EBDD', pf * P(u, 0.6, 1.0) * (1 - P(u, 15.35, 15.5)), 'right');
+  // apply: three points on the face, then spread
+  [[0, -92], [-50, 34], [50, 34]].forEach(([dx, dy], i) => {
+    const kd = P(u, 14.7 + i * 0.12, 14.95 + i * 0.12, E.back), ks = P(u, 15.2, 15.9, E.out3);
+    if (kd <= 0) return;
+    ctx.save(); ctx.globalAlpha = aF * (1 - ks * 0.85); ctx.fillStyle = '#E9D2AE'; ctx.beginPath(); ctx.arc(FX + dx, FY + dy, 7 * clamp(kd) + ks * 34, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  });
+  chipT('~90 s, start to finish', 522, 302, '#fff', K.acc, aF * P(u, 15.5, 15.85), 'right');
+  // ---- cartridges and bases
+  const DX = 800, DY = 474, CR = 90, rot = drumRot(u), chosen = i => ORDER.includes(i);
+  const kc = i => P(u, 3.6 + ORDER.indexOf(i) * 0.15, 3.95 + ORDER.indexOf(i) * 0.15);
+  ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.tube; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(DX, DY, CR + 36, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  for (let i = 0; i < 8; i++) {
+    const ang = Math.PI / 2 + i * Math.PI / 4 + rot, x = DX + Math.cos(ang) * CR, y = DY + Math.sin(ang) * CR;
+    const on = chosen(i) ? kc(i) : 0, dim = chosen(i) ? 1 : 1 - 0.55 * P(u, 3.6, 4.0);
+    const now = ORDER.map((idx, j) => (idx === i ? win(u, actT(j) + 0.38, actT(j) + 0.45, actT(j) + 0.7, actT(j) + 0.8) : 0)).reduce((a, b) => a + b, 0);
+    if (now > 0) dot(x, y, 34, K.acc3, pd * now * 0.6);
+    ctx.save(); ctx.globalAlpha = pd * dim; ctx.fillStyle = on > 0.5 ? K.acc3 : '#F4EEE6'; ctx.strokeStyle = on > 0.5 ? K.acc2 : 'rgba(31,27,22,.25)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.restore();
+    txt(String(i + 1), x, y + 5, '600 14px Inter', on > 0.5 ? K.acc : K.ink3, pd * dim, 'center');
+    const lx = DX + Math.cos(ang) * (CR + 46), ly = DY + Math.sin(ang) * (CR + 46) + 5;
+    const atStation = Math.cos(ang - Math.PI / 2) > 0.93;
+    if (!atStation) txt(CARTS[i], lx, ly, (on > 0.5 ? '600' : '500') + ' 13px Inter', on > 0.5 ? K.acc : K.ink2, pd * dim, Math.abs(Math.cos(ang)) < 0.3 ? 'center' : Math.cos(ang) > 0 ? 'left' : 'right');
+  }
+  chipT(`${ORDER.filter(i => kc(i) > 0.5).length || 4} of 8 chosen`, 992, 302, '#fff', K.acc, pd * P(u, 3.6, 3.9) * (1 - P(u, 7.6, 7.9)), 'right');
+  chipT('8 + 2', 992, 302, K.acc, '#F5EBDD', pd * (1 - P(u, 3.55, 3.75) + P(u, 7.7, 8.0)), 'right');
+  // station and shared piston
+  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = K.ink2; ctx.beginPath(); ctx.moveTo(DX, DY + CR + 28); ctx.lineTo(DX - 8, DY + CR + 40); ctx.lineTo(DX + 8, DY + CR + 40); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#E8DED1'; rr(DX - 26, 608, 52, 14, 5); ctx.fill(); ctx.restore();
+  txt('Shared ceramic piston', DX, 640, '500 13px Inter', K.ink2, pd, 'center');
+  // bases
+  const sLvl = 1 - 0.12 * P(u, 5.9, 7.3);
+  [['Serum', 616, sLvl], ['Moisturizer', 726, 1]].forEach(([n, x, lv]) => {
+    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#F7F1E8'; rr(x, 664, 96, 92, 16); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.2)'; ctx.lineWidth = 1.5; rr(x, 664, 96, 92, 16); ctx.stroke();
+    ctx.fillStyle = '#EADBC4'; rr(x + 6, 664 + 92 - 86 * lv, 84, 86 * lv - 6, 12); ctx.fill(); ctx.restore();
+    txt(n, x + 48, 780, '500 13px Inter', K.ink2, pd, 'center');
+  });
+  const baseOn = win(u, 5.8, 5.95, 7.25, 7.45);
+  if (baseOn > 0) { ctx.save(); ctx.globalAlpha = pd * baseOn; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2.5; rr(616, 664, 96, 92, 16); ctx.stroke(); ctx.restore(); }
+  dot(868, 710, 10, '#E8DED1', pd); ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(868, 710, 10, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  txt('Valve', 868, 740, '500 13px Inter', K.ink2, pd, 'center');
+  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#E8DED1'; rr(902, 702, 52, 16, 5); ctx.fill(); ctx.restore();
+  txt('Base piston', 928, 740, '500 13px Inter', K.ink2, pd, 'center');
+  poly([[712, 710], [858, 710]], K.tube, 3, pd); poly([[878, 710], [902, 710]], K.tube, 3, pd);
+  // tubes to the nozzle
+  const T1 = [[DX + 26, 615], [1031, 615], [1031, 330], [1166, 330]], T2 = [[954, 710], [1041, 710], [1041, 340], [1166, 340]];
+  poly(T1, K.tube, 3, Math.min(pd, pb) + 0.2); poly(T2, K.tube, 3, Math.min(pd, pb) + 0.2);
+  if (baseOn > 0) { poly([[712, 710], [858, 710]], K.acc2, 3, baseOn, [8, 8], -u * 60); poly([[878, 710], [902, 710]], K.acc2, 3, baseOn, [8, 8], -u * 60); poly(T2, K.acc2, 3, baseOn, [8, 8], -u * 60); }
+  ORDER.forEach((_, j) => { const f = win(u, actT(j) + 0.38, actT(j) + 0.45, actT(j) + 0.6, actT(j) + 0.7); if (f > 0) poly(T1, K.acc2, 3, f, [8, 8], -u * 80); });
+  // ---- bowl and scale
+  const BX = 1185, RIM = 600, BOT = 656;
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = K.ink2; rr(BX - 20, 320, 40, 26, 6); ctx.fill(); ctx.restore();
+  txt('Nozzle', BX, 312 + 0, '500 13px Inter', K.ink3, pb * 0, 'center');
+  // layers inside the bowl
+  const hb = 26 * P(u, 5.9, 7.3, E.lin);
+  const layers = [[hb, '#EFE3D0']]; ORDER.forEach((_, j) => layers.push([6 * P(u, actT(j) + 0.62, actT(j) + 0.74), ACOL[j]]));
+  const blend = P(u, 13.8, 14.6, E.io3), mixCol = '#E6D3B4';
+  ctx.save(); ctx.beginPath(); ctx.ellipse(BX, RIM, 92, BOT - RIM, 0, 0, Math.PI); ctx.closePath(); ctx.clip();
+  let top = BOT; ctx.globalAlpha = pb;
+  layers.forEach(([h, col]) => { if (h <= 0) return; ctx.fillStyle = blend > 0 ? mixc(col, mixCol, blend) : col; ctx.fillRect(BX - 100, top - h, 200, h + 0.5); top -= h; });
+  ctx.restore();
+  if (blend > 0 && blend < 1) { ctx.save(); ctx.globalAlpha = pb * Math.sin(blend * Math.PI) * 0.8; ctx.strokeStyle = '#C9A27A'; ctx.lineWidth = 2; ctx.beginPath(); for (let a = 0; a < 9; a += 0.15) { const r = 4 + a * 7, x = BX + Math.cos(a + u * 9) * r, y = top + 4 + Math.sin(a + u * 9) * r * 0.18; a ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
+  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(31,27,22,.55)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(BX, RIM, 96, BOT - RIM + 4, 0, 0, Math.PI); ctx.stroke(); ctx.beginPath(); ctx.moveTo(BX - 104, RIM); ctx.lineTo(BX + 104, RIM); ctx.stroke(); ctx.restore();
+  // base stream, then drops
+  if (baseOn > 0) poly([[BX, 346], [BX, top]], '#E8D8BF', 4, pb * baseOn);
+  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.45, actT(j) + 0.66, E.in3); if (k > 0 && k < 1) dot(BX, lerp(352, top, k), 6, ACOL[j], pb); });
+  // platen and readout
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#DCCFBF'; rr(1090, 668, 190, 12, 6); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#FBF8F3'; rr(1088, 700, 194, 100, 14); ctx.fill(); ctx.restore();
+  caps('ON THE SCALE', 1106, 726, pb);
+  txt(massAt(u).toFixed(2) + ' g', 1106, 766, '600 30px "JetBrains Mono"', K.ink, pb);
+  txt('intended 2.40 g', 1106, 788, '500 13px Inter', K.ink2, pb * P(u, 11.9, 12.2));
+  checkMark(1256, 754, 14, pb * clamp(P(u, 12.3, 12.6, E.back)));
+  footnote('Schematic, not to scale. Values are illustrative.');
+}
+
+/* =================== NURA 2: how the vision pipeline reads skin =================== */
+const N2 = {};
+function surf(u, v) {
+  const th = (u - 0.5) * 2.3, ph = (0.52 - v) * 2.5;
+  let X = Math.sin(th) * Math.cos(ph) * 0.95, Y = -Math.sin(ph) * 1.18, Z = Math.cos(th) * Math.cos(ph);
+  const jaw = clamp((-ph - 0.6) / 0.6); X *= 1 - 0.26 * jaw * jaw; X *= 1 + 0.05 * Math.exp(-(((ph - 0.02) / 0.3) ** 2));
+  Z += 0.24 * Math.exp(-((th / 0.15) ** 2) - (((ph + 0.02) / 0.3) ** 2));
+  Z -= 0.06 * (Math.exp(-(((th - 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)) + Math.exp(-(((th + 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)));
+  Z += 0.05 * Math.exp(-((th / 0.28) ** 2) - (((ph + 0.45) / 0.07) ** 2));
+  Z += 0.035 * Math.exp(-(((ph - 0.36) / 0.07) ** 2)) * Math.exp(-((th / 0.6) ** 4));
+  return { X, Y, Z, nx: Math.sin(th) * Math.cos(ph), ny: Math.sin(ph) * 0.8, nz: Math.cos(th) * Math.cos(ph), th, ph };
+}
+function albedo(s, j) {
+  let c = [228 - j * 12, 186 - j * 10, 158 - j * 9];
+  const eyeF = sx => { const dx = (s.th - sx) / 0.13, dy = (s.ph - 0.2) / 0.045; return dx * dx + dy * dy < 1 ? 1 : Math.exp(-(dx * dx + dy * dy - 1) * 3); };
+  const eye = Math.max(eyeF(0.4), eyeF(-0.4));
+  const iris = Math.max(Math.exp(-(((s.th - 0.4) / 0.04) ** 2) - (((s.ph - 0.2) / 0.035) ** 2)), Math.exp(-(((s.th + 0.4) / 0.04) ** 2) - (((s.ph - 0.2) / 0.035) ** 2)));
+  const lip = Math.exp(-((s.th / 0.2) ** 4) - (((s.ph + 0.45) / 0.045) ** 2));
+  const brow = Math.exp(-(((s.ph - 0.34 + 0.08 * (Math.abs(s.th) - 0.4) ** 2) / 0.03) ** 2)) * Math.exp(-(((Math.abs(s.th) - 0.42) / 0.2) ** 4));
+  const nostril = Math.max(Math.exp(-(((s.th - 0.06) / 0.03) ** 2) - (((s.ph + 0.13) / 0.02) ** 2)), Math.exp(-(((s.th + 0.06) / 0.03) ** 2) - (((s.ph + 0.13) / 0.02) ** 2)));
+  const blush = Math.max(Math.exp(-(((s.th - 0.45) / 0.18) ** 2) - (((s.ph + 0.12) / 0.14) ** 2)), Math.exp(-(((s.th + 0.45) / 0.18) ** 2) - (((s.ph + 0.12) / 0.14) ** 2)));
+  const mix = (col, k) => { c = c.map((x, i) => x * (1 - k) + col[i] * k); };
+  mix([214, 150, 132], 0.25 * blush); mix([238, 230, 222], 0.8 * eye); mix([78, 54, 40], 0.9 * iris); mix([92, 62, 44], 0.75 * brow); mix([184, 102, 96], 0.7 * lip); mix([120, 80, 66], 0.6 * nostril);
+  return c;
+}
+const HX = 720, HY = 548, HS = 168, AX = 470, AY = 296, AW = 500, AH = 500;
+function proj(p, yaw) { const c = Math.cos(yaw), s = Math.sin(yaw); const x = p.X * c + p.Z * s, z = -p.X * s + p.Z * c; const f = 5 / (5 - z); return [HX + HS * x * f, HY + HS * p.Y * f, z, -p.nx * s + p.nz * c, p.nx * c + p.nz * s]; }
+const uvIn = (u, v) => ((u - 0.5) / 0.5) ** 2 + ((v - 0.52) / 0.48) ** 2 <= 1;
+function buildVision() {
+  mkHeads([
+    { t0: 0, t1: 3.0, h: 'Sweep the face', n: 'A short handheld video, with device motion recorded alongside and synced to every frame.' },
+    { t0: 3.0, t1: 5.6, h: 'Recover every camera pose', n: 'Structure from motion finds the camera intrinsics and a 6-DoF pose for each frame, so later measurements are metric.' },
+    { t0: 5.6, t1: 8.0, h: 'Build the face in 3D', n: 'About a million primitives are fit to the frames, with view-dependent color, on Apple Silicon.' },
+    { t0: 8.0, t1: 10.4, h: 'Map it onto a standard face', n: 'Landmarks give a canonical mesh with a fixed UV layout in millimeters, the same for every capture.' },
+    { t0: 10.4, t1: 12.8, h: 'Unwrap the skin into one flat map', n: 'Each triangle takes texture from its sharpest, most frontal frames, with lighting separated from color.' },
+    { t0: 12.8, t1: 16.2, h: 'Measure on the map', n: 'Five layers are read against the face’s own median, and lesions go through a separate proposal and scoring path.' },
+    { t0: 16.2, t1: 99, h: 'Put the findings back in 3D', n: 'Each detection is triangulated into the reconstruction, so it keeps a stable address from session to session.' },
+  ], 134);
+  mkRail([{ label: 'CAPTURE', items: ['Capture'] }, { label: 'GEOMETRY', items: ['Poses', 'Reconstruct', 'Canonical face'] }, { label: 'SKIN MAP', items: ['Atlas', 'Analyze'] }, { label: 'BACK TO 3D', items: ['Lift'] }]);
+  let sd = 9; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  N2.pts = [];
+  const nrm = (u, v) => { const e = 0.002, a = surf(u, v), b = surf(u + e, v), c = surf(u, v + e); const du = [b.X - a.X, b.Y - a.Y, b.Z - a.Z], dv = [c.X - a.X, c.Y - a.Y, c.Z - a.Z]; let n = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]]; const l = Math.hypot(...n) || 1; n = n.map(x => x / l); if (n[2] < 0) n = n.map(x => -x); return n; };
+  const area = (u, v) => { const e = 0.002, a0 = surf(u, v), b0 = surf(u + e, v), c0 = surf(u, v + e); const du = [b0.X - a0.X, b0.Y - a0.Y, b0.Z - a0.Z], dv = [c0.X - a0.X, c0.Y - a0.Y, c0.Z - a0.Z]; return Math.hypot(du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]); };
+  let maxA = 0; for (let i = 0; i <= 60; i++) for (let k = 0; k <= 60; k++) if (uvIn(i / 60, k / 60)) maxA = Math.max(maxA, area(i / 60, k / 60));
+  while (N2.pts.length < 10500) { const u = r(), v = r(); if (!uvIn(u, v)) continue; if (r() > area(u, v) / maxA) continue; const s = surf(u, v), j = r(); const n = nrm(u, v); s.nx = n[0]; s.ny = -n[1]; s.nz = n[2]; N2.pts.push({ u, v, s, j, a: albedo(s, j), d: r(), ar: Math.min(7, 3.4 / Math.sqrt(Math.max(0.05, area(u, v) / maxA))) }); }
+  N2.sparse = N2.pts.slice(0, 260);
+  // lesion candidates: generous proposals, few kept
+  N2.cand = []; while (N2.cand.length < 26) { const u = 0.18 + r() * 0.64, v = 0.3 + r() * 0.55; if (!uvIn(u, v)) continue; const s = surf(u, v); if (Math.abs(Math.abs(s.th) - 0.4) < 0.16 && Math.abs(s.ph - 0.2) < 0.1) continue; N2.cand.push({ u, v, s }); }
+  N2.cand.forEach((c, i) => { c.kind = i < 6 ? (i % 3 === 2 ? 'mark' : 'acne') : i < 9 ? 'pore' : 'drop'; });
+  // frame positions along the sweep
+  N2.cams = Array.from({ length: 12 }, (_, i) => { const a = lerp(-1.05, 1.05, i / 11); return { a, x: HX + 400 * Math.sin(a), y: HY + 150 * Math.cos(a) }; });
+  // layer patterns on the atlas
+  let sp = 3; const r2 = () => (sp = (sp * 16807) % 2147483647) / 2147483647;
+  N2.spots = Array.from({ length: 9 }, () => [0.25 + r2() * 0.5, 0.3 + r2() * 0.5]);
+}
+const G = (x, y, cx, cy, sx, sy) => Math.exp(-(((x - cx) / sx) ** 2) - (((y - cy) / sy) ** 2));
+function layerVal(i, u, v) {
+  if (i === 0) return Math.max(G(u, v, 0.3, 0.63, 0.09, 0.08), G(u, v, 0.7, 0.63, 0.09, 0.08));
+  if (i === 1) return Math.max(...N2.spots.map(([a, b]) => G(u, v, a, b, 0.018, 0.018)));
+  if (i === 2) return (G(u, v, 0.5, 0.27, 0.22, 0.05) * (0.5 + 0.5 * Math.sin(v * 160)) ** 3) + Math.max(G(u, v, 0.2, 0.47, 0.03, 0.06), G(u, v, 0.8, 0.47, 0.03, 0.06)) * (0.5 + 0.5 * Math.sin((v - u) * 120)) ** 2;
+  if (i === 3) return Math.max(G(u, v, 0.33, 0.49, 0.08, 0.025), G(u, v, 0.67, 0.49, 0.08, 0.025));
+  return G(u, v, 0.5, 0.55, 0.12, 0.16) * ((Math.sin(u * 400) * Math.sin(v * 430)) > 0.55 ? 1 : 0.15);
+}
+const LAYERS = [['Redness', '#C2553F'], ['Pigmentation', '#5E3A1E'], ['Fine lines', '#8A5A2B'], ['Under-eye', '#6F6A8F'], ['Texture', '#3E3832']];
+function frustum(x, y, a, alpha, hl = 0) {
+  if (alpha <= 0.003) return;
+  const dx = HX - x, dy = HY - y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, px = -uy, py = ux;
+  const d = 46, w = 22;
+  const c1 = [x + ux * d + px * w, y + uy * d + py * w], c2 = [x + ux * d - px * w, y + uy * d - py * w];
+  poly([[x, y], c1, c2, [x, y]], hl ? K.acc2 : K.acc, hl ? 2.4 : 1.6, alpha);
+  dot(x, y, 3.5, hl ? K.acc2 : K.acc, alpha);
+}
+function rVision(u) {
+  renderHeads(u); renderRail(u); clearC();
+  // yaw over time
+  let yaw = 0.45 * Math.sin(Math.PI * P(u, 5.9, 7.7, E.lin)) + 0.32 * P(u, 17.2, 18.2, E.io3);
+  // ---- capture: a silhouette, a moving phone, frames collecting below
+  const kCap = P(u, 0.1, 0.5) * (1 - P(u, 5.7, 6.2));
+  if (kCap > 0) {
+    ctx.save(); ctx.globalAlpha = kCap * (1 - P(u, 3.2, 3.8) * 0.4); ctx.fillStyle = '#EFE6DA'; ctx.beginPath(); ctx.ellipse(HX, HY, 158, 214, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  }
+  const kp = P(u, 0.4, 2.5, E.io3), phOp = P(u, 0.3, 0.5) * (1 - P(u, 2.6, 3.0));
+  if (phOp > 0) {
+    const a = lerp(-1.05, 1.05, kp), x = HX + 400 * Math.sin(a), y = HY + 150 * Math.cos(a);
+    ctx.save(); ctx.globalAlpha = phOp; ctx.translate(x, y); ctx.rotate(-a * 0.5); ctx.fillStyle = '#2A2520'; rr(-30, -54, 60, 108, 12); ctx.fill(); ctx.fillStyle = '#4A433C'; rr(-25, -46, 50, 92, 8); ctx.fill(); dot(0, -40, 4, '#9A9087', 1); ctx.restore();
+  }
+  const orb = P(u, 0.3, 0.6) * (1 - P(u, 5.9, 6.5));
+  if (orb > 0) { ctx.save(); ctx.globalAlpha = orb * 0.5; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.5; ctx.setLineDash([4, 7]); ctx.beginPath(); ctx.ellipse(HX, HY, 400, 150, 0, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke(); ctx.restore(); }
+  const stripA = P(u, 0.4, 0.7) * (1 - P(u, 3.0, 3.5));
+  if (stripA > 0) {
+    N2.cams.forEach((c, i) => {
+      const k = P(kp, i / 11 - 0.02, i / 11 + 0.04); if (k <= 0) return;
+      const x = 245 + i * 80, y = 792;
+      ctx.save(); ctx.globalAlpha = stripA * k; ctx.fillStyle = '#fff'; rr(x, y, 70, 46, 8); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.15)'; ctx.lineWidth = 1; rr(x, y, 70, 46, 8); ctx.stroke();
+      ctx.fillStyle = '#E9DCCB'; ctx.beginPath(); ctx.ellipse(x + 35 - Math.sin(c.a) * 12, y + 24, 13, 17, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    });
+    // device motion, time-synced
+    ctx.save(); ctx.globalAlpha = stripA; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; ctx.beginPath();
+    for (let x = 245; x <= 245 + 950 * kp; x += 4) { const t = (x - 245) / 950, y = 768 + 9 * Math.sin(t * 19) * Math.cos(t * 5) + 4 * Math.sin(t * 53); x === 245 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.stroke(); ctx.restore();
+    caps('DEVICE MOTION', 245, 748, stripA * 0.9);
+  }
+  // ---- poses: frustums around the face and a sparse point cloud
+  const fr = P(u, 3.2, 3.8) * (1 - P(u, 6.2, 6.9)) + P(u, 17.5, 17.9) * 0.9;
+  N2.cams.forEach((c, i) => { const isTri = [2, 6, 9].includes(i); const a = u > 17 ? (isTri ? fr : 0) : fr * P(u, 3.2 + i * 0.05, 3.5 + i * 0.05); frustum(c.x, c.y, c.a, a, u < 6 && i === 4 ? P(u, 4.4, 4.6) : u > 17 ? 1 : 0); });
+  if (u > 4.3 && u < 5.8) { const c = N2.cams[4]; txt('intrinsics', c.x - 64, c.y - 56, '600 14px Inter', K.acc, P(u, 4.5, 4.8) * (1 - P(u, 5.5, 5.8))); txt('6-DoF pose', c.x - 64, c.y - 36, '600 14px Inter', K.acc, P(u, 4.6, 4.9) * (1 - P(u, 5.5, 5.8))); }
+  const spA = P(u, 3.4, 4.6) * (1 - P(u, 6.4, 7.0));
+  if (spA > 0) {
+    N2.sparse.forEach((p, i) => { const q = proj(p.s, 0); if (q[3] < 0) return; dot(q[0], q[1], 2.2, K.ink2, spA * P(u, 3.4 + p.d * 1.0, 3.6 + p.d * 1.0)); });
+    const ray = win(u, 4.0, 4.3, 5.1, 5.5);
+    if (ray > 0) [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; for (let k = 0; k < 6; k++) { const q = proj(N2.sparse[ci * 7 + k * 11].s, 0); poly([[c.x, c.y], [q[0], q[1]]], K.acc2, 1, ray * 0.45); } });
+  }
+  // ---- splats: reconstruct, canonical, atlas, analyze, lift
+  const kS = P(u, 5.8, 7.3), kA = P(u, 10.6, 11.8, E.io3) * (1 - P(u, 16.4, 17.4, E.io3));
+  if (kS > 0) {
+    const L = [-0.45, 0.5, 0.75];
+    const pts = N2.pts.map(p => { const q = proj(p.s, yaw); return [p, q]; }).sort((a, b) => a[1][2] - b[1][2]);
+    const lay = u > 12.8 && u < 16.6 ? LAYERS.map((_, i) => win(u, 13.0 + i * 0.42, 13.12 + i * 0.42, 13.3 + (i + 1) * 0.42, 13.42 + (i + 1) * 0.42) * (1 - P(u, 16.2, 16.5))) : null;
+    // a soft skin underlay closes the gaps between splats
+    ctx.globalAlpha = 1; ctx.fillStyle = 'rgb(206,166,140)'; ctx.beginPath();
+    pts.forEach(([p, q]) => { if (P(kS, p.d * 0.85, p.d * 0.85 + 0.15) < 0.95 || (q[3] < -0.05 && kA < 0.5)) return; const x = lerp(q[0], AX + p.u * AW, kA), y = lerp(q[1], AY + p.v * AH, kA), rr0 = lerp(5.5, p.ar + 1.2, kA); ctx.moveTo(x + rr0, y); ctx.arc(x, y, rr0, 0, 6.2832); });
+    ctx.fill();
+    pts.forEach(([p, q]) => {
+      const a = kS > 0.999 ? 1 : P(kS, p.d * 0.85, p.d * 0.85 + 0.15);
+      if (a <= 0) return;
+      if (q[3] < -0.05 && kA < 0.5) return;
+      const ax = AX + p.u * AW, ay = AY + p.v * AH;
+      const x = lerp(q[0], ax, kA), y = lerp(q[1], ay, kA);
+      const dd = q[4] * L[0] + p.s.ny * L[1] + q[3] * L[2], sh = 0.5 + 0.55 * Math.max(0, dd) + 0.08 * Math.pow(Math.max(0, dd), 12), shade = lerp(sh, 1, kA);
+      let c = p.a.map(v => v * shade);
+      if (lay) lay.forEach((w, i) => { if (w > 0) { const f = layerVal(i, p.u, p.v) * w; if (f > 0.02) { const lc = rgb(LAYERS[i][1]); c = c.map((v, k) => v * (1 - 0.85 * f) + lc[k] * 0.85 * f); } } });
+      ctx.globalAlpha = a; ctx.fillStyle = `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`;
+      ctx.beginPath(); ctx.arc(x, y, lerp(3.8, p.ar, kA), 0, 6.2832); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    // counter
+    const n = Math.round(P(u, 5.9, 7.4, E.out3) * 1000) * 1000;
+    txt(`≈ ${n.toLocaleString('en-US')}`, 1320, 318, '600 26px "JetBrains Mono"', K.ink, P(u, 5.9, 6.2) * (1 - P(u, 8.0, 8.3)), 'right');
+    txt('primitives, on Apple Silicon', 1320, 344, '500 15px Inter', K.ink2, P(u, 5.9, 6.2) * (1 - P(u, 8.0, 8.3)), 'right');
+  }
+  // canonical mesh: UV grid lines and landmarks
+  const kM = P(u, 8.2, 9.2) * (1 - P(u, 12.9, 13.3)), kL = P(u, 8.5, 8.9) * (1 - P(u, 10.5, 10.9));
+  if (kM > 0) {
+    const pt = (uu, vv) => { const q = proj(surf(uu, vv), yaw); return [lerp(q[0], AX + uu * AW, kA), lerp(q[1], AY + vv * AH, kA)]; };
+    for (let i = 1; i < 14; i++) { const uu = i / 14, seg = []; for (let k = 0; k <= 40; k++) { const vv = k / 40; if (uvIn(uu, vv) && k / 40 <= kM * 1.2) seg.push(pt(uu, vv)); } if (seg.length > 1) poly(seg, K.acc, 1, 0.5); }
+    for (let i = 1; i < 16; i++) { const vv = i / 16, seg = []; if (vv > kM * 1.2) continue; for (let k = 0; k <= 40; k++) { const uu = k / 40; if (uvIn(uu, vv)) seg.push(pt(uu, vv)); } if (seg.length > 1) poly(seg, K.acc, 1, 0.5); }
+    const LM = [[0.25, 0.2], [0.55, 0.2], [-0.25, 0.2], [-0.55, 0.2], [0, -0.04], [0.23, -0.45], [-0.23, -0.45], [0, -1.02], [0, 0.36]];
+    LM.forEach(([th, ph], i) => { const uu = th / 2.3 + 0.5, vv = 0.52 - ph / 2.5; const [x, y] = pt(uu, vv); const k = P(u, 8.5 + i * 0.05, 8.75 + i * 0.05, E.back) * (1 - P(u, 10.5, 10.9)); dot(x, y, 7 * clamp(k), '#fff', k); dot(x, y, 4.5 * clamp(k), K.acc2, k); });
+    const sb = P(u, 9.2, 9.6) * (1 - P(u, 10.4, 10.7));
+    if (sb > 0) { poly([[930, 470], [930, 470 + 160 * sb]], K.ink, 2.5, sb); for (let t = 0; t <= 10; t++) poly([[930, 470 + t * 16 * sb], [t % 5 ? 937 : 942, 470 + t * 16 * sb]], K.ink, 1.5, sb); txt('10 mm', 952, 556, '600 16px Inter', K.ink, sb); txt('calibrated', 952, 576, '400 14px Inter', K.ink2, sb); }
+  }
+  // atlas notes
+  const an = P(u, 11.6, 12.0) * (1 - P(u, 12.8, 13.0));
+  caps('SKIN ATLAS', AX, 282, P(u, 11.3, 11.7) * (1 - P(u, 16.3, 16.6)));
+  txt('0.07 mm per texel', 1010, 470, '600 18px Inter', K.ink, an); txt('Each patch of skin appears once', 1010, 496, '400 15px Inter', K.ink2, an);
+  txt('Lighting separated from color', 1010, 540, '600 18px Inter', K.ink, an); txt('A flat map for color, a detail map for structure', 1010, 566, '400 15px Inter', K.ink2, an);
+  // analyze: legend of layers, then lesions
+  const lg = P(u, 12.9, 13.2) * (1 - P(u, 16.2, 16.5));
+  if (lg > 0) {
+    caps('FIVE LAYERS', 1010, 330, lg); txt('each against the face’s own median', 1010, 352, '400 14px Inter', K.ink2, lg);
+    LAYERS.forEach(([n, col], i) => { const on = win(u, 13.0 + i * 0.42, 13.12 + i * 0.42, 13.3 + (i + 1) * 0.42, 13.42 + (i + 1) * 0.42); const y = 392 + i * 34; dot(1018, y - 5, 7, col, lg * (0.35 + 0.65 * Math.max(on, P(u, 15.1, 15.3)))); txt(n, 1036, y, (on > 0.5 ? '600' : '500') + ' 16px Inter', on > 0.5 ? K.ink : K.ink2, lg); });
+    const ll = P(u, 15.1, 15.3);
+    caps('LESIONS', 1010, 590, lg * ll);
+    txt('Proposal: generous', 1010, 616, '500 15px Inter', K.ink2, lg * P(u, 15.15, 15.35));
+    txt('Scoring: strict', 1010, 640, '500 15px Inter', K.ink2, lg * P(u, 15.55, 15.75));
+    txt('Pores are the hard case', 1010, 664, '500 15px Inter', K.ink2, lg * P(u, 15.7, 15.9));
+  }
+  const kp1 = P(u, 15.15, 15.45), kp2 = P(u, 15.55, 15.85);
+  if (kp1 > 0) N2.cand.forEach((c, i) => {
+    const q = proj(c.s, yaw), x = lerp(q[0], AX + c.u * AW, kA), y = lerp(q[1], AY + c.v * AH, kA);
+    const vis = P(kp1, i / 26 * 0.7, i / 26 * 0.7 + 0.3);
+    if (c.kind === 'drop') { poly([[x - 9, y], [x + 9, y]], 'rgba(0,0,0,0)', 1, 0); ctx.save(); ctx.globalAlpha = vis * (1 - kp2) * 0.8; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); ctx.restore(); return; }
+    if (c.kind === 'pore') { ctx.save(); ctx.globalAlpha = vis * (1 - 0.5 * kp2) * (1 - P(u, 16.3, 16.6)); ctx.strokeStyle = kp2 > 0.5 ? K.ink3 : K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); if (kp2 > 0.5) { poly([[x - 5, y - 5], [x + 5, y + 5]], K.ink3, 1.5, kp2 * (1 - P(u, 16.3, 16.6))); poly([[x + 5, y - 5], [x - 5, y + 5]], K.ink3, 1.5, kp2 * (1 - P(u, 16.3, 16.6))); txt('pore', x + 13, y + 5, '500 12px Inter', K.ink3, kp2 * (1 - P(u, 16.3, 16.6))); } ctx.restore(); return; }
+    const pin = P(u, 16.6, 17.2);
+    ctx.save(); ctx.globalAlpha = vis; ctx.strokeStyle = kp2 > 0.5 ? K.warn : K.ink2; ctx.lineWidth = kp2 > 0.5 ? 2.5 : 1.5; ctx.beginPath(); ctx.arc(x, y, 9 + kp2, 0, 6.2832); ctx.stroke(); ctx.restore();
+    if (kp2 > 0.5) txt(c.kind === 'acne' ? 'acne' : 'post-acne mark', x + 14, y + 5, '600 12px Inter', K.warn, kp2 * (1 - P(u, 16.3, 16.6)));
+    if (pin > 0) dot(x, y, 4, K.warn, pin);
+  });
+  // lift: rays from three cameras to one lesion
+  const tr = P(u, 17.6, 18.0);
+  if (tr > 0) {
+    const c0 = N2.cand[0], q = proj(c0.s, yaw);
+    [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; poly([[c.x, c.y], [lerp(c.x, q[0], tr), lerp(c.y, q[1], tr)]], K.warn, 1.6, 0.8); });
+    txt('Triangulated into 3D', 1010, 470, '600 18px Inter', K.ink, P(u, 17.8, 18.1)); txt('sub-2-pixel median placement', 1010, 496, '400 15px Inter', K.ink2, P(u, 17.9, 18.2));
+    txt('A stable address, session to session', 1010, 540, '600 18px Inter', K.ink, P(u, 18.1, 18.4));
+  }
+  footnote('An illustration of the pipeline, which runs end to end on real captures.');
+}
+
+/* =================== NURA 3: dosing safety =================== */
+const N3 = {};
+const ROWS = [
+  { n: 'Active A', p: 0.78, c: 0.6 }, { n: 'Active B', p: 0.45, c: 0.7, out: [4.9, 'AM only', 'mute'] },
+  { n: 'Active C', p: 0.64, c: 0.5 }, { n: 'Active D', p: 0.38, c: 0.7 },
+  { n: 'Active E', p: 0.5, c: 0.8, out: [7.0, 'Not with D', 'mute'] }, { n: 'Active F', p: 0.3, c: 0.6, out: [8.5, 'Used today', 'mute'] },
+  { n: 'Active G', p: 0.42, c: 0.7, out: [10.3, 'Allergen', 'warn'] }, { n: 'Active H', p: 0.35, c: 0.6, out: [12.1, 'Expired', 'warn'] },
+];
+function buildSafety() {
+  mkHeads([
+    { t0: 0, t1: 2.6, h: 'The model suggests amounts', n: 'From today’s scan, the time of day, your history, and opt-in signals like sleep and UV.' },
+    { t0: 2.6, t1: 4.6, h: 'Cap every active', n: 'No recommendation can exceed an active’s maximum final concentration.' },
+    { t0: 4.6, t1: 6.4, h: 'Route by time of day', n: 'Photosensitizing or oxidation-sensitive actives only dispense in their session.' },
+    { t0: 6.4, t1: 8.2, h: 'Keep certain pairs apart', n: 'Some pairings are split across the day or locked out of the same session, for skin tolerance.' },
+    { t0: 8.2, t1: 10.0, h: 'Limit how often', n: 'Renewal actives dispense at most once a day, and stronger actives ramp up gradually.' },
+    { t0: 10.0, t1: 11.8, h: 'Exclude allergens for good', n: 'An ingredient flagged at onboarding is never dispensed, with no override.' },
+    { t0: 11.8, t1: 13.6, h: 'Block expired cartridges', n: 'Each cartridge expires 90 days after loading, and an expired or empty channel cannot dispense.' },
+    { t0: 13.6, t1: 99, h: 'Weigh what was dispensed', n: 'A scale under the bowl checks each session’s mass against the plan, so a model error cannot become an unsafe dose.' },
+  ], 134);
+  mkRail([{ label: 'PERSONALIZATION', items: ['Suggest'] }, { label: 'FIRMWARE RULES', items: ['Ceilings', 'Time of day', 'Pairs', 'Frequency', 'Allergy', 'Expiry'] }, { label: 'SCALE', items: ['Weigh'] }]);
+}
+function rSafety(u) {
+  renderHeads(u); renderRail(u); clearC();
+  const a0 = P(u, 0.1, 0.5);
+  panel(120, 270, 880, 560, a0); panel(1030, 270, 290, 560, P(u, 0.2, 0.6));
+  caps('PM SESSION', 150, 306, a0); txt('suggested amount, firmware ceiling', 300, 306, '500 14px Inter', K.ink3, a0);
+  const X0 = 300, TW = 560;
+  let left = 8;
+  ROWS.forEach((r, i) => {
+    const y = 350 + i * 58;
+    let v = r.p * P(u, 0.6 + i * 0.08, 1.3 + i * 0.08, E.out3);
+    const capT = P(u, 2.8 + i * 0.05, 3.1 + i * 0.05), over = r.p > r.c, clip = over ? P(u, 3.4, 3.9, E.io3) : 0;
+    let drain = 0; if (r.out) drain = P(u, r.out[0], r.out[0] + 0.45, E.io3);
+    if (drain > 0.5) left--;
+    const rowA = a0 * (1 - 0.5 * drain);
+    txt(r.n, 150, y + 6, '600 17px Inter', K.ink, rowA);
+    if (r.out && r.out[1] === 'Allergen' && drain > 0) { ctx.save(); ctx.globalAlpha = a0 * drain; ctx.strokeStyle = K.warn; ctx.lineWidth = 2; rr(254, y - 6, 14, 11, 2); ctx.stroke(); ctx.beginPath(); ctx.arc(261, y - 7, 5, Math.PI, 0); ctx.stroke(); ctx.restore(); }
+    ctx.save(); ctx.globalAlpha = rowA; ctx.fillStyle = K.mute; rr(X0, y - 8, TW, 16, 8); ctx.fill();
+    if (r.out && r.out[1] === 'Expired' && drain > 0) { ctx.save(); ctx.beginPath(); rr(X0, y - 8, TW, 16, 8); ctx.clip(); ctx.strokeStyle = 'rgba(31,27,22,.18)'; ctx.lineWidth = 2; for (let x = X0 - 20; x < X0 + TW; x += 10) { ctx.beginPath(); ctx.moveTo(x, y + 10); ctx.lineTo(x + 16, y - 10); ctx.stroke(); } ctx.restore(); }
+    const shown = lerp(v, Math.min(v, r.c), clip) * (1 - drain);
+    ctx.fillStyle = K.acc2; if (shown > 0.003) { rr(X0, y - 8, TW * shown, 16, 8); ctx.fill(); }
+    if (over && capT > 0 && v > r.c) { const ex = (1 - clip); ctx.globalAlpha = rowA * ex; ctx.fillStyle = K.warn; rr(X0 + TW * r.c, y - 8 + clip * 18, TW * (v - r.c), 16, 8); ctx.fill(); }
+    ctx.restore();
+    if (capT > 0) { const cx = X0 + TW * r.c; poly([[cx, y - 15], [cx, y + 15]], K.ink, 2, rowA * capT); poly([[cx - 5, y - 15], [cx + 5, y - 15]], K.ink, 2, rowA * capT); }
+    if (over) chipT('Capped', 990, y + 1, K.warn, K.warnBg, a0 * P(u, 3.7, 3.9) * (1 - P(u, 13.8, 14.0)), 'right');
+    if (r.out) chipT(r.out[1], 990, y + 1, r.out[2] === 'warn' ? K.warn : K.ink2, r.out[2] === 'warn' ? K.warnBg : K.mute, a0 * P(u, r.out[0] + 0.2, r.out[0] + 0.45), 'right');
+    if (!r.out) chipT('Dispense', 990, y + 1, K.ok, K.okBg, a0 * P(u, 13.8 + i * 0.05, 14.05 + i * 0.05), 'right');
+  });
+  // the pair bracket
+  const br = P(u, 6.6, 6.9);
+  if (br > 0) { const y1 = 350 + 3 * 58, y2 = 350 + 4 * 58; poly([[876, y1], [886, y1], [886, y2], [876, y2]], K.ink2, 2, a0 * br * (1 - P(u, 8.0, 8.3) * 0.6)); }
+  // right panel: inputs, then the plan
+  const inA = P(u, 0.2, 0.5) * (1 - P(u, 2.6, 2.9));
+  caps('INPUTS', 1056, 306, inA);
+  ['Today’s scan', 'PM session', 'Your history', 'Sleep, opt-in', 'UV index, opt-in'].forEach((s, i) => chipT(s, 1056, 352 + i * 44, K.acc, '#F5EBDD', inA * P(u, 0.3 + i * 0.1, 0.55 + i * 0.1)));
+  if (inA > 0) { poly([[1175, 570], [1175, 610]], K.ink3, 2, inA * P(u, 0.9, 1.1)); ctx.save(); ctx.globalAlpha = inA * P(u, 0.95, 1.2); ctx.fillStyle = K.ink; rr(1056, 620, 240, 64, 14); ctx.fill(); ctx.restore(); txt('Recommendation model', 1176, 658, '600 16px Inter', '#fff', inA * P(u, 0.95, 1.2), 'center'); }
+  const plA = P(u, 2.7, 3.0);
+  caps('DISPENSE PLAN', 1056, 306, plA);
+  txt(`${left} of 8`, 1056, 368, '600 40px Inter', K.ink, plA); txt('actives this session', 1056, 394, '400 15px Inter', K.ink2, plA);
+  const RULES = [['Ceilings', 3.9], ['Time of day', 5.4], ['Pairs', 7.5], ['Frequency', 9.0], ['Allergy', 10.8], ['Expiry', 12.6]];
+  RULES.forEach(([n, t], i) => { const k = P(u, t, t + 0.25); const y = 440 + i * 34; txt(n, 1084, y, '500 16px Inter', k > 0.5 ? K.ink : K.ink3, plA); if (k > 0) checkMark(1065, y - 5, 9, plA * k); else dot(1065, y - 5, 9, K.mute, plA); });
+  const sc = P(u, 13.8, 14.2);
+  if (sc > 0) {
+    ctx.save(); ctx.globalAlpha = sc; ctx.fillStyle = '#FBF8F3'; rr(1050, 662, 250, 140, 14); ctx.fill(); ctx.restore();
+    caps('ON THE SCALE', 1068, 690, sc);
+    const m = 1.2 * P(u, 14.0, 14.9, E.out3);
+    txt('planned 1.20 g', 1068, 718, '500 14px Inter', K.ink2, sc);
+    txt(`${(m + (u > 14.9 ? 0.01 : 0)).toFixed(2)} g`, 1068, 760, '600 30px "JetBrains Mono"', K.ink, sc);
+    checkMark(1272, 750, 14, sc * clamp(P(u, 15.0, 15.3, E.back)));
+    txt('within tolerance', 1068, 786, '500 13px Inter', K.ok, sc * P(u, 15.1, 15.4));
+  }
+  footnote('Illustrative actives and values. The rules run in firmware, and the model only recommends within them.');
+}
+
+/* =================== sequencer =================== */
+const CLIPS = {
+  session: { build: buildSession, measure: () => {}, render: rSession, dur: 16.5, blur: [] },
+  vision: { build: buildVision, measure: () => {}, render: rVision, dur: 18.9, blur: [] },
+  safety: { build: buildSafety, measure: () => {}, render: rSafety, dur: 16.1, blur: [] },
+};
+const C = CLIPS[CLIP];
+let DURATION = C.dur;
+C.build();
+window.render = function (T) {
+  T = Math.max(0, Math.min(DURATION - 1e-4, T));
+  C.render(T);
+  $('clipFade').style.opacity = LIVE ? 0 : Math.max(1 - P(T, 0, 0.35, E.io3), P(T, DURATION - 0.35, DURATION, E.io3));
+};
+window.blurAt = T => (C.blur.some(([a, b]) => T >= a && T <= b) ? 1 : 0);
+const fontLoads = ['400 20px Inter', '500 20px Inter', '600 20px Inter', 'italic 600 24px Inter', '400 20px "JetBrains Mono"', '500 20px "JetBrains Mono"', '600 20px "JetBrains Mono"'].map(f => document.fonts.load(f));
+window.ready = Promise.all([...fontLoads, document.fonts.ready, ...Array.from(document.images).map(i => i.decode().catch(() => {}))])
+  .then(() => document.fonts.ready).then(() => { C.measure(); window.render(0); if (LIVE) setupLive(); return true; });
+
+/* =================== live mode: the reader moves through the steps =================== */
+let XP_WANT = false, XP_GO = null;
+window.xpStart = () => { XP_WANT = true; if (XP_GO) XP_GO(); };   // called by the page when this comes into view
+const HOLDS = { session: [2.9, 5.3, 7.5, 11.4, 13.3, 16.3], vision: [2.7, 5.3, 7.7, 10.1, 12.5, 15.95, 18.7], safety: [2.3, 4.3, 6.1, 7.9, 9.7, 11.5, 13.3, 15.9] };
+function setupLive() {
+  document.documentElement.classList.add('live');
+  const H = HOLDS[CLIP], n = H.length, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  STEPS.forEach((s, i) => { if (i < n - 1) s.tout = H[i]; if (i > 0) s.tin = Math.max(s.t0 + 0.06, H[i - 1] + 0.45); });
+  const names = PILLS.map(p => p.textContent);
+  let tNow = 0, queue = [], raf = 0, last = 0, target = -1;
+  const ui = i => {
+    PILLS.forEach((p, j) => { if (j === i) p.setAttribute('aria-current', 'step'); else p.removeAttribute('aria-current'); });
+    const end = i >= n - 1;
+    $('nextl').textContent = end ? 'Replay' : 'Next: ' + names[i + 1];
+    $('nextb').querySelector('b').innerHTML = end ? '&#8635;' : '&rarr;';
+    $('mbLab').textContent = `${i + 1} of ${n} \u00b7 ${names[i]}`;
+    $('mbNext').textContent = end ? 'Replay' : 'Next';
+    $('mbPrev').disabled = i <= 0;
+  };
+  const settle = () => { const s = STEPS[target]; $('say').textContent = `${s.h}. ${s.n}`; };
+  const frame = () => {
+    const now = performance.now(), dt = clamp((now - last) / 1000, 0, 0.05); last = now;
+    const [to, sp] = queue[0], d = to - tNow, mv = sp * dt;
+    if (Math.abs(d) <= mv) { tNow = to; queue.shift(); } else tNow += Math.sign(d) * mv;
+    window.render(tNow);
+    if (queue.length) raf = requestAnimationFrame(frame); else { raf = 0; settle(); }
+  };
+  const go = i => {
+    if (i < 0 || i >= n) return;
+    const prev = i === 0 ? 0 : H[i - 1], q = [];
+    if (tNow > prev + 0.01) { tNow = prev; window.render(tNow); }                  // back, or replaying: cut to just before the step
+    else if (tNow < prev - 0.01) q.push([prev, Math.max(3, (prev - tNow) / 0.9)]); // skipping ahead: fast-forward
+    q.push([H[i], 0.6]);
+    target = i; ui(i);
+    if (reduce) { tNow = H[i]; queue = []; window.render(tNow); settle(); return; }
+    queue = q;
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+  };
+  const next = () => go(target >= n - 1 ? 0 : target + 1);
+  PILLS.forEach((p, i) => p.addEventListener('click', () => go(i)));
+  $('nextb').addEventListener('click', next);
+  $('mbNext').addEventListener('click', next);
+  $('mbPrev').addEventListener('click', () => go(target - 1));
+  addEventListener('keydown', e => { if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') go(target - 1); });
+  ui(0);
+  const fit = () => {
+    const s = document.documentElement.clientWidth / 1440;
+    $('stage').style.transform = `scale(${s})`;
+    const mb = $('mbar'); mb.style.top = 900 * s + 'px';
+    const h = 900 * s + (getComputedStyle(mb).display === 'none' ? 0 : mb.offsetHeight);
+    document.body.style.height = h + 'px';
+    if (window.frameElement) window.frameElement.style.height = Math.ceil(h) + 'px';
+  };
+  addEventListener('resize', fit); fit();
+  // the first step plays once the walkthrough is on screen, then it waits for the reader
+  XP_GO = () => { if (target < 0) go(0); };
+  if (XP_WANT) XP_GO();
+  // fallback when opened on its own
+  const io = new IntersectionObserver(es => { if (es.some(e => e.intersectionRatio >= 0.4)) { io.disconnect(); XP_GO(); } }, { threshold: [0, 0.4, 0.6, 1] });
+  io.observe(document.body);
+}
+</script>
+</body>
+</html>
