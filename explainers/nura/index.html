@@ -283,12 +283,104 @@ function poly(pts, col, w, a = 1, dash = null, off = 0) {
 function checkMark(x, y, r, a, col = K.ok) { if (a <= 0.003) return; dot(x, y, r, col, a); poly([[x - r * 0.42, y + r * 0.02], [x - r * 0.1, y + r * 0.34], [x + r * 0.45, y - r * 0.3]], '#fff', r * 0.24, a); }
 function footnote(s) { txt(s, 120, 884, '400 14px Inter', K.ink3, 1); }
 
+/* =================== NURA: a head drawn as a 3D scan (contour lines and stipple) =================== */
+const H3 = {};
+function surf(u, v) {
+  const th = (u - 0.5) * 2.3, ph = (0.52 - v) * 2.5;
+  let X = Math.sin(th) * Math.cos(ph) * 0.95, Y = -Math.sin(ph) * 1.18, Z = Math.cos(th) * Math.cos(ph);
+  const jaw = clamp((-ph - 0.6) / 0.6); X *= 1 - 0.26 * jaw * jaw; X *= 1 + 0.05 * Math.exp(-(((ph - 0.02) / 0.3) ** 2));
+  Z += 0.3 * Math.exp(-((th / 0.13) ** 2) - (((ph + 0.04) / 0.28) ** 2));
+  Z -= 0.04 * (Math.exp(-(((th - 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)) + Math.exp(-(((th + 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)));
+  Z += 0.035 * Math.exp(-((th / 0.28) ** 2) - (((ph + 0.45) / 0.07) ** 2));
+  Z += 0.05 * Math.exp(-(((ph - 0.36) / 0.07) ** 2)) * Math.exp(-((th / 0.6) ** 4));
+  return { X, Y, Z, th, ph };
+}
+const uvIn = (u, v) => ((u - 0.5) / 0.5) ** 2 + ((v - 0.52) / 0.48) ** 2 <= 1;
+function withNormal(u, v) {
+  const e = 0.002, a = surf(u, v), b = surf(u + e, v), c = surf(u, v + e);
+  const du = [b.X - a.X, b.Y - a.Y, b.Z - a.Z], dv = [c.X - a.X, c.Y - a.Y, c.Z - a.Z];
+  let n = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]];
+  const area = Math.hypot(...n) || 1; n = n.map(x => x / area); if (n[2] < 0) n = n.map(x => -x);
+  a.nx = n[0]; a.ny = -n[1]; a.nz = n[2]; a.area = area; a.u = u; a.v = v; return a;
+}
+function buildHead() {
+  if (H3.ready) return;
+  // mesh lines (rows and meridians) for the canonical face
+  H3.rows = []; for (let k = 1; k < 22; k++) { const v = k / 22, ln = []; for (let i = 0; i <= 90; i++) { const u = i / 90; if (uvIn(u, v)) ln.push(withNormal(u, v)); } if (ln.length > 1) H3.rows.push(ln); }
+  H3.cols = []; for (let i = 1; i < 18; i++) { const u = i / 18, ln = []; for (let k = 0; k <= 90; k++) { const v = k / 90; if (uvIn(u, v)) ln.push(withNormal(u, v)); } if (ln.length > 1) H3.cols.push(ln); }
+  // a regular lattice of dots, the way structured light lands on a face
+  let sd = 9; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  H3.grid = []; for (let j = 0; j <= 60; j++) for (let i = 0; i <= 58; i++) { const u = i / 58, v = j / 60; if (!uvIn(u, v)) continue; const p = withNormal(u, v); p.d = r(); H3.grid.push(p); }
+  H3.pts = []; while (H3.pts.length < 300) { const u = r(), v = r(); if (!uvIn(u, v)) continue; const p = withNormal(u, v); p.d = r(); H3.pts.push(p); }
+  // feature outlines in UV, the way a UV layout template shows them
+  const ell = (cu, cv, ru, rv, a0 = 0, a1 = Math.PI * 2, n = 40) => Array.from({ length: n + 1 }, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [cu + ru * Math.cos(a), cv + rv * Math.sin(a)]; });
+  const eyeU = th => th / 2.3 + 0.5, V = ph => 0.52 - ph / 2.5;
+  H3.feat = [
+    ell(eyeU(0.4), V(0.2), 0.052, 0.016), ell(eyeU(-0.4), V(0.2), 0.052, 0.016),
+    ell(eyeU(0.42), V(0.34) + 0.012, 0.07, 0.02, Math.PI * 1.1, Math.PI * 1.9, 20), ell(eyeU(-0.42), V(0.34) + 0.012, 0.07, 0.02, Math.PI * 1.1, Math.PI * 1.9, 20),
+    ell(0.5, V(-0.12), 0.04, 0.012, 0.1, Math.PI - 0.1, 20),
+    ell(0.5, V(-0.45), 0.085, 0.014, 0, Math.PI * 2, 40),
+  ].map(pts => pts.map(([u, v]) => withNormal(u, v)));
+  H3.ready = true;
+}
+// project a surface point; returns [x, y, depth, facing, sideways normal]
+function P3(p, yaw, cx, cy, S) { const c = Math.cos(yaw), s = Math.sin(yaw); const x = p.X * c + p.Z * s, z = -p.X * s + p.Z * c; const f = 5 / (5 - z); return [cx + S * x * f, cy + S * p.Y * f, z, -p.nx * s + p.nz * c, p.nx * c + p.nz * s]; }
+// a view: where the head sits, and how far it is unwrapped into a flat map (kA)
+function V3(yaw, cx, cy, S, kA = 0, ax = 0, ay = 0, aw = 1, ah = 1) { return { yaw, cx, cy, S, kA, ax, ay, aw, ah }; }
+function at(p, vw) { const q = P3(p, vw.yaw, vw.cx, vw.cy, vw.S); if (vw.kA <= 0) return q; return [lerp(q[0], vw.ax + p.u * vw.aw, vw.kA), lerp(q[1], vw.ay + p.v * vw.ah, vw.kA), q[2], vw.kA > 0.5 ? 1 : q[3], q[4]]; }
+function strokeLines(lines, vw, col, width, alpha, reveal = 1, tint = null) {
+  if (alpha <= 0.003) return;
+  ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  const n = lines.length;
+  lines.forEach((ln, li) => {
+    if (li / n > reveal) return;
+    ctx.beginPath(); let pen = false, sumF = 0, cnt = 0;
+    ln.forEach(p => { const q = at(p, vw); if (q[3] < 0.05) { pen = false; return; } sumF += q[3]; cnt++; if (!pen) { ctx.moveTo(q[0], q[1]); pen = true; } else ctx.lineTo(q[0], q[1]); });
+    if (!cnt) return;
+    const depth = lerp(0.45 + 0.55 * (sumF / cnt), 1, vw.kA);
+    ctx.globalAlpha = alpha * depth; ctx.strokeStyle = col; ctx.lineWidth = width; ctx.stroke();
+  });
+  if (tint) lines.forEach((ln, li) => {
+    if (li / n > reveal) return;
+    for (let i = 1; i < ln.length; i++) {
+      const w = tint(ln[i]); if (w <= 0.05) continue; const q0 = at(ln[i - 1], vw), q1 = at(ln[i], vw); if (q1[3] < 0.05 || q0[3] < 0.05) continue;
+      ctx.globalAlpha = alpha * Math.min(1, w); ctx.strokeStyle = tint.col(ln[i]); ctx.lineWidth = width + 1.6 * w; ctx.beginPath(); ctx.moveTo(q0[0], q0[1]); ctx.lineTo(q1[0], q1[1]); ctx.stroke();
+    }
+  });
+  ctx.restore();
+}
+// the lattice: one ink, with opacity and size from the light; tint(p) can color a dot
+function lattice(vw, alpha, appear = 1, size = 1.7, tint = null) {
+  if (alpha <= 0.003) return;
+  const L = [-0.35, 0.5, 0.8], B = [[], [], [], [], [], []], T = [];
+  H3.grid.forEach(p => {
+    if (appear < 1 && P(appear, p.d * 0.85, p.d * 0.85 + 0.15) < 0.5) return;
+    const q = at(p, vw); if (q[3] < 0.04) return;
+    const sh = clamp(0.2 + 0.8 * Math.max(0, q[4] * L[0] + p.ny * L[1] + q[3] * L[2]));
+    const lv = lerp(sh, 0.85, vw.kA);
+    if (tint) { const t = tint(p); if (t) { T.push([q, t, lv]); return; } }
+    B[Math.min(5, Math.floor(lv * 6))].push([q, lerp(0.6 + 0.4 * q[3], 1, vw.kA)]);
+  });
+  ctx.save(); ctx.fillStyle = '#5E3B1C';
+  B.forEach((qs, i) => { if (!qs.length) return; ctx.globalAlpha = alpha * (0.22 + i * 0.13); ctx.beginPath(); qs.forEach(([q, s]) => { const rr0 = size * s; ctx.moveTo(q[0] + rr0, q[1]); ctx.arc(q[0], q[1], rr0, 0, 6.2832); }); ctx.fill(); });
+  T.forEach(([q, [col, w], lv]) => { ctx.globalAlpha = alpha * Math.min(1, 0.35 + 0.65 * w); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(q[0], q[1], size * (1 + 0.5 * w), 0, 6.2832); ctx.fill(); });
+  ctx.restore();
+}
+function maskOutline(vw, col, width, alpha) {
+  if (alpha <= 0.003) return;
+  const pts = Array.from({ length: 121 }, (_, i) => { const a = i / 120 * Math.PI * 2; return withNormal(0.5 + 0.499 * Math.cos(a), 0.52 + 0.479 * Math.sin(a)); });
+  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = col; ctx.lineWidth = width; ctx.beginPath(); let pen = false;
+  pts.forEach(p => { const q = at(p, vw); if (q[3] < -0.2 && vw.kA < 0.5) { pen = false; return; } pen ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); pen = true; });
+  ctx.stroke(); ctx.restore();
+}
+
 /* =================== NURA 1: one session =================== */
 const CARTS = ['Hydration', 'Barrier', 'Oil & tone', 'Brighten', 'Firming', 'Calming', 'Antioxidant', 'Renewal'];
 const ORDER = [0, 1, 5, 6];                        // the chosen actives, in the order the firmware dispenses them
 const ACOL = ['#E9CFA4', '#D7B58A', '#C9A27A', '#E2C08F'];
 const N1 = {};
 function buildSession() {
+  buildHead();
   mkHeads([
     { t0: 0, t1: 3.2, h: 'Scan the face', n: 'The wand reads moisture and sebum at its tip while the camera captures the whole face.' },
     { t0: 3.2, t1: 5.6, h: 'Choose the actives', n: 'The recommendation picks actives and amounts, inside limits the firmware enforces.' },
@@ -305,16 +397,9 @@ function buildSession() {
 const actT = j => 8.0 + j * 0.85;
 function drumRot(u) { let r = 0; N1.rotT.forEach(([t, a, b]) => { if (u >= t) r = lerp(a, b, P(u, t, t + 0.4, E.io3)); }); return r; }
 function massAt(u) { let m = 1.8 * P(u, 5.9, 7.3, E.lin); ORDER.forEach((_, j) => { m += 0.15 * P(u, actT(j) + 0.62, actT(j) + 0.74); }); return m; }
-function drawFace(cx, cy, a) {
-  if (a <= 0.003) return;
-  ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = 'rgba(31,27,22,.55)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.ellipse(cx, cy, 104, 138, 0, 0, Math.PI * 2); ctx.stroke();
-  [[-42, -18], [42, -18]].forEach(([dx, dy]) => { ctx.beginPath(); ctx.arc(cx + dx, cy + dy, 13, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx + dx - 18, cy + dy - 22); ctx.quadraticCurveTo(cx + dx, cy + dy - 30, cx + dx + 18, cy + dy - 22); ctx.stroke(); });
-  ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.quadraticCurveTo(cx - 10, cy + 26, cx - 2, cy + 34); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - 26, cy + 66); ctx.quadraticCurveTo(cx, cy + 80, cx + 26, cy + 66); ctx.stroke();
-  ctx.restore();
-}
-const ZONES = [[0, -96, 64, 24, '#E5BA7E'], [-52, 30, 28, 30, '#D98F7A'], [52, 30, 28, 30, '#D98F7A'], [0, 104, 30, 16, '#C9A27A']];
+const ZONES = [[0.5, 0.3, 0.17, 0.055, '#C9A27A'], [0.3, 0.62, 0.08, 0.075, '#C2553F'], [0.7, 0.62, 0.08, 0.075, '#C2553F'], [0.5, 0.86, 0.07, 0.035, '#B0783F']];
+const zoneW = p => Math.max(...ZONES.map(([cu, cv, su, sv]) => Math.exp(-(((p.u - cu) / su) ** 2) - (((p.v - cv) / sv) ** 2))));
+const zoneC = p => { let best = 0, col = ZONES[0][4]; ZONES.forEach(([cu, cv, su, sv, c]) => { const w = Math.exp(-(((p.u - cu) / su) ** 2) - (((p.v - cv) / sv) ** 2)); if (w > best) { best = w; col = c; } }); return col; };
 function rSession(u) {
   renderHeads(u); renderRail(u); clearC();
   const act = (a, b) => P(u, a - 0.25, a + 0.15) * (1 - P(u, b - 0.15, b + 0.25));
@@ -327,15 +412,13 @@ function rSession(u) {
   // ---- skin panel
   const FX = 262, FY = 560;
   const sweep = P(u, 0.5, 2.2, E.io3), sy = lerp(FY - 150, FY + 150, sweep);
-  ZONES.forEach(([dx, dy, rx, ry, col]) => {
-    const k = P(sy, FY + dy - 20, FY + dy + 20);
-    if (k > 0) { ctx.save(); ctx.globalAlpha = pf * k * 0.4; ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(FX + dx, FY + dy, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-  });
-  drawFace(FX, FY, pf);
-  if (sweep > 0 && sweep < 1) { const g = Math.sin(sweep * Math.PI); poly([[FX - 125, sy], [FX + 125, sy]], K.acc2, 3, pf * g); poly([[FX - 125, sy], [FX + 125, sy]], K.acc3, 12, pf * g * 0.25); }
+  const fv = V3(0.22, FX, FY, 122);
+  lattice(fv, pf, 1, 1.35, p => { const w = zoneW(p); return w > 0.25 && at(p, fv)[1] < sy ? [zoneC(p), w] : null; });
+  maskOutline(fv, '#A8927A', 1.2, pf * 0.6);
+  if (sweep > 0 && sweep < 1) { const g = Math.sin(sweep * Math.PI); poly([[FX - 130, sy], [FX + 130, sy]], K.acc2, 2, pf * g); poly([[FX - 130, sy], [FX + 130, sy]], K.acc3, 10, pf * g * 0.22); }
   // the wand touches the right cheek
   const kw = P(u, 1.0, 1.45, E.io3) * (1 - P(u, 2.1, 2.5, E.io3));
-  const wx = lerp(356, 322, kw), wy = lerp(668, 612, kw);
+  const tip = at(withNormal(0.72, 0.64), fv), wx = lerp(356, tip[0] + 4, kw), wy = lerp(668, tip[1] + 6, kw);
   ctx.save(); ctx.globalAlpha = pf; ctx.translate(wx, wy); ctx.rotate(-0.55);
   ctx.fillStyle = '#EDE3D5'; rr(-12, 0, 24, 100, 12); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.35)'; ctx.lineWidth = 1.5; rr(-12, 0, 24, 100, 12); ctx.stroke();
   ctx.fillStyle = K.acc2; rr(-12, 0, 24, 14, 7); ctx.fill(); ctx.restore();
@@ -352,7 +435,7 @@ function rSession(u) {
   txt('Bars against your own baseline (the tick)', 148, 808, '400 13px Inter', K.ink3, pf * P(u, 1.6, 2.0));
   chipT('~50 s', 522, 302, K.acc, '#F5EBDD', pf * P(u, 0.6, 1.0) * (1 - P(u, 15.35, 15.5)), 'right');
   // apply: three points on the face, then spread
-  [[0, -92], [-50, 34], [50, 34]].forEach(([dx, dy], i) => {
+  [[0.5, 0.3], [0.32, 0.62], [0.68, 0.62]].map(([uu, vv]) => { const q = at(withNormal(uu, vv), fv); return [q[0] - FX, q[1] - FY]; }).forEach(([dx, dy], i) => {
     const kd = P(u, 14.7 + i * 0.12, 14.95 + i * 0.12, E.back), ks = P(u, 15.2, 15.9, E.out3);
     if (kd <= 0) return;
     ctx.save(); ctx.globalAlpha = aF * (1 - ks * 0.85); ctx.fillStyle = '#E9D2AE'; ctx.beginPath(); ctx.arc(FX + dx, FY + dy, 7 * clamp(kd) + ks * 34, 0, Math.PI * 2); ctx.fill(); ctx.restore();
@@ -428,32 +511,8 @@ function rSession(u) {
 
 /* =================== NURA 2: how the vision pipeline reads skin =================== */
 const N2 = {};
-function surf(u, v) {
-  const th = (u - 0.5) * 2.3, ph = (0.52 - v) * 2.5;
-  let X = Math.sin(th) * Math.cos(ph) * 0.95, Y = -Math.sin(ph) * 1.18, Z = Math.cos(th) * Math.cos(ph);
-  const jaw = clamp((-ph - 0.6) / 0.6); X *= 1 - 0.26 * jaw * jaw; X *= 1 + 0.05 * Math.exp(-(((ph - 0.02) / 0.3) ** 2));
-  Z += 0.24 * Math.exp(-((th / 0.15) ** 2) - (((ph + 0.02) / 0.3) ** 2));
-  Z -= 0.06 * (Math.exp(-(((th - 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)) + Math.exp(-(((th + 0.4) / 0.15) ** 2) - (((ph - 0.2) / 0.1) ** 2)));
-  Z += 0.05 * Math.exp(-((th / 0.28) ** 2) - (((ph + 0.45) / 0.07) ** 2));
-  Z += 0.035 * Math.exp(-(((ph - 0.36) / 0.07) ** 2)) * Math.exp(-((th / 0.6) ** 4));
-  return { X, Y, Z, nx: Math.sin(th) * Math.cos(ph), ny: Math.sin(ph) * 0.8, nz: Math.cos(th) * Math.cos(ph), th, ph };
-}
-function albedo(s, j) {
-  let c = [228 - j * 12, 186 - j * 10, 158 - j * 9];
-  const eyeF = sx => { const dx = (s.th - sx) / 0.13, dy = (s.ph - 0.2) / 0.045; return dx * dx + dy * dy < 1 ? 1 : Math.exp(-(dx * dx + dy * dy - 1) * 3); };
-  const eye = Math.max(eyeF(0.4), eyeF(-0.4));
-  const iris = Math.max(Math.exp(-(((s.th - 0.4) / 0.04) ** 2) - (((s.ph - 0.2) / 0.035) ** 2)), Math.exp(-(((s.th + 0.4) / 0.04) ** 2) - (((s.ph - 0.2) / 0.035) ** 2)));
-  const lip = Math.exp(-((s.th / 0.2) ** 4) - (((s.ph + 0.45) / 0.045) ** 2));
-  const brow = Math.exp(-(((s.ph - 0.34 + 0.08 * (Math.abs(s.th) - 0.4) ** 2) / 0.03) ** 2)) * Math.exp(-(((Math.abs(s.th) - 0.42) / 0.2) ** 4));
-  const nostril = Math.max(Math.exp(-(((s.th - 0.06) / 0.03) ** 2) - (((s.ph + 0.13) / 0.02) ** 2)), Math.exp(-(((s.th + 0.06) / 0.03) ** 2) - (((s.ph + 0.13) / 0.02) ** 2)));
-  const blush = Math.max(Math.exp(-(((s.th - 0.45) / 0.18) ** 2) - (((s.ph + 0.12) / 0.14) ** 2)), Math.exp(-(((s.th + 0.45) / 0.18) ** 2) - (((s.ph + 0.12) / 0.14) ** 2)));
-  const mix = (col, k) => { c = c.map((x, i) => x * (1 - k) + col[i] * k); };
-  mix([214, 150, 132], 0.25 * blush); mix([238, 230, 222], 0.8 * eye); mix([78, 54, 40], 0.9 * iris); mix([92, 62, 44], 0.75 * brow); mix([184, 102, 96], 0.7 * lip); mix([120, 80, 66], 0.6 * nostril);
-  return c;
-}
 const HX = 720, HY = 548, HS = 168, AX = 470, AY = 296, AW = 500, AH = 500;
-function proj(p, yaw) { const c = Math.cos(yaw), s = Math.sin(yaw); const x = p.X * c + p.Z * s, z = -p.X * s + p.Z * c; const f = 5 / (5 - z); return [HX + HS * x * f, HY + HS * p.Y * f, z, -p.nx * s + p.nz * c, p.nx * c + p.nz * s]; }
-const uvIn = (u, v) => ((u - 0.5) / 0.5) ** 2 + ((v - 0.52) / 0.48) ** 2 <= 1;
+const LAYERS = [['Redness', '#C2553F'], ['Pigmentation', '#6B4423'], ['Fine lines', '#8A5A2B'], ['Under-eye', '#7A7398'], ['Texture', '#4A3F36']];
 function buildVision() {
   mkHeads([
     { t0: 0, t1: 3.0, h: 'Sweep the face', n: 'A short handheld video, with device motion recorded alongside and synced to every frame.' },
@@ -465,152 +524,135 @@ function buildVision() {
     { t0: 16.2, t1: 99, h: 'Put the findings back in 3D', n: 'Each detection is triangulated into the reconstruction, so it keeps a stable address from session to session.' },
   ], 134);
   mkRail([{ label: 'CAPTURE', items: ['Capture'] }, { label: 'GEOMETRY', items: ['Poses', 'Reconstruct', 'Canonical face'] }, { label: 'SKIN MAP', items: ['Atlas', 'Analyze'] }, { label: 'BACK TO 3D', items: ['Lift'] }]);
-  let sd = 9; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
-  N2.pts = [];
-  const nrm = (u, v) => { const e = 0.002, a = surf(u, v), b = surf(u + e, v), c = surf(u, v + e); const du = [b.X - a.X, b.Y - a.Y, b.Z - a.Z], dv = [c.X - a.X, c.Y - a.Y, c.Z - a.Z]; let n = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]]; const l = Math.hypot(...n) || 1; n = n.map(x => x / l); if (n[2] < 0) n = n.map(x => -x); return n; };
-  const area = (u, v) => { const e = 0.002, a0 = surf(u, v), b0 = surf(u + e, v), c0 = surf(u, v + e); const du = [b0.X - a0.X, b0.Y - a0.Y, b0.Z - a0.Z], dv = [c0.X - a0.X, c0.Y - a0.Y, c0.Z - a0.Z]; return Math.hypot(du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]); };
-  let maxA = 0; for (let i = 0; i <= 60; i++) for (let k = 0; k <= 60; k++) if (uvIn(i / 60, k / 60)) maxA = Math.max(maxA, area(i / 60, k / 60));
-  while (N2.pts.length < 10500) { const u = r(), v = r(); if (!uvIn(u, v)) continue; if (r() > area(u, v) / maxA) continue; const s = surf(u, v), j = r(); const n = nrm(u, v); s.nx = n[0]; s.ny = -n[1]; s.nz = n[2]; N2.pts.push({ u, v, s, j, a: albedo(s, j), d: r(), ar: Math.min(7, 3.4 / Math.sqrt(Math.max(0.05, area(u, v) / maxA))) }); }
-  N2.sparse = N2.pts.slice(0, 260);
-  // lesion candidates: generous proposals, few kept
-  N2.cand = []; while (N2.cand.length < 26) { const u = 0.18 + r() * 0.64, v = 0.3 + r() * 0.55; if (!uvIn(u, v)) continue; const s = surf(u, v); if (Math.abs(Math.abs(s.th) - 0.4) < 0.16 && Math.abs(s.ph - 0.2) < 0.1) continue; N2.cand.push({ u, v, s }); }
+  buildHead();
+  let sd = 21; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  N2.sparse = H3.pts;
+  N2.cand = []; while (N2.cand.length < 26) { const u = 0.2 + r() * 0.6, v = 0.3 + r() * 0.52; if (!uvIn(u, v) || (Math.abs(Math.abs(u - 0.5) - 0.174) < 0.07 && Math.abs(v - 0.44) < 0.04) || (Math.abs(u - 0.5) < 0.1 && Math.abs(v - 0.7) < 0.03)) continue; N2.cand.push(withNormal(u, v)); }
   N2.cand.forEach((c, i) => { c.kind = i < 6 ? (i % 3 === 2 ? 'mark' : 'acne') : i < 9 ? 'pore' : 'drop'; });
-  // frame positions along the sweep
   N2.cams = Array.from({ length: 12 }, (_, i) => { const a = lerp(-1.05, 1.05, i / 11); return { a, x: HX + 400 * Math.sin(a), y: HY + 150 * Math.cos(a) }; });
-  // layer patterns on the atlas
-  let sp = 3; const r2 = () => (sp = (sp * 16807) % 2147483647) / 2147483647;
-  N2.spots = Array.from({ length: 9 }, () => [0.25 + r2() * 0.5, 0.3 + r2() * 0.5]);
+  N2.spots = Array.from({ length: 9 }, () => [0.27 + r() * 0.46, 0.32 + r() * 0.46, 5 + r() * 4]);
+  N2.grain = Array.from({ length: 220 }, () => [0.4 + r() * 0.2, 0.47 + r() * 0.2]);
 }
-const G = (x, y, cx, cy, sx, sy) => Math.exp(-(((x - cx) / sx) ** 2) - (((y - cy) / sy) ** 2));
-function layerVal(i, u, v) {
-  if (i === 0) return Math.max(G(u, v, 0.3, 0.63, 0.09, 0.08), G(u, v, 0.7, 0.63, 0.09, 0.08));
-  if (i === 1) return Math.max(...N2.spots.map(([a, b]) => G(u, v, a, b, 0.018, 0.018)));
-  if (i === 2) return (G(u, v, 0.5, 0.27, 0.22, 0.05) * (0.5 + 0.5 * Math.sin(v * 160)) ** 3) + Math.max(G(u, v, 0.2, 0.47, 0.03, 0.06), G(u, v, 0.8, 0.47, 0.03, 0.06)) * (0.5 + 0.5 * Math.sin((v - u) * 120)) ** 2;
-  if (i === 3) return Math.max(G(u, v, 0.33, 0.49, 0.08, 0.025), G(u, v, 0.67, 0.49, 0.08, 0.025));
-  return G(u, v, 0.5, 0.55, 0.12, 0.16) * ((Math.sin(u * 400) * Math.sin(v * 430)) > 0.55 ? 1 : 0.15);
+const toA = (u, v) => [AX + u * AW, AY + v * AH];
+function atlasClip() { ctx.beginPath(); ctx.ellipse(AX + 0.5 * AW, AY + 0.52 * AH, 0.5 * AW, 0.48 * AH, 0, 0, Math.PI * 2); ctx.clip(); }
+function drawLayer(i, a) {
+  if (a <= 0.003) return;
+  ctx.save(); atlasClip(); ctx.globalAlpha = a;
+  const blob = (u, v, rx, ry, col, op) => { const [x, y] = toA(u, v); const g = ctx.createRadialGradient(x, y, 0, x, y, rx); g.addColorStop(0, col.replace('A', op)); g.addColorStop(1, col.replace('A', 0)); ctx.save(); ctx.translate(x, y); ctx.scale(1, ry / rx); ctx.translate(-x, -y); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, rx, 0, 6.2832); ctx.fill(); ctx.restore(); };
+  if (i === 0) { blob(0.3, 0.62, 78, 64, 'rgba(194,85,63,A)', 0.55); blob(0.7, 0.62, 78, 64, 'rgba(194,85,63,A)', 0.55); blob(0.5, 0.56, 30, 24, 'rgba(194,85,63,A)', 0.3); }
+  if (i === 1) N2.spots.forEach(([u, v, s]) => blob(u, v, s * 1.6, s * 1.6, 'rgba(107,68,35,A)', 0.8));
+  if (i === 2) {
+    ctx.strokeStyle = '#8A5A2B'; ctx.lineWidth = 1.6; ctx.globalAlpha = a * 0.8;
+    for (let k = 0; k < 4; k++) { ctx.beginPath(); for (let t = 0; t <= 40; t++) { const uu = 0.33 + t / 40 * 0.34, [x, y] = toA(uu, 0.26 + k * 0.022); const yy = y + Math.sin(t * 0.7 + k) * 2.2; t ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); } ctx.stroke(); }
+    [[0.2, 1], [0.8, -1]].forEach(([uu, sgn]) => { for (let k = -1; k <= 1; k++) { const [x, y] = toA(uu, 0.445); ctx.beginPath(); ctx.moveTo(x, y + k * 7); ctx.lineTo(x - sgn * 22, y + k * 13); ctx.stroke(); } });
+  }
+  if (i === 3) { blob(0.326, 0.485, 46, 14, 'rgba(122,115,152,A)', 0.6); blob(0.674, 0.485, 46, 14, 'rgba(122,115,152,A)', 0.6); }
+  if (i === 4) { ctx.fillStyle = '#4A3F36'; ctx.globalAlpha = a * 0.6; ctx.beginPath(); N2.grain.forEach(([u, v]) => { const [x, y] = toA(u, v); ctx.moveTo(x + 1.4, y); ctx.arc(x, y, 1.4, 0, 6.2832); }); ctx.fill(); }
+  ctx.restore();
 }
-const LAYERS = [['Redness', '#C2553F'], ['Pigmentation', '#5E3A1E'], ['Fine lines', '#8A5A2B'], ['Under-eye', '#6F6A8F'], ['Texture', '#3E3832']];
-function frustum(x, y, a, alpha, hl = 0) {
+function frustum(x, y, alpha, hl = 0) {
   if (alpha <= 0.003) return;
-  const dx = HX - x, dy = HY - y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, px = -uy, py = ux;
-  const d = 46, w = 22;
+  const dx = HX - x, dy = HY - y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, px = -uy, py = ux, d = 46, w = 22;
   const c1 = [x + ux * d + px * w, y + uy * d + py * w], c2 = [x + ux * d - px * w, y + uy * d - py * w];
-  poly([[x, y], c1, c2, [x, y]], hl ? K.acc2 : K.acc, hl ? 2.4 : 1.6, alpha);
-  dot(x, y, 3.5, hl ? K.acc2 : K.acc, alpha);
+  poly([[x, y], c1, c2, [x, y]], hl ? K.acc2 : K.acc, hl ? 2.2 : 1.5, alpha);
+  dot(x, y, 3.2, hl ? K.acc2 : K.acc, alpha);
 }
 function rVision(u) {
   renderHeads(u); renderRail(u); clearC();
-  // yaw over time
-  let yaw = 0.45 * Math.sin(Math.PI * P(u, 5.9, 7.7, E.lin)) + 0.32 * P(u, 17.2, 18.2, E.io3);
-  // ---- capture: a silhouette, a moving phone, frames collecting below
-  const kCap = P(u, 0.1, 0.5) * (1 - P(u, 5.7, 6.2));
-  if (kCap > 0) {
-    ctx.save(); ctx.globalAlpha = kCap * (1 - P(u, 3.2, 3.8) * 0.4); ctx.fillStyle = '#EFE6DA'; ctx.beginPath(); ctx.ellipse(HX, HY, 158, 214, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-  }
+  const yaw = 0.38 * Math.sin(Math.PI * P(u, 5.9, 7.7, E.lin)) + 0.25 * P(u, 8.0, 8.6, E.io3) * (1 - P(u, 10.5, 11.2, E.io3)) + 0.35 * P(u, 17.2, 18.2, E.io3);
+  const kA = P(u, 10.6, 11.8, E.io3) * (1 - P(u, 16.4, 17.4, E.io3));
+  const vw = V3(yaw, HX, HY, HS, kA, AX, AY, AW, AH);
+  // the subject, as a faint outline while it is captured
+  const ghost = P(u, 0.1, 0.5) * (1 - P(u, 5.8, 6.4));
+  maskOutline(V3(0, HX, HY, HS), '#A8927A', 1.4, ghost * 0.7);
+  H3.feat.forEach(f => strokeLines([f], V3(0, HX, HY, HS), '#A8927A', 1.2, ghost * 0.5));
+  // orbit, phone and frames
+  const orb = P(u, 0.3, 0.6) * (1 - P(u, 5.9, 6.5));
+  if (orb > 0) { ctx.save(); ctx.globalAlpha = orb * 0.45; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.4; ctx.setLineDash([3, 7]); ctx.beginPath(); ctx.ellipse(HX, HY, 400, 150, 0, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke(); ctx.restore(); }
   const kp = P(u, 0.4, 2.5, E.io3), phOp = P(u, 0.3, 0.5) * (1 - P(u, 2.6, 3.0));
   if (phOp > 0) {
     const a = lerp(-1.05, 1.05, kp), x = HX + 400 * Math.sin(a), y = HY + 150 * Math.cos(a);
-    ctx.save(); ctx.globalAlpha = phOp; ctx.translate(x, y); ctx.rotate(-a * 0.5); ctx.fillStyle = '#2A2520'; rr(-30, -54, 60, 108, 12); ctx.fill(); ctx.fillStyle = '#4A433C'; rr(-25, -46, 50, 92, 8); ctx.fill(); dot(0, -40, 4, '#9A9087', 1); ctx.restore();
+    ctx.save(); ctx.globalAlpha = phOp; ctx.translate(x, y); ctx.rotate(-a * 0.5);
+    ctx.shadowColor = 'rgba(40,25,10,.25)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6; ctx.fillStyle = '#2A2520'; rr(-28, -52, 56, 104, 12); ctx.fill(); ctx.shadowColor = 'transparent';
+    ctx.fillStyle = '#3E3832'; rr(-23, -45, 46, 90, 8); ctx.fill(); dot(0, -38, 3.5, '#9A9087', 1); ctx.restore();
   }
-  const orb = P(u, 0.3, 0.6) * (1 - P(u, 5.9, 6.5));
-  if (orb > 0) { ctx.save(); ctx.globalAlpha = orb * 0.5; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.5; ctx.setLineDash([4, 7]); ctx.beginPath(); ctx.ellipse(HX, HY, 400, 150, 0, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke(); ctx.restore(); }
   const stripA = P(u, 0.4, 0.7) * (1 - P(u, 3.0, 3.5));
   if (stripA > 0) {
     N2.cams.forEach((c, i) => {
       const k = P(kp, i / 11 - 0.02, i / 11 + 0.04); if (k <= 0) return;
-      const x = 245 + i * 80, y = 792;
-      ctx.save(); ctx.globalAlpha = stripA * k; ctx.fillStyle = '#fff'; rr(x, y, 70, 46, 8); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.15)'; ctx.lineWidth = 1; rr(x, y, 70, 46, 8); ctx.stroke();
-      ctx.fillStyle = '#E9DCCB'; ctx.beginPath(); ctx.ellipse(x + 35 - Math.sin(c.a) * 12, y + 24, 13, 17, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      const x = 245 + i * 80, y = 796;
+      ctx.save(); ctx.globalAlpha = stripA * k; ctx.fillStyle = '#fff'; rr(x, y, 70, 46, 8); ctx.fill(); ctx.strokeStyle = 'rgba(31,27,22,.14)'; ctx.lineWidth = 1; rr(x, y, 70, 46, 8); ctx.stroke();
+      ctx.strokeStyle = '#B9A58C'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(x + 35 - Math.sin(c.a) * 11, y + 23, 11, 15, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
     });
-    // device motion, time-synced
-    ctx.save(); ctx.globalAlpha = stripA; ctx.strokeStyle = K.acc2; ctx.lineWidth = 2; ctx.beginPath();
-    for (let x = 245; x <= 245 + 950 * kp; x += 4) { const t = (x - 245) / 950, y = 768 + 9 * Math.sin(t * 19) * Math.cos(t * 5) + 4 * Math.sin(t * 53); x === 245 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.save(); ctx.globalAlpha = stripA; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.6; ctx.beginPath();
+    for (let x = 245; x <= 245 + 950 * kp; x += 4) { const t = (x - 245) / 950, y = 772 + 8 * Math.sin(t * 19) * Math.cos(t * 5) + 3.5 * Math.sin(t * 53); x === 245 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
     ctx.stroke(); ctx.restore();
-    caps('DEVICE MOTION', 245, 748, stripA * 0.9);
+    caps('DEVICE MOTION', 245, 752, stripA * 0.9);
   }
-  // ---- poses: frustums around the face and a sparse point cloud
-  const fr = P(u, 3.2, 3.8) * (1 - P(u, 6.2, 6.9)) + P(u, 17.5, 17.9) * 0.9;
-  N2.cams.forEach((c, i) => { const isTri = [2, 6, 9].includes(i); const a = u > 17 ? (isTri ? fr : 0) : fr * P(u, 3.2 + i * 0.05, 3.5 + i * 0.05); frustum(c.x, c.y, c.a, a, u < 6 && i === 4 ? P(u, 4.4, 4.6) : u > 17 ? 1 : 0); });
-  if (u > 4.3 && u < 5.8) { const c = N2.cams[4]; txt('intrinsics', c.x - 64, c.y - 56, '600 14px Inter', K.acc, P(u, 4.5, 4.8) * (1 - P(u, 5.5, 5.8))); txt('6-DoF pose', c.x - 64, c.y - 36, '600 14px Inter', K.acc, P(u, 4.6, 4.9) * (1 - P(u, 5.5, 5.8))); }
+  // poses: frustums and a sparse cloud
+  const fr = P(u, 3.2, 3.8) * (1 - P(u, 6.2, 6.9));
+  N2.cams.forEach((c, i) => frustum(c.x, c.y, fr * P(u, 3.2 + i * 0.05, 3.5 + i * 0.05), i === 4 ? P(u, 4.4, 4.6) : 0));
+  if (u > 4.3 && u < 5.9) { const c = N2.cams[4]; txt('intrinsics', c.x - 70, c.y + 64, '600 14px Inter', K.acc, P(u, 4.5, 4.8) * (1 - P(u, 5.5, 5.8))); txt('6-DoF pose', c.x - 70, c.y + 84, '600 14px Inter', K.acc, P(u, 4.6, 4.9) * (1 - P(u, 5.5, 5.8))); }
   const spA = P(u, 3.4, 4.6) * (1 - P(u, 6.4, 7.0));
   if (spA > 0) {
-    N2.sparse.forEach((p, i) => { const q = proj(p.s, 0); if (q[3] < 0) return; dot(q[0], q[1], 2.2, K.ink2, spA * P(u, 3.4 + p.d * 1.0, 3.6 + p.d * 1.0)); });
+    ctx.save(); ctx.fillStyle = K.ink; ctx.beginPath(); let any = false;
+    N2.sparse.forEach(p => { if (P(u, 3.4 + p.d * 1.0, 3.6 + p.d * 1.0) < 0.5) return; const q = P3(p, 0, HX, HY, HS); if (q[3] < 0.05) return; ctx.moveTo(q[0] + 2, q[1]); ctx.arc(q[0], q[1], 2, 0, 6.2832); any = true; });
+    ctx.globalAlpha = spA * 0.8; if (any) ctx.fill(); ctx.restore();
     const ray = win(u, 4.0, 4.3, 5.1, 5.5);
-    if (ray > 0) [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; for (let k = 0; k < 6; k++) { const q = proj(N2.sparse[ci * 7 + k * 11].s, 0); poly([[c.x, c.y], [q[0], q[1]]], K.acc2, 1, ray * 0.45); } });
+    if (ray > 0) [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; for (let k = 0; k < 5; k++) { const q = P3(N2.sparse[ci * 7 + k * 13], 0, HX, HY, HS); poly([[c.x, c.y], [q[0], q[1]]], K.acc2, 1, ray * 0.4); } });
   }
-  // ---- splats: reconstruct, canonical, atlas, analyze, lift
-  const kS = P(u, 5.8, 7.3), kA = P(u, 10.6, 11.8, E.io3) * (1 - P(u, 16.4, 17.4, E.io3));
-  if (kS > 0) {
-    const L = [-0.45, 0.5, 0.75];
-    const pts = N2.pts.map(p => { const q = proj(p.s, yaw); return [p, q]; }).sort((a, b) => a[1][2] - b[1][2]);
-    const lay = u > 12.8 && u < 16.6 ? LAYERS.map((_, i) => win(u, 13.0 + i * 0.42, 13.12 + i * 0.42, 13.3 + (i + 1) * 0.42, 13.42 + (i + 1) * 0.42) * (1 - P(u, 16.2, 16.5))) : null;
-    // a soft skin underlay closes the gaps between splats
-    ctx.globalAlpha = 1; ctx.fillStyle = 'rgb(206,166,140)'; ctx.beginPath();
-    pts.forEach(([p, q]) => { if (P(kS, p.d * 0.85, p.d * 0.85 + 0.15) < 0.95 || (q[3] < -0.05 && kA < 0.5)) return; const x = lerp(q[0], AX + p.u * AW, kA), y = lerp(q[1], AY + p.v * AH, kA), rr0 = lerp(5.5, p.ar + 1.2, kA); ctx.moveTo(x + rr0, y); ctx.arc(x, y, rr0, 0, 6.2832); });
-    ctx.fill();
-    pts.forEach(([p, q]) => {
-      const a = kS > 0.999 ? 1 : P(kS, p.d * 0.85, p.d * 0.85 + 0.15);
-      if (a <= 0) return;
-      if (q[3] < -0.05 && kA < 0.5) return;
-      const ax = AX + p.u * AW, ay = AY + p.v * AH;
-      const x = lerp(q[0], ax, kA), y = lerp(q[1], ay, kA);
-      const dd = q[4] * L[0] + p.s.ny * L[1] + q[3] * L[2], sh = 0.5 + 0.55 * Math.max(0, dd) + 0.08 * Math.pow(Math.max(0, dd), 12), shade = lerp(sh, 1, kA);
-      let c = p.a.map(v => v * shade);
-      if (lay) lay.forEach((w, i) => { if (w > 0) { const f = layerVal(i, p.u, p.v) * w; if (f > 0.02) { const lc = rgb(LAYERS[i][1]); c = c.map((v, k) => v * (1 - 0.85 * f) + lc[k] * 0.85 * f); } } });
-      ctx.globalAlpha = a; ctx.fillStyle = `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})`;
-      ctx.beginPath(); ctx.arc(x, y, lerp(3.8, p.ar, kA), 0, 6.2832); ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-    // counter
-    const n = Math.round(P(u, 5.9, 7.4, E.out3) * 1000) * 1000;
-    txt(`≈ ${n.toLocaleString('en-US')}`, 1320, 318, '600 26px "JetBrains Mono"', K.ink, P(u, 5.9, 6.2) * (1 - P(u, 8.0, 8.3)), 'right');
-    txt('primitives, on Apple Silicon', 1320, 344, '500 15px Inter', K.ink2, P(u, 5.9, 6.2) * (1 - P(u, 8.0, 8.3)), 'right');
-  }
-  // canonical mesh: UV grid lines and landmarks
-  const kM = P(u, 8.2, 9.2) * (1 - P(u, 12.9, 13.3)), kL = P(u, 8.5, 8.9) * (1 - P(u, 10.5, 10.9));
-  if (kM > 0) {
-    const pt = (uu, vv) => { const q = proj(surf(uu, vv), yaw); return [lerp(q[0], AX + uu * AW, kA), lerp(q[1], AY + vv * AH, kA)]; };
-    for (let i = 1; i < 14; i++) { const uu = i / 14, seg = []; for (let k = 0; k <= 40; k++) { const vv = k / 40; if (uvIn(uu, vv) && k / 40 <= kM * 1.2) seg.push(pt(uu, vv)); } if (seg.length > 1) poly(seg, K.acc, 1, 0.5); }
-    for (let i = 1; i < 16; i++) { const vv = i / 16, seg = []; if (vv > kM * 1.2) continue; for (let k = 0; k <= 40; k++) { const uu = k / 40; if (uvIn(uu, vv)) seg.push(pt(uu, vv)); } if (seg.length > 1) poly(seg, K.acc, 1, 0.5); }
-    const LM = [[0.25, 0.2], [0.55, 0.2], [-0.25, 0.2], [-0.55, 0.2], [0, -0.04], [0.23, -0.45], [-0.23, -0.45], [0, -1.02], [0, 0.36]];
-    LM.forEach(([th, ph], i) => { const uu = th / 2.3 + 0.5, vv = 0.52 - ph / 2.5; const [x, y] = pt(uu, vv); const k = P(u, 8.5 + i * 0.05, 8.75 + i * 0.05, E.back) * (1 - P(u, 10.5, 10.9)); dot(x, y, 7 * clamp(k), '#fff', k); dot(x, y, 4.5 * clamp(k), K.acc2, k); });
-    const sb = P(u, 9.2, 9.6) * (1 - P(u, 10.4, 10.7));
-    if (sb > 0) { poly([[930, 470], [930, 470 + 160 * sb]], K.ink, 2.5, sb); for (let t = 0; t <= 10; t++) poly([[930, 470 + t * 16 * sb], [t % 5 ? 937 : 942, 470 + t * 16 * sb]], K.ink, 1.5, sb); txt('10 mm', 952, 556, '600 16px Inter', K.ink, sb); txt('calibrated', 952, 576, '400 14px Inter', K.ink2, sb); }
-  }
+  // reconstruction as stipple, then the mesh, the flat map, and back
+  const kS = P(u, 5.8, 7.3), sA = 1 - 0.35 * P(u, 8.1, 8.5) * (1 - P(u, 16.4, 17.0)) - 0.3 * P(u, 17.0, 17.4);
+  if (kA > 0) { ctx.save(); ctx.globalAlpha = kA; ctx.shadowColor = 'rgba(70,45,20,0.10)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14; ctx.fillStyle = '#fff'; rr(AX - 24, AY - 18, AW + 48, AH + 36, 18); ctx.fill(); ctx.restore(); }
+  if (kS > 0) lattice(vw, sA * (1 - 0.25 * kA), kS, lerp(1.9, 1.8, kA));
+  const kM = P(u, 8.2, 9.2), mA = kM * (1 - P(u, 12.9, 13.3) * 0.6);
+  strokeLines(H3.rows, vw, K.acc2, 1, 0.6 * mA, kM);
+  strokeLines(H3.cols, vw, K.acc2, 1, 0.5 * mA * (1 - P(u, 16.4, 16.9)), kM);
+  H3.feat.forEach(f => strokeLines([f], vw, K.ink, 1.3, 0.55 * P(u, 8.6, 9.0) * (u < 17 ? 1 : 0.6)));
+  maskOutline(vw, K.acc, 1.4, P(u, 10.7, 11.4) * (1 - P(u, 16.4, 16.9)));
+  const LM = [[0.25, 0.2], [0.55, 0.2], [-0.25, 0.2], [-0.55, 0.2], [0, -0.04], [0.23, -0.45], [-0.23, -0.45], [0, -1.02], [0, 0.36]];
+  LM.forEach(([th, ph], i) => { const p = withNormal(th / 2.3 + 0.5, 0.52 - ph / 2.5), q = at(p, vw), k = P(u, 8.5 + i * 0.05, 8.75 + i * 0.05, E.back) * (1 - P(u, 10.5, 10.9)); if (k <= 0) return; dot(q[0], q[1], 6.5 * clamp(k), '#fff', k); dot(q[0], q[1], 4 * clamp(k), K.acc2, k); });
+  const sb = P(u, 9.2, 9.6) * (1 - P(u, 10.4, 10.7));
+  if (sb > 0) { poly([[940, 470], [940, 470 + 160 * sb]], K.ink, 2, sb); for (let t = 0; t <= 10; t++) poly([[940, 470 + t * 16 * sb], [t % 5 ? 946 : 951, 470 + t * 16 * sb]], K.ink, 1.3, sb); txt('10 mm', 962, 556, '600 16px Inter', K.ink, sb); txt('calibrated', 962, 576, '400 14px Inter', K.ink2, sb); }
+  const cnt = P(u, 5.9, 6.2) * (1 - P(u, 8.0, 8.3));
+  txt(`≈ ${(Math.round(P(u, 5.9, 7.4, E.out3) * 1000) * 1000).toLocaleString('en-US')}`, 1320, 318, '600 26px "JetBrains Mono"', K.ink, cnt, 'right');
+  txt('primitives, on Apple Silicon', 1320, 344, '500 15px Inter', K.ink2, cnt, 'right');
   // atlas notes
   const an = P(u, 11.6, 12.0) * (1 - P(u, 12.8, 13.0));
-  caps('SKIN ATLAS', AX, 282, P(u, 11.3, 11.7) * (1 - P(u, 16.3, 16.6)));
-  txt('0.07 mm per texel', 1010, 470, '600 18px Inter', K.ink, an); txt('Each patch of skin appears once', 1010, 496, '400 15px Inter', K.ink2, an);
-  txt('Lighting separated from color', 1010, 540, '600 18px Inter', K.ink, an); txt('A flat map for color, a detail map for structure', 1010, 566, '400 15px Inter', K.ink2, an);
-  // analyze: legend of layers, then lesions
+  caps('SKIN ATLAS', AX - 24, 266, P(u, 11.3, 11.7) * (1 - P(u, 16.3, 16.6)));
+  txt('0.07 mm per texel', 1030, 470, '600 18px Inter', K.ink, an); txt('Each patch of skin appears once', 1030, 496, '400 15px Inter', K.ink2, an);
+  txt('Lighting separated from color', 1030, 540, '600 18px Inter', K.ink, an); txt('A flat map for color, a detail map for structure', 1030, 566, '400 15px Inter', K.ink2, an);
+  // analyze: five layers in turn, then lesions
+  const lw = i => win(u, 13.0 + i * 0.42, 13.15 + i * 0.42, 13.3 + (i + 1) * 0.42, 13.45 + (i + 1) * 0.42);
+  LAYERS.forEach((_, i) => drawLayer(i, lw(i) * (1 - P(u, 16.2, 16.5))));
   const lg = P(u, 12.9, 13.2) * (1 - P(u, 16.2, 16.5));
   if (lg > 0) {
-    caps('FIVE LAYERS', 1010, 330, lg); txt('each against the face’s own median', 1010, 352, '400 14px Inter', K.ink2, lg);
-    LAYERS.forEach(([n, col], i) => { const on = win(u, 13.0 + i * 0.42, 13.12 + i * 0.42, 13.3 + (i + 1) * 0.42, 13.42 + (i + 1) * 0.42); const y = 392 + i * 34; dot(1018, y - 5, 7, col, lg * (0.35 + 0.65 * Math.max(on, P(u, 15.1, 15.3)))); txt(n, 1036, y, (on > 0.5 ? '600' : '500') + ' 16px Inter', on > 0.5 ? K.ink : K.ink2, lg); });
-    const ll = P(u, 15.1, 15.3);
-    caps('LESIONS', 1010, 590, lg * ll);
-    txt('Proposal: generous', 1010, 616, '500 15px Inter', K.ink2, lg * P(u, 15.15, 15.35));
-    txt('Scoring: strict', 1010, 640, '500 15px Inter', K.ink2, lg * P(u, 15.55, 15.75));
-    txt('Pores are the hard case', 1010, 664, '500 15px Inter', K.ink2, lg * P(u, 15.7, 15.9));
+    caps('FIVE LAYERS', 1030, 330, lg); txt('each against the face’s own median', 1030, 352, '400 14px Inter', K.ink2, lg);
+    LAYERS.forEach(([n, col], i) => { const on = lw(i), y = 392 + i * 34; dot(1038, y - 5, 7, col, lg * (0.3 + 0.7 * Math.max(on, P(u, 15.1, 15.3)))); txt(n, 1056, y, (on > 0.5 ? '600' : '500') + ' 16px Inter', on > 0.5 ? K.ink : K.ink2, lg); });
+    caps('LESIONS', 1030, 590, lg * P(u, 15.1, 15.3));
+    txt('Proposal: generous', 1030, 616, '500 15px Inter', K.ink2, lg * P(u, 15.15, 15.35));
+    txt('Scoring: strict', 1030, 640, '500 15px Inter', K.ink2, lg * P(u, 15.55, 15.75));
+    txt('Pores are the hard case', 1030, 664, '500 15px Inter', K.ink2, lg * P(u, 15.7, 15.9));
   }
-  const kp1 = P(u, 15.15, 15.45), kp2 = P(u, 15.55, 15.85);
+  const kp1 = P(u, 15.15, 15.45), kp2 = P(u, 15.55, 15.85), gone = 1 - P(u, 16.3, 16.6);
   if (kp1 > 0) N2.cand.forEach((c, i) => {
-    const q = proj(c.s, yaw), x = lerp(q[0], AX + c.u * AW, kA), y = lerp(q[1], AY + c.v * AH, kA);
-    const vis = P(kp1, i / 26 * 0.7, i / 26 * 0.7 + 0.3);
-    if (c.kind === 'drop') { poly([[x - 9, y], [x + 9, y]], 'rgba(0,0,0,0)', 1, 0); ctx.save(); ctx.globalAlpha = vis * (1 - kp2) * 0.8; ctx.strokeStyle = K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); ctx.restore(); return; }
-    if (c.kind === 'pore') { ctx.save(); ctx.globalAlpha = vis * (1 - 0.5 * kp2) * (1 - P(u, 16.3, 16.6)); ctx.strokeStyle = kp2 > 0.5 ? K.ink3 : K.ink2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); if (kp2 > 0.5) { poly([[x - 5, y - 5], [x + 5, y + 5]], K.ink3, 1.5, kp2 * (1 - P(u, 16.3, 16.6))); poly([[x + 5, y - 5], [x - 5, y + 5]], K.ink3, 1.5, kp2 * (1 - P(u, 16.3, 16.6))); txt('pore', x + 13, y + 5, '500 12px Inter', K.ink3, kp2 * (1 - P(u, 16.3, 16.6))); } ctx.restore(); return; }
-    const pin = P(u, 16.6, 17.2);
-    ctx.save(); ctx.globalAlpha = vis; ctx.strokeStyle = kp2 > 0.5 ? K.warn : K.ink2; ctx.lineWidth = kp2 > 0.5 ? 2.5 : 1.5; ctx.beginPath(); ctx.arc(x, y, 9 + kp2, 0, 6.2832); ctx.stroke(); ctx.restore();
-    if (kp2 > 0.5) txt(c.kind === 'acne' ? 'acne' : 'post-acne mark', x + 14, y + 5, '600 12px Inter', K.warn, kp2 * (1 - P(u, 16.3, 16.6)));
-    if (pin > 0) dot(x, y, 4, K.warn, pin);
+    const q = at(c, vw), x = q[0], y = q[1], vis = P(kp1, i / 26 * 0.7, i / 26 * 0.7 + 0.3);
+    if (q[3] < 0.05) return;
+    ctx.save(); ctx.lineWidth = 1.5;
+    if (c.kind === 'drop') { ctx.globalAlpha = vis * (1 - kp2) * 0.8; ctx.strokeStyle = K.ink2; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); ctx.restore(); return; }
+    if (c.kind === 'pore') { ctx.globalAlpha = vis * (1 - 0.45 * kp2) * gone; ctx.strokeStyle = kp2 > 0.5 ? K.ink3 : K.ink2; ctx.beginPath(); ctx.arc(x, y, 9, 0, 6.2832); ctx.stroke(); ctx.restore(); if (kp2 > 0.5) { poly([[x - 5, y - 5], [x + 5, y + 5]], K.ink3, 1.4, kp2 * gone); poly([[x + 5, y - 5], [x - 5, y + 5]], K.ink3, 1.4, kp2 * gone); txt('pore', x + 13, y + 5, '500 12px Inter', K.ink3, kp2 * gone); } return; }
+    ctx.globalAlpha = vis; ctx.strokeStyle = kp2 > 0.5 ? K.warn : K.ink2; ctx.lineWidth = kp2 > 0.5 ? 2.4 : 1.5; ctx.beginPath(); ctx.arc(x, y, 9 + kp2, 0, 6.2832); ctx.stroke(); ctx.restore();
+    if (kp2 > 0.5) txt(c.kind === 'acne' ? 'acne' : 'post-acne mark', x + 14, y + 5, '600 12px Inter', K.warn, kp2 * gone);
+    dot(x, y, 3.5, K.warn, P(u, 16.6, 17.2));
   });
   // lift: rays from three cameras to one lesion
-  const tr = P(u, 17.6, 18.0);
+  const tr = P(u, 17.6, 18.0), fr2 = P(u, 17.4, 17.8);
+  [2, 6, 9].forEach(ci => frustum(N2.cams[ci].x, N2.cams[ci].y, fr2, 1));
   if (tr > 0) {
-    const c0 = N2.cand[0], q = proj(c0.s, yaw);
-    [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; poly([[c.x, c.y], [lerp(c.x, q[0], tr), lerp(c.y, q[1], tr)]], K.warn, 1.6, 0.8); });
-    txt('Triangulated into 3D', 1010, 470, '600 18px Inter', K.ink, P(u, 17.8, 18.1)); txt('sub-2-pixel median placement', 1010, 496, '400 15px Inter', K.ink2, P(u, 17.9, 18.2));
-    txt('A stable address, session to session', 1010, 540, '600 18px Inter', K.ink, P(u, 18.1, 18.4));
+    const q = at(N2.cand[0], vw);
+    [2, 6, 9].forEach(ci => { const c = N2.cams[ci]; poly([[c.x, c.y], [lerp(c.x, q[0], tr), lerp(c.y, q[1], tr)]], K.warn, 1.5, 0.75); });
+    txt('Triangulated into 3D', 1030, 470, '600 18px Inter', K.ink, P(u, 17.8, 18.1)); txt('sub-2-pixel median placement', 1030, 496, '400 15px Inter', K.ink2, P(u, 17.9, 18.2));
+    txt('A stable address, session to session', 1030, 540, '600 18px Inter', K.ink, P(u, 18.1, 18.4));
   }
   footnote('An illustration of the pipeline, which runs end to end on real captures.');
 }
