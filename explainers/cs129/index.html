@@ -1,0 +1,574 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>CS 129 walkthrough</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+  :root { --acc: #A8295F; --acc2: #D0558A; --acc3: #F4C6DA; --teal: #D0558A; --ink: #141316; --ink2: #5E5C64; --ink3: #6B7280; }
+  html, body { margin: 0; background: #fff; overflow: hidden; }
+  #stage { position: relative; width: 1440px; height: 900px; overflow: hidden; font-family: Inter, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .bgfill { position: absolute; inset: 0; background: #FFFFFF; }
+  .o { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 18px 48px rgba(30,24,36,.09); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  #cv { position: absolute; left: 0; top: 0; width: 1440px; height: 900px; z-index: 5; pointer-events: none; }
+  #heads { position: absolute; left: 120px; top: 134px; width: 1200px; z-index: 6; }
+  .head { position: absolute; left: 0; top: 0; width: 1200px; }
+  .head h1 { margin: 0; font: 600 46px/1.08 Inter, sans-serif; letter-spacing: -0.03em; }
+  .head p { margin: 14px 0 0; font: 400 22px/1.4 Inter, sans-serif; color: var(--ink2); }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+  .w > span { display: inline-block; }
+  #rail { position: absolute; left: 120px; top: 40px; display: flex; gap: 26px; z-index: 6; }
+  .grp { display: flex; flex-direction: column; gap: 10px; }
+  .grp > i { font: 600 12.5px/1 Inter; letter-spacing: 0.14em; color: var(--ink3); font-style: normal; padding-bottom: 9px; border-bottom: 1.5px solid rgba(168,41,95,.3); white-space: nowrap; }
+  .grp > div { display: flex; gap: 8px; }
+  .pill { position: relative; margin: 0; box-sizing: content-box; -webkit-appearance: none; appearance: none; height: 38px; padding: 0 17px; border-radius: 19px; background: #fff; border: 1px solid rgba(168,41,95,.4); font: 500 17px/38px Inter, sans-serif; color: #6B7280; overflow: hidden; white-space: nowrap; cursor: default; }
+  .pill b { position: absolute; inset: 0; background: var(--acc); opacity: 0; }
+  .pill span { position: relative; }
+  .kick { display: flex; align-items: center; gap: 10px; font: 600 13px/1 Inter; letter-spacing: 0.16em; color: var(--acc); z-index: 6; }
+  .kick i { width: 8px; height: 8px; border-radius: 50%; background: var(--acc); }
+  #cursor { position: absolute; left: 0; top: 0; width: 26px; height: 26px; z-index: 8; opacity: 0; }
+  .ring { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 2px solid var(--acc); opacity: 0; z-index: 8; }
+  #clipFade { z-index: 9; }
+
+  /* arch */
+  .quiz { width: 720px; overflow: hidden; }
+  .qbar { height: 54px; display: flex; align-items: center; gap: 8px; padding: 0 22px; border-bottom: 1px solid #EEF0F3; }
+  .qbar > i { width: 11px; height: 11px; border-radius: 50%; background: #E3E5EA; }
+  .qbar > b { margin-left: 12px; font: 600 16px Inter; }
+  .prog { margin-left: auto; width: 170px; height: 6px; border-radius: 3px; background: #EEF0F3; overflow: hidden; }
+  .prog > em { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; transform: scaleX(0); }
+  .qb { padding: 30px 40px 38px; }
+  .qq + .qq { margin-top: 28px; }
+  .qq > p { margin: 0 0 14px; font: 600 20px/1.25 Inter; }
+  .chips { display: flex; gap: 10px; }
+  .chip, .fly { position: relative; display: inline-flex; align-items: center; height: 46px; padding: 0 16px; border-radius: 23px; border: 1.5px solid #D5DAE3; background: #fff; font: 500 17px/1 Inter; color: #3B4A63; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
+  .chip b { position: absolute; inset: -1.5px; background: var(--acc); opacity: 0; }
+  .chip span { position: relative; }
+  .fly { position: absolute; background: var(--acc); border-color: var(--acc); color: #fff; z-index: 4; }
+  .prof { width: 440px; padding: 22px 30px 14px; box-sizing: border-box; }
+  .cap { margin: 0 0 12px; font: 600 13px/1 Inter; letter-spacing: 0.14em; color: var(--ink3); }
+  .pr { position: relative; display: flex; align-items: center; min-height: 56px; border-top: 1px solid #EEF0F3; }
+  .pr > s { position: absolute; inset: 4px -14px; border-radius: 10px; background: rgba(17,60,123,.07); opacity: 0; }
+  .pr > span { position: relative; width: 96px; flex: none; font: 500 18px Inter; color: var(--ink2); }
+  .pr > div { position: relative; display: flex; gap: 8px; }
+  .tag { font: 500 16px/1 'JetBrains Mono'; font-style: normal; color: var(--acc); background: #EEF2F8; border-radius: 8px; padding: 9px 11px; opacity: 0; }
+  .qry { width: 880px; height: 240px; padding: 20px 26px; box-sizing: border-box; overflow: hidden; }
+  .qt { margin: 0; font: 500 20px/33px 'JetBrains Mono'; color: var(--ink); }
+  .pre { margin: 0; font: 500 17px/30px 'JetBrains Mono'; color: var(--teal); }
+  .caret { display: inline-block; width: 2px; height: 22px; background: var(--ink); vertical-align: -4px; margin-left: 1px; }
+  .model { width: 460px; height: 170px; box-sizing: border-box; padding: 24px 30px; border-radius: 18px; background: #17161A; color: #fff; }
+  .model .cap { color: #6FD0D3; }
+  .model b { display: block; font: 600 34px/1.1 Inter; letter-spacing: -0.02em; }
+  .model span { display: block; margin-top: 12px; font: 500 16px 'JetBrains Mono'; color: #9AA3B5; }
+  .vnum { font: 500 20px 'JetBrains Mono'; color: var(--ink2); white-space: nowrap; }
+  .vlab { width: 300px; text-align: right; font: 500 18px Inter; color: var(--ink2); }
+  .glab { width: 190px; text-align: right; font: 400 18px/22px Inter; color: var(--ink2); white-space: nowrap; }
+  .glab b { color: var(--ink); font-weight: 600; margin-right: 8px; }
+  .clab { font: 500 18px Inter; color: var(--ink2); white-space: nowrap; }
+  .frame { width: 1240px; height: 600px; border-radius: 16px; background: #F1F2F4; box-shadow: 0 30px 80px rgba(30,24,36,.14); overflow: hidden; }
+  .fbar { height: 44px; background: #fff; display: flex; align-items: center; gap: 8px; padding: 0 18px; border-bottom: 1px solid #E7E9EE; }
+  .fbar i { width: 11px; height: 11px; border-radius: 50%; background: #E3E5EA; }
+  .fbar span { margin-left: 16px; font: 500 15px Inter; color: #8A8F9C; background: #F3F4F6; padding: 6px 14px; border-radius: 8px; }
+  .rrow { position: absolute; left: 0; width: 1200px; height: 44px; box-sizing: border-box; padding: 0 22px 0 64px; display: flex; align-items: center; gap: 18px; background: #fff; border-radius: 12px; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); }
+  .rrow b { font: 600 19px Inter; white-space: nowrap; }
+  .rrow > span { flex: 1; min-width: 0; font: 400 16px Inter; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .th { display: flex; gap: 16px; color: #8A8F9C; opacity: 0; }
+  .th svg { width: 22px; height: 22px; display: block; }
+
+  /* score */
+  .fcard { width: 1200px; height: 92px; display: flex; align-items: center; justify-content: center; gap: 14px; font: 500 26px Inter; color: var(--ink); }
+  .fcard > b { font-weight: 600; }
+  .slot { position: relative; width: 150px; height: 56px; border-radius: 12px; border: 2px dashed #C9D1DE; box-sizing: border-box; }
+  .slot em, .slot strong { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .slot em { font: 400 20px Inter; font-style: normal; color: var(--ink3); }
+  .slot strong { font: 600 28px 'JetBrains Mono'; color: var(--acc); opacity: 0; }
+  .slot u { position: absolute; left: 13px; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; opacity: 0; }
+  .tot { font: 600 30px 'JetBrains Mono'; color: var(--acc); opacity: 0; white-space: nowrap; }
+  .comp p { margin: 0; white-space: nowrap; }
+  .comp .lab { font: 500 19px Inter; color: var(--ink2); }
+  .comp .big { font: 600 56px/1.1 'JetBrains Mono'; margin-top: 6px; }
+  .comp .mid { font: 500 34px/1.2 'JetBrains Mono'; margin-top: 30px; }
+  .comp .mid span { font: 400 18px Inter; color: var(--ink2); margin-left: 12px; }
+  .comp .res { font: 600 64px/1.1 'JetBrains Mono'; color: var(--acc); margin-top: 30px; }
+  .comp > * { opacity: 0; }
+  .flyv { font: 600 28px 'JetBrains Mono'; color: var(--acc); z-index: 7; white-space: nowrap; }
+  .rule { position: absolute; left: 0; width: 640px; height: 52px; box-sizing: border-box; padding: 0 16px 0 22px; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 12px; border: 1.5px solid transparent; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); font: 500 18px Inter; }
+  .rule > span { flex: 1; white-space: nowrap; }
+  .rule s { text-decoration: none; font: 600 12px/1 Inter; letter-spacing: 0.1em; color: var(--acc); background: #EEF2F8; padding: 7px 9px; border-radius: 6px; opacity: 0; }
+  .rule b { font: 500 18px 'JetBrains Mono'; color: var(--ink3); width: 64px; text-align: right; }
+  .rule i { width: 26px; height: 26px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; opacity: 0; flex: none; }
+  .meter { width: 420px; }
+  .meter > p { margin: 0 0 16px; font: 500 19px Inter; color: var(--ink2); }
+  .track { position: relative; height: 28px; border-radius: 14px; background: #E4E7EE; }
+  .seg { position: absolute; top: 0; height: 28px; transform-origin: 0 50%; transform: scaleX(0); }
+  .capl { position: absolute; right: -2px; top: -12px; width: 3px; height: 52px; border-radius: 2px; background: var(--ink); }
+  .capt { position: absolute; right: -2px; top: -40px; font: 500 16px Inter; color: var(--ink2); white-space: nowrap; }
+  .mval { margin-top: 34px; font: 600 64px/1 'JetBrains Mono'; color: var(--acc); }
+  .mval span { opacity: 0; }
+  .bk { position: absolute; left: 0; width: 440px; height: 52px; box-sizing: border-box; padding: 0 22px; display: flex; align-items: center; justify-content: space-between; background: #fff; border-radius: 12px; border: 1.5px solid transparent; box-shadow: 0 1px 2px rgba(20,19,22,.05), 0 6px 18px rgba(30,24,36,.05); font: 500 18px Inter; color: var(--ink2); }
+  .bk b { font: 600 20px 'JetBrains Mono'; color: var(--ink); }
+  .prods p { margin: 0 0 20px; font: 500 30px/1.2 'JetBrains Mono'; display: flex; align-items: center; gap: 16px; white-space: nowrap; opacity: 0; }
+  .prods i { width: 16px; height: 16px; border-radius: 4px; }
+  .prods b { color: var(--acc); }
+  .sbar { width: 1120px; height: 44px; border-radius: 12px; background: #E4E7EE; position: relative; overflow: hidden; }
+  .sseg { position: absolute; top: 0; height: 100%; transform-origin: 0 50%; transform: scaleX(0); }
+  .tick { position: absolute; top: 0; width: 2px; height: 16px; background: #B5BCC9; }
+  .tickl { position: absolute; top: 24px; font: 500 17px Inter; color: var(--ink2); white-space: nowrap; transform: translateX(-50%); }
+  .mark { font: 600 26px 'JetBrains Mono'; color: var(--acc); white-space: nowrap; }
+  .badge { font: 600 18px/1 Inter; color: #fff; background: var(--acc); padding: 11px 16px; border-radius: 22px; white-space: nowrap; }
+
+  /* etl */
+  .tbl { width: 1200px; height: 560px; overflow: hidden; }
+  .thd { position: relative; z-index: 2; height: 48px; display: flex; align-items: center; padding: 0 24px; background: #F6F7F9; font: 600 13px Inter; letter-spacing: 0.12em; color: var(--ink3); border-radius: 18px 18px 0 0; }
+  .tb { position: absolute; left: 0; top: 48px; width: 1200px; }
+  .tr { position: relative; height: 50px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid #EEF0F3; font: 400 16px Inter; color: var(--ink2); box-sizing: border-box; }
+  .tr > s { position: absolute; inset: 0; background: rgba(17,60,123,.08); border-left: 4px solid var(--acc); opacity: 0; }
+  .tr > span, .thd > span { position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 18px; box-sizing: border-box; flex: none; }
+  .c1 { width: 270px; } .tr .c1 { font-weight: 600; color: var(--ink); } .c2 { width: 500px; } .c3 { width: 190px; } .c4 { width: 122px; } .c5 { width: 70px; }
+  .raw { width: 1200px; box-sizing: border-box; padding: 22px 30px 24px; }
+  .raw .t { margin: 0; font: 400 18px/1.65 Inter; color: var(--ink2); }
+  .sec { border-radius: 5px; padding: 2px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .sec b { color: var(--acc); font-weight: 600; }
+  .lab2 { width: 1200px; box-sizing: border-box; padding: 20px 30px; }
+  .ln { display: flex; align-items: center; gap: 16px; height: 36px; opacity: 0; }
+  .ln em { flex: none; width: 150px; font: 500 15px 'JetBrains Mono'; font-style: normal; color: var(--acc); background: #EEF2F8; border-radius: 7px; padding: 6px 10px; box-sizing: border-box; }
+  .ln span { flex: 1; min-width: 0; font: 400 18px Inter; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini { width: 78px; height: 54px; border-radius: 9px; background: #fff; box-shadow: 0 4px 12px rgba(30,24,36,.08); padding: 12px 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; }
+  .mini i { display: block; height: 5px; border-radius: 3px; background: #DCE2EC; }
+  .mini i:first-child { width: 60%; background: #9FB3D6; }
+  .mini.hl { box-shadow: 0 0 0 2px var(--teal), 0 4px 12px rgba(30,24,36,.08); }
+  .model.sm { width: 300px; height: 180px; }
+  .cnt { width: 300px; text-align: center; font: 500 19px 'JetBrains Mono'; color: var(--ink2); }
+  .axl { font: 500 17px Inter; color: var(--ink2); white-space: nowrap; }
+  .call { font: 600 16px/1 Inter; color: #fff; background: var(--acc); padding: 9px 13px; border-radius: 8px; white-space: nowrap; }
+  #clipFade, #cursor, .ring { pointer-events: none; }
+  .nextb { position: absolute; right: 120px; top: 73px; z-index: 7; display: none; align-items: center; gap: 10px; height: 40px; padding: 0 20px; border-radius: 20px; border: 1px solid var(--acc); background: #fff; color: var(--acc); font: 600 17px/38px Inter, sans-serif; white-space: nowrap; cursor: pointer; -webkit-appearance: none; appearance: none; }
+  .nextb:hover { background: var(--acc); color: #fff; }
+  .live body { background: #fff; overflow: hidden; }
+  .live #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .live .nextb { display: flex; }
+  .live .pill { cursor: pointer; }
+  .live .pill:hover { box-shadow: 0 0 0 2px rgba(168,41,95,.25); }
+  .pill:focus-visible, .nextb:focus-visible, .mbar button:focus-visible { outline: 3px solid rgba(208,85,138,.7); outline-offset: 2px; }
+  .mbar { display: none; }
+  .sr { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (max-width: 639px) {
+    .live .nextb { display: none; }
+    .live .mbar { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 60px; font: 500 14px Inter, sans-serif; color: var(--ink2); }
+    .mbar button { height: 40px; padding: 0 18px; border-radius: 20px; border: 1px solid rgba(168,41,95,.4); background: #fff; color: var(--acc); font: 600 14px Inter, sans-serif; cursor: pointer; }
+    .mbar button:disabled { opacity: 0.35; cursor: default; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bgfill"></div>
+  <div id="rail"></div>
+  <div id="heads"></div>
+  <canvas id="cv"></canvas>
+  <svg id="cursor" viewBox="0 0 22 22"><path d="M3 2 L3 18 L7.2 14.2 L10 20.4 L12.9 19.1 L10.2 13 L16 13 Z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+  <div class="ring" id="click"></div>
+  <div id="clipFade" class="bgfill" style="opacity:0"></div>
+  <button class="nextb" id="nextb" type="button"><span id="nextl">Next</span><b aria-hidden="true">&rarr;</b></button>
+</div>
+<div class="mbar" id="mbar"><button type="button" id="mbPrev">Back</button><span id="mbLab"></span><button type="button" id="mbNext">Next</button></div>
+<p class="sr" id="say" aria-live="polite"></p>
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const E = {
+  lin: k => k, out3: k => 1 - Math.pow(1 - k, 3), out5: k => 1 - Math.pow(1 - k, 5),
+  outExpo: k => k >= 1 ? 1 : 1 - Math.pow(2, -10 * k), in3: k => k * k * k,
+  io3: k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2,
+  io5: k => k < 0.5 ? 16 * k ** 5 : 1 - Math.pow(-2 * k + 2, 5) / 2,
+  back: k => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(k - 1, 3) + c1 * Math.pow(k - 1, 2); },
+};
+const P = (t, a, b, e = E.out3) => e(clamp((t - a) / (b - a)));
+const win = (t, a, b, c, d) => P(t, a, b) * (1 - P(t, c, d, E.io3));
+const show = (el, on) => { const v = on ? '' : 'none'; if (el.style.display !== v) el.style.display = v; };
+const QS = new URLSearchParams(location.search);
+const LIVE = !QS.has('clip');
+const CLIP = QS.get('clip') || QS.get('x') || 'pipe';
+const stage = $('stage');
+function mk(html, parent = stage) { const t = document.createElement('template'); t.innerHTML = html.trim(); const el = t.content.firstChild; parent.appendChild(el); return el; }
+function put(el, x, y, s = 1, op = 1) { show(el, op > 0.002); el.style.opacity = op; el.style.transform = `translate(${x}px, ${y}px) scale(${s})`; }
+const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mixc = (a, b, k) => { const A = rgb(a), B = rgb(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], clamp(k)))).join(',')})`; };
+const rectOf = el => { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + r.height / 2 }; };
+let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+/* canvas */
+const cv = $('cv'), ctx = cv.getContext('2d'); const DPR = window.devicePixelRatio || 1;
+cv.width = Math.round(1440 * DPR); cv.height = Math.round(900 * DPR);
+function clearC() { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, 1440, 900); }
+function dot(x, y, r, col, a) { if (a <= 0.005 || r <= 0) return; ctx.globalAlpha = Math.min(1, a); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); }
+function heat(v) { const lim = 0.06, a = Math.pow(Math.min(1, Math.abs(v) / lim), 0.8); const m = [244, 245, 248], c = v >= 0 ? [17, 60, 123] : [22, 163, 168]; return `rgb(${m.map((x, i) => Math.round(x + (c[i] - x) * a)).join(',')})`; }
+
+/* headings, rail */
+function words(t) { return t.split(' ').map(w => `<span class="w"><span>${w}</span></span>`).join(' '); }
+let STEPS = [], PILLS = [];
+function mkHeads(steps, top) {
+  $('heads').style.top = top + 'px';
+  steps.forEach(s => { s.d = mk(`<div class="head"><h1>${words(s.h)}</h1><p>${words(s.n)}</p></div>`, $('heads')); s.ws = [...s.d.querySelectorAll('.w > span')]; });
+  STEPS = steps;
+}
+function renderHeads(u) {
+  STEPS.forEach((s, i) => {
+    const tin = s.tin ?? (s.t0 + (i === 0 ? 0.3 : 0.06)), tout = i === STEPS.length - 1 ? 1e9 : (s.tout ?? s.t1 - 0.5);
+    const on = u > tin - 0.02 && u < tout + 0.75; show(s.d, on); if (!on) return;
+    s.ws.forEach((w, j) => {
+      const kin = P(u, tin + j * 0.035, tin + j * 0.035 + 0.7, E.outExpo);
+      const kout = P(u, tout + j * 0.01, tout + j * 0.01 + 0.36, E.in3);
+      w.style.transform = `translateY(${(1 - kin) * 110 - kout * 110}%)`;
+    });
+  });
+}
+function mkRail(groups) {
+  groups.forEach(g => { const G = mk(`<div class="grp"><i>${g.label}</i><div></div></div>`, $('rail')); g.items.forEach(it => PILLS.push(mk(`<button type="button" class="pill"><b></b><span>${it}</span></button>`, G.lastChild))); });
+}
+function renderRail(u) {
+  $('rail').style.opacity = P(u, 0.1, 0.45); $('nextb').style.opacity = P(u, 0.1, 0.45);
+  PILLS.forEach((p, i) => {
+    const s = STEPS[i]; const done = u >= s.t1 - 0.02;
+    const k = P(u, s.t0 - 0.1, s.t0 + 0.2) * (1 - P(u, s.t1 - 0.1, s.t1 + 0.2));
+    const base = done ? '#A8295F' : '#6B7280';
+    p.firstChild.style.opacity = k; p.lastChild.style.color = mixc(base, '#ffffff', k);
+    p.style.borderColor = done ? 'rgba(168,41,95,.7)' : 'rgba(168,41,95,.4)';
+  });
+}
+
+/* cursor */
+function cursorAt(x, y, op, press) { const el = $('cursor'); el.style.opacity = op; el.style.transform = `translate(${x - 3}px, ${y - 2}px) scale(${press})`; }
+function ringAt(x, y, k) { const el = $('click'); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = k > 0 && k < 1 ? (1 - k) * 0.9 : 0; el.style.transform = `scale(${0.4 + k * 1.5})`; }
+function glide(t, a, b, from, to, bend = 24) { const k = P(t, a, b, E.io3); return [lerp(from[0], to[0], k) + Math.sin(k * Math.PI) * bend * 0.4, lerp(from[1], to[1], k) - Math.sin(k * Math.PI) * bend]; }
+function cursorPath(u, pts, tOn, tOff) {
+  const op = P(u, tOn, tOn + 0.2) * (1 - P(u, tOff, tOff + 0.25));
+  let pos = pts[0].slice(1, 3);
+  for (let i = 1; i < pts.length; i++) { const [t1, x1, y1] = pts[i], [t0, x0, y0] = pts[i - 1]; if (u >= t0) pos = u < t1 ? glide(u, t0 + 0.06, t1 - 0.04, [x0, y0], [x1, y1]) : [x1, y1]; }
+  let press = 1, ring = -1, rp = pos;
+  for (const p of pts) if (p[3]) { if (u > p[0] && u < p[0] + 0.12) press = 0.85; const k = (u - p[0]) / 0.55; if (k > 0 && k < 1) { ring = k; rp = [p[1], p[2]]; } }
+  cursorAt(pos[0], pos[1], op, press); ringAt(rp[0], rp[1], ring);
+}
+const THUP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>';
+const THDN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+/* =================== CS 129: shared drawing =================== */
+const K = { ink: '#141316', ink2: '#5E5C64', ink3: '#6B7280', acc: '#A8295F', acc2: '#D0558A', acc3: '#F4C6DA', mute: '#E7E7E7', card: '#F4F4F4', best: '#2F7D5B', bestBg: '#E1F0E8', mid: '#9A6A12', midBg: '#F6EBD3', poor: '#B4422F', poorBg: '#F7E1DC' };
+const TONES = ['#F3DCCB', '#E8C3A5', '#D3A27C', '#B47D58', '#875638', '#563624'];
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function card(x, y, w, h, a = 1, fill = K.card) { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = fill; rr(x, y, w, h, 18); ctx.fill(); ctx.restore(); }
+function txt(s, x, y, font, col, a = 1, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = font; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
+function caps(s, x, y, a = 1, col = K.ink3, align = 'left') { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = '600 13px Inter'; ctx.letterSpacing = '1.8px'; ctx.fillStyle = col; ctx.textAlign = align; ctx.fillText(s, x, y); ctx.restore(); }
+function chipT(s, x, y, col, bg, a = 1, align = 'left', font = '600 14px Inter') {
+  if (a <= 0.003) return 0; ctx.save(); ctx.globalAlpha = Math.min(1, a); ctx.font = font;
+  const w = ctx.measureText(s).width + 22, X = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x;
+  ctx.fillStyle = bg; rr(X, y - 16, w, 28, 14); ctx.fill(); ctx.fillStyle = col; ctx.fillText(s, X + 11, y + 3); ctx.restore(); return w;
+}
+function bar(x, y, w, h, v, col, a, track = K.mute) { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = track; rr(x, y, w, h, h / 2); ctx.fill(); if (v > 0.002) { ctx.fillStyle = col; rr(x, y, Math.max(h, w * v), h, h / 2); ctx.fill(); } ctx.restore(); }
+function swatch(x, y, r, i, a, ring = 0) { if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = TONES[i]; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.12)'; ctx.lineWidth = 1; ctx.stroke(); if (ring > 0.01) { ctx.globalAlpha = a * ring; ctx.strokeStyle = K.acc; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, r + 6, 0, 6.2832); ctx.stroke(); } ctx.restore(); }
+function footnote(s) { txt(s, 120, 884, '400 14px Inter', K.ink3, 1); }
+let sd0 = 7; const rnd0 = () => (sd0 = (sd0 * 16807) % 2147483647) / 2147483647;
+// a patch of skin, drawn from a seeded texture so every frame matches
+const SKIN = (() => { const c = document.createElement('canvas'); c.width = c.height = 240; const g = c.getContext('2d'); g.fillStyle = TONES[3]; g.fillRect(0, 0, 240, 240);
+  for (let i = 0; i < 2600; i++) { const x = rnd0() * 240, y = rnd0() * 240, r = 0.6 + rnd0() * 2.6, d = rnd0(); g.fillStyle = d < 0.5 ? `rgba(90,52,30,${0.05 + rnd0() * 0.08})` : `rgba(255,235,215,${0.04 + rnd0() * 0.07})`; g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill(); }
+  for (let i = 0; i < 6; i++) { const x = 30 + rnd0() * 180, y = 30 + rnd0() * 180, gr = g.createRadialGradient(x, y, 0, x, y, 30 + rnd0() * 30); gr.addColorStop(0, 'rgba(150,70,50,0.14)'); gr.addColorStop(1, 'rgba(150,70,50,0)'); g.fillStyle = gr; g.fillRect(0, 0, 240, 240); }
+  return c; })();
+function skinTile(x, y, s, a, rot = 0, flip = 1, hue = 0) {
+  if (a <= 0.003) return; ctx.save(); ctx.globalAlpha = a; ctx.translate(x + s / 2, y + s / 2); ctx.rotate(rot); ctx.scale(flip, 1);
+  ctx.shadowColor = 'rgba(0,0,0,.12)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 8; rr(-s / 2, -s / 2, s, s, 14); ctx.clip();
+  if (hue) ctx.filter = `hue-rotate(${hue}deg) saturate(${1 + Math.abs(hue) / 40})`;
+  ctx.drawImage(SKIN, -s / 2, -s / 2, s, s); ctx.restore();
+}
+
+/* =================== 1. the pipeline =================== */
+const V2048 = Array.from({ length: 256 }, () => Math.pow(rnd0(), 2.2));
+function buildPipe() {
+  mkHeads([
+    { t0: 0, t1: 3.0, h: 'Prepare the images', n: '12,222 cleaned Fitzpatrick17k images, resized to 224 × 224, normalized, and augmented with flips, rotations and color jitter.' },
+    { t0: 3.0, t1: 6.0, h: 'Mix in more diverse faces', n: 'FairFace adds over 100,000 labeled faces, mapped to Fitzpatrick types. Training draws 75% FairFace and 25% Fitzpatrick17k.' },
+    { t0: 6.0, t1: 9.0, h: 'Extract features with ResNet50', n: 'An ImageNet-pretrained ResNet50, fine-tuned, turns each image into 2,048 numbers that capture texture, color and lighting.' },
+    { t0: 9.0, t1: 12.0, h: 'Predict the skin type', n: 'A linear layer and a softmax give a probability for each Fitzpatrick type, trained with cross-entropy and Adam.' },
+    { t0: 12.0, t1: 15.0, h: 'Break a product into its ingredients', n: 'Each ingredient adds to four dimensions, weighted by its position, since ingredients listed earlier carry more.' },
+    { t0: 15.0, t1: 18.0, h: 'Weight it by skin type', n: 'Type-specific multipliers reweight each dimension. Reflectivity counts more for deeper skin, where it reads as white cast.' },
+    { t0: 18.0, t1: 99, h: 'Rank the shelf', n: 'Lower scores are better. For a Type V prediction, the project ranked these foundations from about 8,500 Sephora products.' },
+  ], 134);
+  mkRail([{ label: 'DATA', items: ['Images', 'Mix'] }, { label: 'CLASSIFIER', items: ['Features', 'Predict'] }, { label: 'RECOMMENDER', items: ['Ingredients', 'Weight', 'Rank'] }]);
+}
+const PROB = [0.03, 0.06, 0.14, 0.29, 0.41, 0.07];
+const ING = [['Zinc oxide', [0.9, 0.1, 0.1, 0.5]], ['Titanium dioxide', [0.8, 0.1, 0.2, 0.6]], ['Mica', [0.6, 0.2, 0.0, 0.2]], ['Iron oxides', [0.1, 0.8, 0.1, 0.0]], ['Glycerin', [0.0, 0.0, 0.0, 0.1]], ['Fragrance', [0.0, 0.0, 0.7, 0.0]]];
+const POSW = [1.0, 0.82, 0.62, 0.45, 0.3, 0.2];
+const DIMS = ['Reflectivity', 'Pigment depth', 'Irritation', 'Dullness'];
+const DIMV = DIMS.map((_, d) => ING.reduce((s, [, c], j) => s + c[d] * POSW[j], 0));
+const MULT = { 1: [0.4, 0.6, 1.0, 0.5], 4: [1.6, 1.3, 1.0, 1.4] };
+function rPipe(u) {
+  renderHeads(u); renderRail(u); clearC();
+  const on = (a, b) => P(u, a, a + 0.4) * (1 - P(u, b - 0.25, b + 0.15));
+  // 1 images
+  const a1 = on(0.15, 3.0);
+  if (a1 > 0) {
+    card(120, 290, 470, 520, a1);
+    caps('FITZPATRICK17K, AFTER CLEANING', 150, 330, a1);
+    txt('12,222', 150, 392, '600 52px Inter', K.ink, a1 * P(u, 0.4, 0.8));
+    txt('images', 150, 422, '400 17px Inter', K.ink2, a1 * P(u, 0.4, 0.8));
+    const sp = [['Train', 0.7], ['Validation', 0.1], ['Test', 0.2]]; let x = 150;
+    sp.forEach(([n, f], i) => { const k = P(u, 0.8 + i * 0.25, 1.3 + i * 0.25, E.out3), w = 410 * f - 4; ctx.save(); ctx.globalAlpha = a1; ctx.fillStyle = [K.acc, K.acc2, K.acc3][i]; rr(x, 470, Math.max(1, w * k), 20, 5); ctx.fill(); ctx.restore(); x += w + 4; dot(158 + i * 140, 520, 6, [K.acc, K.acc2, K.acc3][i], a1 * k); txt(`${n} ${Math.round(f * 100)}%`, 172 + i * 140, 526, '500 15px Inter', K.ink2, a1 * k); });
+    caps('AUGMENTATION', 150, 600, a1 * P(u, 1.4, 1.7));
+    [['Horizontal flip', 1.6], ['Rotation', 2.0], ['Color jitter', 2.4]].forEach(([n, t0], i) => chipT(n, 150, 640 + i * 44, u > t0 && u < t0 + 0.5 ? '#fff' : K.acc, u > t0 && u < t0 + 0.5 ? K.acc : '#fff', a1 * P(u, 1.5 + i * 0.1, 1.8 + i * 0.1)));
+    const flip = u > 1.6 && u < 2.1 ? Math.cos(P(u, 1.6, 2.1, E.io3) * Math.PI * 2) : 1, rot = Math.sin(P(u, 2.0, 2.5, E.io3) * Math.PI) * 0.18, hue = Math.sin(P(u, 2.4, 2.9, E.io3) * Math.PI) * 22;
+    skinTile(790, 330, 360, a1 * P(u, 0.3, 0.7), rot, flip, hue);
+    const gk = P(u, 0.7, 1.1);
+    if (gk > 0) { ctx.save(); ctx.globalAlpha = a1 * gk * 0.35; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; for (let i = 1; i < 8; i++) { ctx.beginPath(); ctx.moveTo(790 + i * 45, 330); ctx.lineTo(790 + i * 45, 690); ctx.moveTo(790, 330 + i * 45); ctx.lineTo(1150, 330 + i * 45); ctx.stroke(); } ctx.restore(); }
+    txt('224 × 224', 970, 730, '600 18px "JetBrains Mono"', K.ink, a1 * gk, 'center'); txt('normalized with ImageNet statistics', 970, 756, '400 15px Inter', K.ink2, a1 * gk, 'center');
+  }
+  // 2 mix
+  const a2 = on(3.05, 6.0);
+  if (a2 > 0) {
+    [[120, 'FAIRFACE', '100K+', 'labeled faces, mapped to Fitzpatrick types', 0], [120, 'FITZPATRICK17K', '12,222', 'dermatology images, labeled by type', 1]].forEach(([x, k, n, d, i]) => {
+      const y = 300 + i * 250, kk = P(u, 3.2 + i * 0.2, 3.6 + i * 0.2);
+      card(x, y, 420, 220, a2 * kk); caps(k, x + 30, y + 42, a2 * kk); txt(n, x + 30, y + 110, '600 48px Inter', K.ink, a2 * kk); txt(d, x + 30, y + 146, '400 16px Inter', K.ink2, a2 * kk);
+      dot(x + 390, y + 40, 9, i ? K.acc3 : K.acc, a2 * kk);
+    });
+    caps('EACH TRAINING BATCH', 640, 330, a2 * P(u, 3.6, 3.9));
+    for (let i = 0; i < 40; i++) {
+      const isF = i % 4 !== 3, c = i % 10, r = Math.floor(i / 10), x = 640 + c * 56, y = 360 + r * 56, k = P(u, 3.8 + i * 0.03, 4.2 + i * 0.03, E.back);
+      if (k <= 0) continue; ctx.save(); ctx.globalAlpha = a2 * clamp(k); ctx.fillStyle = isF ? K.acc : K.acc3; rr(x + 24 * (1 - clamp(k)), y + 24 * (1 - clamp(k)), 48 * clamp(k), 48 * clamp(k), 10); ctx.fill(); ctx.restore();
+    }
+    const kk = P(u, 5.0, 5.4);
+    txt('75%', 640, 636, '600 40px Inter', K.acc, a2 * kk); txt('FairFace', 640, 664, '500 16px Inter', K.ink2, a2 * kk);
+    txt('25%', 800, 636, '600 40px Inter', K.ink, a2 * kk); txt('Fitzpatrick17k', 800, 664, '500 16px Inter', K.ink2, a2 * kk);
+    txt('1,500 images per epoch, sampled by class to temper imbalance', 640, 720, '400 16px Inter', K.ink2, a2 * P(u, 5.3, 5.6));
+  }
+  // 3 features
+  const a3 = on(6.05, 9.0);
+  if (a3 > 0) {
+    const fl = P(u, 6.4, 7.6, E.io3);
+    skinTile(lerp(120, 150, fl), 430, lerp(200, 120, fl), a3 * (1 - P(u, 7.4, 7.7)));
+    const ST = [['Stem', 240, 64], ['Stage 1', 210, 256], ['Stage 2', 170, 512], ['Stage 3', 130, 1024], ['Stage 4', 96, 2048]];
+    ST.forEach(([n, h, ch], i) => {
+      const x = 360 + i * 140, k = P(u, 6.3 + i * 0.12, 6.7 + i * 0.12, E.out3), lit = win(u, 6.9 + i * 0.22, 7.0 + i * 0.22, 7.3 + i * 0.22, 7.5 + i * 0.22);
+      ctx.save(); ctx.globalAlpha = a3 * k; ctx.strokeStyle = lit > 0.3 ? K.acc : 'rgba(20,20,22,.22)'; ctx.lineWidth = 1.2;
+      for (let d = 2; d >= 0; d--) { rr(x + d * 10, 540 - h / 2 - d * 10, 80, h, 10); ctx.globalAlpha = a3 * k * (d ? 0.55 : 1); ctx.fillStyle = d ? '#F6F6F6' : (lit > 0.3 ? K.acc : '#ECECEC'); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
+      txt(n, x + 50, 690, '600 15px Inter', K.ink, a3 * k, 'center'); txt(`${ch} ch`, x + 50, 712, '400 14px Inter', K.ink3, a3 * k, 'center');
+    });
+    const kv = P(u, 8.0, 8.6, E.out3);
+    caps('FEATURE VECTOR', 1080, 388, a3 * kv); txt('2,048 numbers', 1080, 412, '500 15px Inter', K.ink2, a3 * kv);
+    for (let i = 0; i < 64; i++) { const v = V2048[i], k = P(kv, i / 64 * 0.7, i / 64 * 0.7 + 0.3); bar(1080, 430 + i * 4.6, 220, 2.6, v * k, K.acc, a3 * k * 0.9, 'rgba(0,0,0,0)'); }
+    txt('ImageNet-pretrained, then fine-tuned', 360, 780, '400 16px Inter', K.ink2, a3 * P(u, 6.6, 7.0));
+  }
+  // 4 predict
+  const a4 = on(9.05, 12.0);
+  if (a4 > 0) {
+    card(120, 290, 760, 520, a4);
+    caps('PROBABILITY BY FITZPATRICK TYPE', 150, 330, a4);
+    const win4 = P(u, 10.6, 11.0);
+    PROB.forEach((p, i) => {
+      const y = 380 + i * 66, k = P(u, 9.4 + i * 0.1, 10.4 + i * 0.1, E.out3), top = i === 4;
+      swatch(170, y + 12, 18, i, a4, top ? win4 : 0);
+      txt(`Type ${ROMAN[i]}`, 206, y + 18, (top && win4 > 0.5 ? '600' : '500') + ' 18px Inter', K.ink, a4);
+      bar(310, y + 4, 440, 16, p / 0.45 * k, top && win4 > 0.5 ? K.acc : '#B9B9B9', a4);
+      txt(`${Math.round(p * 100 * k)}%`, 846, y + 18, '600 18px "JetBrains Mono"', top && win4 > 0.5 ? K.acc : K.ink2, a4, 'right');
+    });
+    const kf = P(u, 9.6, 10.0);
+    txt('ŷ = softmax(W h + b)', 940, 380, '500 26px "JetBrains Mono"', K.ink, a4 * kf);
+    txt('Cross-entropy loss', 940, 440, '600 18px Inter', K.ink, a4 * P(u, 9.8, 10.2)); txt('Adam, learning rate 0.001', 940, 468, '400 16px Inter', K.ink2, a4 * P(u, 9.8, 10.2));
+    txt('Learning rate scheduling', 940, 516, '600 18px Inter', K.ink, a4 * P(u, 10.0, 10.4)); txt('and early stopping', 940, 544, '400 16px Inter', K.ink2, a4 * P(u, 10.0, 10.4));
+    chipT('Predicted: Type V', 940, 620, '#fff', K.acc, a4 * win4, 'left', '600 16px Inter');
+    footnote('Illustrative probabilities for one image.');
+  }
+  // 5 ingredients, 6 weighting
+  const a5 = on(12.05, 18.0);
+  if (a5 > 0) {
+    card(120, 290, 430, 520, a5);
+    caps('INGREDIENTS, IN LIST ORDER', 150, 330, a5);
+    ING.forEach(([n], j) => { const y = 382 + j * 64, k = P(u, 12.3 + j * 0.12, 12.7 + j * 0.12); txt(`${j + 1}`, 150, y, '600 15px "JetBrains Mono"', K.ink3, a5 * k); txt(n, 182, y, '500 18px Inter', K.ink, a5 * k); bar(182, y + 14, 300, 6, POSW[j] * P(u, 12.6 + j * 0.12, 13.2 + j * 0.12), K.acc3, a5 * k); });
+    txt('position weight', 182, 790, '400 14px Inter', K.ink3, a5 * P(u, 13.0, 13.4));
+    // four dimensions build up from the ingredients
+    const kd = P(u, 13.2, 14.6, E.io3), sw = P(u, 15.1, 15.6, E.io3);
+    card(580, 290, 740, 520, a5);
+    caps(sw > 0.5 ? 'BY SKIN TYPE' : 'CONCERN BY DIMENSION', 610, 330, a5);
+    txt('Concern(P) = Σ wⱼ · cⱼ', 610, 790, '500 17px "JetBrains Mono"', K.ink2, a5 * P(u, 13.0, 13.4) * (1 - sw));
+    txt('Score(P, f) = αᶠ R + βᶠ P + γᶠ I + δᶠ D', 1290, 790, '500 16px "JetBrains Mono"', K.ink2, a5 * sw, 'right');
+    const MX = 2.6;
+    DIMS.forEach((d, i) => {
+      const y = 392 + i * 84, base = DIMV[i] * kd;
+      txt(d, 610, y, '600 18px Inter', K.ink, a5);
+      if (sw < 1) bar(800, y - 16, 480, 14, base / MX, K.acc2, a5 * (1 - sw));
+      if (sw > 0) {
+        const lo = base * MULT[1][i] * P(u, 15.4, 16.0, E.out3), hi = base * MULT[4][i] * P(u, 15.6, 16.3, E.out3);
+        bar(800, y - 24, 480, 12, lo / (MX * 1.7), TONES[1], a5 * sw); bar(800, y - 6, 480, 12, hi / (MX * 1.7), TONES[4], a5 * sw);
+        txt(`×${MULT[1][i]}`, 1290, y - 14, '500 13px "JetBrains Mono"', K.ink3, a5 * sw * P(u, 15.6, 15.9), 'right'); txt(`×${MULT[4][i]}`, 1290, y + 4, '500 13px "JetBrains Mono"', K.ink3, a5 * sw * P(u, 15.8, 16.1), 'right');
+      }
+    });
+    const ks = P(u, 16.4, 17.0);
+    if (ks > 0) {
+      const sII = 0.72 * DIMV.reduce((s, v, i) => s + v * MULT[1][i], 0), sV = 0.72 * DIMV.reduce((s, v, i) => s + v * MULT[4][i], 0);
+      swatch(624, 722, 14, 1, a5 * ks); txt('Type II', 648, 728, '500 17px Inter', K.ink2, a5 * ks); txt(sII.toFixed(1), 760, 728, '600 22px "JetBrains Mono"', K.ink, a5 * ks);
+      swatch(870, 722, 14, 4, a5 * ks); txt('Type V', 894, 728, '500 17px Inter', K.ink2, a5 * ks); txt(sV.toFixed(1), 990, 728, '600 22px "JetBrains Mono"', K.poor, a5 * ks);
+      txt('lower is better', 1290, 728, '400 15px Inter', K.ink3, a5 * ks, 'right');
+    }
+    footnote('Illustrative product, contributions and multipliers.');
+  }
+  // 7 rank
+  const a7 = P(u, 18.05, 18.45);
+  if (a7 > 0) {
+    swatch(140, 312, 16, 4, a7, 1); txt('Predicted Type V', 170, 318, '600 18px Inter', K.ink, a7);
+    const R = [['Best', 0, 'MAKE UP FOR EVER', 'Ultra HD Invisible Cover Cream Foundation Palette', K.best, K.bestBg], ['Mid', 1.7, 'Westman Atelier', 'Vital Skincare Dewy Foundation Drops', K.mid, K.midBg], ['Poor', 4.3, 'SEPHORA COLLECTION', 'Perfection Mist Airbrush Foundation', K.poor, K.poorBg]];
+    R.forEach(([lab, sc, br, nm, c, bg], i) => {
+      const y = 370 + i * 140, k = P(u, 18.3 + i * 0.25, 18.8 + i * 0.25, E.out5);
+      ctx.save(); ctx.translate((1 - k) * 40, 0); card(120, y, 1200, 120, a7 * k, '#fff');
+      ctx.save(); ctx.globalAlpha = a7 * k; ctx.strokeStyle = 'rgba(20,20,22,.08)'; ctx.lineWidth = 1; rr(120.5, y + 0.5, 1199, 119, 18); ctx.stroke(); ctx.restore();
+      chipT(lab, 150, y + 44, c, bg, a7 * k); caps(br, 236, y + 49, a7 * k); txt(nm, 150, y + 92, '600 22px Inter', K.ink, a7 * k);
+      bar(860, y + 56, 320, 10, sc / 5 * P(u, 18.6 + i * 0.25, 19.3 + i * 0.25, E.out3), c, a7 * k);
+      txt(sc.toFixed(1), 1290, y + 60, '600 26px "JetBrains Mono"', K.ink, a7 * k, 'right');
+      ctx.restore();
+    });
+    footnote('Foundation scores from the project report, on a 0 to 5 concern scale.');
+  }
+}
+
+/* =================== 2. recommendations by skin type =================== */
+const RECS = {
+  f: [
+    [['Dior', 'Dreamskin Fresh & Perfect Cushion SPF 50', 0], ['PATRICK TA', 'Major Skin Crème Foundation Duo', 0.51], ['Yves Saint Laurent', 'NU BARE LOOK TINT Skin Tint', 2]],
+    [['Dior', 'Dreamskin Fresh & Perfect Cushion SPF 50', 0], ['PATRICK TA', 'Major Skin Crème Foundation Duo', 0.51], ['Yves Saint Laurent', 'NU BARE LOOK TINT Skin Tint', 1.8]],
+    [['Shiseido', 'Synchro Skin Self-Refreshing Foundation SPF 30', 0], ['Too Faced', 'Born This Way Natural Finish Foundation', 0.6], ['Yves Saint Laurent', 'NU BARE LOOK TINT Skin Tint', 1.6]],
+    [['Estée Lauder', 'Double Wear Foundation Pump', 0], ['SEPHORA COLLECTION', 'Make No Mistake Foundation Stick', 1.2], ['SEPHORA COLLECTION', 'Perfection Mist Airbrush Foundation', 2.8]],
+    [['MAKE UP FOR EVER', 'Ultra HD Invisible Cover Cream Foundation', 0], ['Westman Atelier', 'Vital Skincare Dewy Foundation Drops', 1.7], ['SEPHORA COLLECTION', 'Perfection Mist Airbrush Foundation', 4.3]],
+    [['MAKE UP FOR EVER', 'Ultra HD Invisible Cover Cream Foundation', 0], ['Armani Beauty', 'Neo Nude Tinted Moisturizer', 2], ['SEPHORA COLLECTION', 'Perfection Mist Airbrush Foundation', 5]],
+  ],
+  s: [
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Glow Recipe', 'Watermelon Glow Niacinamide SPF 50', 0], ['Algenist', 'SUBLIME DEFENSE UV Defense Fluid', 2]],
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Glow Recipe', 'Watermelon Glow Niacinamide SPF 50', 0], ['Algenist', 'SUBLIME DEFENSE UV Defense Fluid', 1.8]],
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Dr. Barbara Sturm', 'Sun Drops SPF 50', 0.6], ['Algenist', 'SUBLIME DEFENSE UV Defense Fluid', 1.6]],
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Supergoop!', 'PLAY Body Sunscreen Mousse SPF 50', 1], ['Supergoop!', 'Mini Mineral Mattescreen SPF 40', 2.27]],
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Dr. Barbara Sturm', 'Sun Drops SPF 50', 1.5], ['COOLA', 'Dew Good Illuminating Serum SPF 30', 3.44]],
+    [['Nécessaire', 'The Sunscreen, 100% Mineral SPF 30', 0], ['Dr. Barbara Sturm', 'Sun Drops SPF 50', 1.7], ['COOLA', 'Dew Good Illuminating Serum SPF 30', 4]],
+  ],
+};
+const TT = [0, 2.6, 5.2, 7.8, 10.4, 13.0];
+function buildTypes() {
+  mkHeads([
+    { t0: 0, t1: 2.6, h: 'Fitzpatrick Type I', n: 'Lower scores are better. On the fairest skin, even the weakest matches stay near 2.' },
+    { t0: 2.6, t1: 5.2, h: 'Fitzpatrick Type II', n: 'Nearly the same shelf as Type I, with slightly lighter penalties.' },
+    { t0: 5.2, t1: 7.8, h: 'Fitzpatrick Type III', n: 'New best picks appear, and the penalties stay mild.' },
+    { t0: 7.8, t1: 10.4, h: 'Fitzpatrick Type IV', n: 'Penalties start to climb: an airbrush foundation now scores 2.8.' },
+    { t0: 10.4, t1: 13.0, h: 'Fitzpatrick Type V', n: 'Reflectivity weighs more on deeper skin, so the same airbrush foundation scores 4.3.' },
+    { t0: 13.0, t1: 99, h: 'Fitzpatrick Type VI', n: 'It reaches 5.0, while a mineral sunscreen stays the best pick for every type.' },
+  ], 134);
+  mkRail([{ label: 'FITZPATRICK TYPE', items: ['Type I', 'Type II', 'Type III', 'Type IV', 'Type V', 'Type VI'] }]);
+}
+function typeAt(u) { let i = 0; TT.forEach((t, j) => { if (u >= t + 0.15) i = j; }); return i; }
+function rTypes(u) {
+  renderHeads(u); renderRail(u); clearC();
+  const ti = typeAt(u), a = P(u, 0.1, 0.5), kT = P(u, TT[ti] + 0.15, TT[ti] + 0.75, E.out3);
+  // skin tones, with the active one ringed
+  ROMAN.forEach((r, i) => { const x = 1004 + i * 52, sel = i === ti ? kT : (i === ti - 1 ? 1 - kT : 0); swatch(x, 156, 18, i, a, i === ti ? 1 : 0); txt(r, x, 196, (i === ti ? '600' : '500') + ' 13px Inter', i === ti ? K.ink : K.ink3, a, 'center'); });
+  [['FOUNDATION', 'f', 120], ['SUNSCREEN', 's', 730]].forEach(([lab, key, X]) => {
+    card(X, 270, 590, 560, a);
+    caps(lab, X + 30, 310, a);
+    RECS[key][ti].forEach(([br, nm, sc], j) => {
+      const prev = ti > 0 ? RECS[key][ti - 1][j] : null, changed = prev && (prev[0] !== br || prev[1] !== nm), y = 340 + j * 160;
+      const scPrev = prev ? prev[2] : sc, scNow = lerp(scPrev, sc, kT);
+      const [labT, c, bg] = [['Best', K.best, K.bestBg], ['Mid', K.mid, K.midBg], ['Poor', K.poor, K.poorBg]][j];
+      ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = '#fff'; rr(X + 20, y, 550, 140, 14); ctx.fill(); ctx.restore();
+      chipT(labT, X + 46, y + 40, c, bg, a);
+      const ko = changed ? clamp(1 - kT * 2.2) : 0, ki = changed ? clamp(kT * 2.2 - 1.2) : 1;
+      if (ko > 0) { caps(prev[0], X + 46, y + 84, a * ko); txt(prev[1], X + 46, y + 112, '600 18px Inter', K.ink, a * ko); }
+      ctx.save(); ctx.translate(0, (1 - ki) * 12); caps(br, X + 46, y + 84, a * ki); txt(nm, X + 46, y + 112, '600 18px Inter', K.ink, a * ki); ctx.restore();
+      bar(X + 300, y + 32, 160, 10, scNow / 5, c, a);
+      txt(scNow.toFixed(sc % 1 && String(sc).split('.')[1].length > 1 ? 2 : 1), X + 546, y + 46, '600 22px "JetBrains Mono"', K.ink, a, 'right');
+    });
+  });
+  footnote('Results from the project report: lowest, middle and highest concern scores per category, 0 to 5.');
+}
+
+/* =================== sequencer =================== */
+const CLIPS = {
+  pipe: { build: buildPipe, measure: () => {}, render: rPipe, dur: 21.6, blur: [] },
+  types: { build: buildTypes, measure: () => {}, render: rTypes, dur: 15.6, blur: [] },
+};
+const C = CLIPS[CLIP];
+let DURATION = C.dur;
+C.build();
+window.render = function (T) {
+  T = Math.max(0, Math.min(DURATION - 1e-4, T));
+  C.render(T);
+  $('clipFade').style.opacity = LIVE ? 0 : Math.max(1 - P(T, 0, 0.35, E.io3), P(T, DURATION - 0.35, DURATION, E.io3));
+};
+window.blurAt = T => (C.blur.some(([a, b]) => T >= a && T <= b) ? 1 : 0);
+const fontLoads = ['400 20px Inter', '500 20px Inter', '600 20px Inter', 'italic 600 24px Inter', '400 20px "JetBrains Mono"', '500 20px "JetBrains Mono"', '600 20px "JetBrains Mono"'].map(f => document.fonts.load(f));
+window.ready = Promise.all([...fontLoads, document.fonts.ready, ...Array.from(document.images).map(i => i.decode().catch(() => {}))])
+  .then(() => document.fonts.ready).then(() => { C.measure(); window.render(0); if (LIVE) setupLive(); return true; });
+
+/* =================== live mode: the reader moves through the steps =================== */
+let XP_WANT = false, XP_GO = null;
+window.xpStart = () => { XP_WANT = true; if (XP_GO) XP_GO(); };   // called by the page when this comes into view
+const HOLDS = { pipe: [2.9, 5.8, 8.8, 11.6, 14.7, 17.6, 21.5], types: [2.4, 5.0, 7.6, 10.2, 12.8, 15.5] };
+function setupLive() {
+  document.documentElement.classList.add('live');
+  const H = HOLDS[CLIP], n = H.length, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  STEPS.forEach((s, i) => { if (i < n - 1) s.tout = H[i]; if (i > 0) s.tin = Math.max(s.t0 + 0.06, H[i - 1] + 0.45); });
+  const names = PILLS.map(p => p.textContent);
+  let tNow = 0, queue = [], raf = 0, last = 0, target = -1;
+  const ui = i => {
+    PILLS.forEach((p, j) => { if (j === i) p.setAttribute('aria-current', 'step'); else p.removeAttribute('aria-current'); });
+    const end = i >= n - 1;
+    $('nextl').textContent = end ? 'Replay' : 'Next: ' + names[i + 1];
+    $('nextb').querySelector('b').innerHTML = end ? '&#8635;' : '&rarr;';
+    $('mbLab').textContent = `${i + 1} of ${n} \u00b7 ${names[i]}`;
+    $('mbNext').textContent = end ? 'Replay' : 'Next';
+    $('mbPrev').disabled = i <= 0;
+  };
+  const settle = () => { const s = STEPS[target]; $('say').textContent = `${s.h}. ${s.n}`; };
+  const frame = () => {
+    const now = performance.now(), dt = clamp((now - last) / 1000, 0, 0.05); last = now;
+    const [to, sp] = queue[0], d = to - tNow, mv = sp * dt;
+    if (Math.abs(d) <= mv) { tNow = to; queue.shift(); } else tNow += Math.sign(d) * mv;
+    window.render(tNow);
+    if (queue.length) raf = requestAnimationFrame(frame); else { raf = 0; settle(); }
+  };
+  const go = i => {
+    if (i < 0 || i >= n) return;
+    const prev = i === 0 ? 0 : H[i - 1], q = [];
+    if (tNow > prev + 0.01) { tNow = prev; window.render(tNow); }                  // back, or replaying: cut to just before the step
+    else if (tNow < prev - 0.01) q.push([prev, Math.max(3, (prev - tNow) / 0.9)]); // skipping ahead: fast-forward
+    q.push([H[i], 0.6]);
+    target = i; ui(i);
+    if (reduce) { tNow = H[i]; queue = []; window.render(tNow); settle(); return; }
+    queue = q;
+    if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+  };
+  const next = () => go(target >= n - 1 ? 0 : target + 1);
+  PILLS.forEach((p, i) => p.addEventListener('click', () => go(i)));
+  $('nextb').addEventListener('click', next);
+  $('mbNext').addEventListener('click', next);
+  $('mbPrev').addEventListener('click', () => go(target - 1));
+  addEventListener('keydown', e => { if (e.key === 'ArrowRight') next(); if (e.key === 'ArrowLeft') go(target - 1); });
+  ui(0);
+  const fit = () => {
+    const s = document.documentElement.clientWidth / 1440;
+    $('stage').style.transform = `scale(${s})`;
+    const mb = $('mbar'); mb.style.top = 900 * s + 'px';
+    const h = 900 * s + (getComputedStyle(mb).display === 'none' ? 0 : mb.offsetHeight);
+    document.body.style.height = h + 'px';
+    if (window.frameElement) window.frameElement.style.height = Math.ceil(h) + 'px';
+  };
+  addEventListener('resize', fit); fit();
+  // the first step plays once the walkthrough is on screen, then it waits for the reader
+  XP_GO = () => { if (target < 0) go(0); };
+  if (XP_WANT) XP_GO();
+  // fallback when opened on its own
+  const io = new IntersectionObserver(es => { if (es.some(e => e.intersectionRatio >= 0.4)) { io.disconnect(); XP_GO(); } }, { threshold: [0, 0.4, 0.6, 1] });
+  io.observe(document.body);
+}
+</script>
+</body>
+</html>

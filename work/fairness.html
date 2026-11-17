@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css?v=18" />
+  <link rel="stylesheet" href="../styles.css?v=20" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -32,106 +32,158 @@
         <p class="eyebrow reveal">Stanford CS 129 · Course project under Andrew Ng</p>
         <h1 class="reveal">Bridging skin tone classification with fair cosmetics recommendation.</h1>
         <p class="lede reveal">
-          Skincare recommenders usually focus on visible conditions like acne or
-          dryness and overlook skin tone, which can bias results against
-          underrepresented groups. I built a pipeline that predicts Fitzpatrick
-          skin type from a photo and uses it to rank products with
-          ingredient-aware scoring.
+          Skincare recommenders usually rank products by visible concerns like
+          acne or dryness and leave skin tone out, so the same product can be
+          recommended to someone it will leave with a white cast. I built a
+          pipeline that predicts Fitzpatrick skin type from a photo with a
+          fine-tuned ResNet50, then ranks about 8,500 Sephora products with an
+          ingredient scoring system weighted for that skin type.
         </p>
         <dl class="case-meta reveal">
-          <div><dt>Context</dt><dd>CS 129, Stanford</dd></div>
-          <div><dt>Model</dt><dd>Fine-tuned ResNet50</dd></div>
+          <div><dt>Context</dt><dd>CS 129, Stanford, solo project</dd></div>
+          <div><dt>Model</dt><dd>Fine-tuned ResNet50, six-class</dd></div>
           <div><dt>Data</dt><dd>Fitzpatrick17k, FairFace, Sephora</dd></div>
-          <div><dt>Poster</dt><dd><a href="../images/fairness-poster.webp" target="_blank" rel="noopener">Open full size ↗</a></dd></div>
+          <div><dt>Stack</dt><dd>PyTorch, torchvision, scikit-learn, pandas</dd></div>
         </dl>
       </div>
     </section>
 
     <div class="container">
       <figure class="reveal">
-        <a class="case-cover" href="../images/fairness-poster.webp" target="_blank" rel="noopener" style="cursor: zoom-in">
-          <img src="../images/fairness-poster.webp" width="2000" height="1333" alt="Research poster: Beauty, but Make it Tech. Bridging Skin Tone Classification with Fair Cosmetics Formulation and Recommendation, covering motivation, approach, data, model, results, and per-skin-type product recommendations" />
-        </a>
-        <figcaption class="cover-caption">Project poster. Click to open it at full size.</figcaption>
+        <div class="case-cover fill r16-10">
+          <video data-autoplay muted loop playsinline preload="metadata" poster="../images/fairness/types-poster.jpg" aria-label="The project's recommendations for each Fitzpatrick type from I to VI. Foundation and sunscreen each show a best, mid and poor match with its concern score. The same airbrush foundation scores 2.8 for Type IV, 4.3 for Type V and 5.0 for Type VI, while a mineral sunscreen stays the best pick for every type.">
+            <source src="../images/fairness/types.mp4" type="video/mp4" />
+          </video>
+        </div>
       </figure>
 
       <ul class="case-stats">
         <li class="reveal"><b>37.3%</b><span>six-class evaluation accuracy, against a 16.7% random baseline</span></li>
         <li class="reveal"><b>45.8%</b><span>validation accuracy</span></li>
-        <li class="reveal"><b>8,500</b><span>Sephora products ranked</span></li>
+        <li class="reveal"><b>8,500</b><span>Sephora products scored by ingredient</span></li>
         <li class="reveal"><b>100K+</b><span>FairFace images added for demographic diversity</span></li>
       </ul>
 
+      <section class="case-section" data-nav="Problem">
+        <h2 class="reveal">Problem</h2>
+        <div class="prose reveal">
+          <p>Skin tone changes how a product behaves on skin. Mineral filters and reflective particles can leave a white cast on deeper skin, and some actives raise the risk of post-inflammatory hyperpigmentation. Yet most AI skincare tools classify conditions or ask for a predefined skin type, and never model tone.</p>
+          <p>Dermatology models also tend to perform worse on skin they rarely saw in training. Adamson and Smith (JAMA Dermatology, 2018) trace this to datasets drawn mostly from lighter skin, which is why this project treats fairness as part of the problem from the first dataset onward.</p>
+        </div>
+      </section>
+
       <section class="case-section" data-nav="Approach">
         <h2 class="reveal">Approach</h2>
+        <div class="prose reveal">
+          <p>Recent work splits into clinical skin analysis with deep learning and AI product recommenders that classify conditions before suggesting products (Lee et al., 2024; Hanchinal et al., 2024). Few combine the two, and fewer model how ingredients interact with different skin. This project joins them: a learned skin tone prediction feeds a structured, interpretable ranking built on cosmetic chemistry (Draelos, 2016).</p>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="How it works">
+        <h2 class="reveal">How it works</h2>
         <div class="reveal">
-          <div class="prose">
-            <p>
-              An end-to-end pipeline that combines learned visual features with
-              domain-specific ingredient knowledge: predict skin type first, then
-              use that prediction inside a structured, interpretable ranking.
-            </p>
-          </div>
-          <figure class="wide">
-            <div class="diagram diagram--row">
-              <div class="node"><span class="node-k">Face image</span><span class="node-v">224×224 RGB</span></div>
-              <span class="wire" aria-hidden="true"></span>
-              <div class="node"><span class="node-k">ResNet50</span><span class="node-v">Fitzpatrick type I to VI</span></div>
-              <span class="wire" aria-hidden="true"></span>
-              <div class="node"><span class="node-k">Ingredient scoring</span><span class="node-v">Weights conditioned on skin type</span></div>
-              <span class="wire" aria-hidden="true"></span>
-              <div class="node node-out"><span class="node-k">Ranked products</span><span class="node-v">Across 8,500 Sephora items</span></div>
-            </div>
+          <div class="prose"><p>Seven steps, from a photo to a ranked shelf. Step through them, or let the first one play.</p></div>
+          <figure class="clip-fig">
+            <iframe src="../explainers/cs129/?x=pipe" title="Step-by-step walkthrough: from a skin photo to a ranked list of products" loading="lazy"></iframe>
           </figure>
         </div>
       </section>
 
-      <section class="case-section" data-nav="Data">
+      <section class="case-section stack" data-nav="Data">
         <h2 class="reveal">Data</h2>
-        <ul class="points reveal">
-          <li><strong>Fitzpatrick17k.</strong> Labeled skin tone images, about 12K after cleaning.</li>
-          <li><strong>FairFace.</strong> Over 100K images to improve demographic diversity.</li>
-          <li><strong>Sephora.</strong> 8,500 products with ingredient lists.</li>
-        </ul>
+        <div class="reveal">
+          <ul class="tiles three">
+            <li><b>12,222</b><span>Fitzpatrick17k images after cleaning, split 70 / 10 / 20 into train, validation and test</span></li>
+            <li><b>100K+</b><span>FairFace faces, mapped to Fitzpatrick types with a heuristic from the labels FairFace provides</span></li>
+            <li><b>75 / 25</b><span>FairFace to Fitzpatrick17k in each training batch, trading diversity against label accuracy</span></li>
+            <li><b>224 &times; 224</b><span>input size, normalized with ImageNet statistics</span></li>
+            <li><b>1,500</b><span>images per epoch, sampled by class to temper imbalance</span></li>
+            <li><b>8,500</b><span>Sephora products from Kaggle, each with its ingredient list</span></li>
+          </ul>
+          <p class="table-note">Augmentation: horizontal flips, rotations, and color jitter on brightness, contrast, saturation and hue.</p>
+        </div>
       </section>
 
-      <section class="case-section" data-nav="Model">
+      <section class="case-section stack" data-nav="Model">
         <h2 class="reveal">Model and ranking</h2>
         <div class="reveal">
-          <ul class="points">
-            <li><strong>Classifier.</strong> A fine-tuned ResNet50 maps a face image to a 2048-d embedding and a probability distribution over Fitzpatrick types I to VI, trained with cross-entropy and Adam (learning rate 0.001).</li>
-            <li><strong>Ranking.</strong> Each product gets a weighted score over four ingredient features, with coefficients that depend on the predicted skin type <i>f</i>:</li>
-          </ul>
+          <div class="cards two">
+            <div class="card"><span class="eyebrow">Classifier</span><h3>ResNet50, fine-tuned end to end</h3><p>Each image becomes a 2,048-number feature vector capturing texture, color distribution and lighting. A linear layer and a softmax give a probability for each of the six types. Training used cross-entropy, Adam at a learning rate of 0.001, learning rate scheduling, and early stopping.</p></div>
+            <div class="card"><span class="eyebrow">Recommender</span><h3>Ingredient compatibility, by skin type</h3><p>Each ingredient adds to four dimensions: reflectivity, pigment depth, irritation potential and dullness, weighted by its position in the list. Type-specific multipliers then reweight each dimension, so reflectivity counts more on deeper skin. Lower scores are better.</p></div>
+          </div>
+          <p class="formula wide">ŷ = softmax(W h + b)</p>
+          <p class="formula wide">Concern(P) = &Sigma;<sub><i>j</i></sub> w<sub><i>j</i></sub> &middot; c<sub><i>j</i></sub></p>
           <p class="formula wide">Score(P, <i>f</i>) = α<sub><i>f</i></sub> · Reflectivity + β<sub><i>f</i></sub> · Pigment + γ<sub><i>f</i></sub> · Irritation + δ<sub><i>f</i></sub> · Dullness</p>
         </div>
       </section>
 
-      <section class="case-section" data-nav="Results">
+      <section class="case-section stack" data-nav="Results">
         <h2 class="reveal">Results</h2>
-        <div class="prose reveal">
-          <p>
-            The model shows that automated skin tone classification is feasible:
-            <strong>45.8% validation and 37.3% evaluation accuracy</strong>,
-            against a 16.7% random baseline, with performance varying across
-            classes. Most errors fall between adjacent skin tones, which reflects
-            how continuous the label space really is.
-          </p>
-          <p>
-            Dataset imbalance and ambiguity in skin tone labeling were the main
-            constraints. The hybrid design made recommendations more
-            interpretable, but fairness challenges remain wherever
-            representation is uneven.
-          </p>
+        <div class="reveal">
+          <div class="prose">
+            <p>The classifier reached <strong>45.8% validation and 37.3% evaluation accuracy</strong> on six classes, where chance is 16.7%. Most errors fall between neighboring types, which reflects how continuous skin tone really is. Accuracy held steady across gender but ranged from 38% to 52% across ethnic groups, so dataset composition still shaped the model.</p>
+            <p>On the recommendation side, the scoring produced compatibility scores for over 70% of products, enough to filter and rank the shelf for each predicted type.</p>
+          </div>
+          <div class="data-grid">
+            <figure class="bars-fig">
+              <p class="bars-title">F1 score by Fitzpatrick type</p>
+              <p class="bars-sub">1,000 FairFace validation images. Type III, the best represented, scores highest.</p>
+              <dl class="bars rose">
+                <div class="bar-row" title="Type I: F1 0.201, precision 0.168, recall 0.250, 64 images"><dt><i class="tone" style="background:#F3DCCB"></i>Type I</dt><dd><span class="bar" style="width:33.5%;--i:0"></span><span class="bar-val">0.20</span></dd></div>
+                <div class="bar-row" title="Type II: F1 0.263, precision 0.247, recall 0.282, 78 images"><dt><i class="tone" style="background:#E8C3A5"></i>Type II</dt><dd><span class="bar" style="width:43.8%;--i:1"></span><span class="bar-val">0.26</span></dd></div>
+                <div class="bar-row" title="Type III: F1 0.531, precision 0.441, recall 0.669, 284 images"><dt><i class="tone" style="background:#D3A27C"></i>Type III</dt><dd><span class="bar" style="width:88.5%;--i:2"></span><span class="bar-val">0.53</span></dd></div>
+                <div class="bar-row" title="Type IV: F1 0.165, precision 0.500, recall 0.099, 294 images"><dt><i class="tone" style="background:#B47D58"></i>Type IV</dt><dd><span class="bar" style="width:27.5%;--i:3"></span><span class="bar-val">0.17</span></dd></div>
+                <div class="bar-row" title="Type V: F1 0.388, precision 0.336, recall 0.460, 202 images"><dt><i class="tone" style="background:#875638"></i>Type V</dt><dd><span class="bar" style="width:64.7%;--i:4"></span><span class="bar-val">0.39</span></dd></div>
+                <div class="bar-row" title="Type VI: F1 0.362, precision 0.477, recall 0.292, 72 images"><dt><i class="tone" style="background:#563624"></i>Type VI</dt><dd><span class="bar" style="width:60.3%;--i:5"></span><span class="bar-val">0.36</span></dd></div>
+              </dl>
+            </figure>
+            <div class="table-wrap">
+              <table class="spec">
+                <caption>Per-class metrics</caption>
+                <thead><tr><th>Type</th><th>Precision</th><th>Recall</th><th>F1</th><th>Images</th></tr></thead>
+                <tbody>
+                <tr><td><i class="tone" style="background:#F3DCCB"></i>Type I</td><td>0.168</td><td>0.250</td><td>0.201</td><td>64</td></tr>
+                <tr><td><i class="tone" style="background:#E8C3A5"></i>Type II</td><td>0.247</td><td>0.282</td><td>0.263</td><td>78</td></tr>
+                <tr><td><i class="tone" style="background:#D3A27C"></i>Type III</td><td>0.441</td><td>0.669</td><td>0.531</td><td>284</td></tr>
+                <tr><td><i class="tone" style="background:#B47D58"></i>Type IV</td><td>0.500</td><td>0.099</td><td>0.165</td><td>294</td></tr>
+                <tr><td><i class="tone" style="background:#875638"></i>Type V</td><td>0.336</td><td>0.460</td><td>0.388</td><td>202</td></tr>
+                <tr><td><i class="tone" style="background:#563624"></i>Type VI</td><td>0.477</td><td>0.292</td><td>0.362</td><td>72</td></tr>
+                </tbody>
+              </table>
+              <p class="table-note">Overall accuracy 37.3%, macro F1 0.319, weighted F1 0.339.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="case-section" data-nav="Next">
-        <h2 class="reveal">What's next</h2>
-        <ul class="points reveal">
-          <li>More diverse data and refined label definitions.</li>
-          <li>Transformer-based architectures, and multi-task learning that models skin tone and skin conditions together.</li>
-          <li>Real-world user feedback to improve personalization.</li>
-        </ul>
+      <section class="case-section stack" data-nav="Recommendations">
+        <h2 class="reveal">Recommendations by skin type</h2>
+        <div class="reveal">
+          <div class="prose"><p>The same shelf, ranked for each type. Pick a type to see the best, middle and weakest foundation and sunscreen from the project's results.</p></div>
+          <figure class="clip-fig">
+            <iframe src="../explainers/cs129/?x=types" title="Step-by-step walkthrough: the best, middle and weakest products for each Fitzpatrick type" loading="lazy"></iframe>
+          </figure>
+        </div>
+      </section>
+
+      <section class="case-section" data-nav="Learnings">
+        <h2 class="reveal">What I learned</h2>
+        <div class="cards two reveal">
+          <div class="card"><h3>Labels set the ceiling.</h3><p>Fitzpatrick types sit on a continuous spectrum, and the labels are subjective, so adjacent types blur. Better architectures matter less than clearer label definitions and more balanced data.</p></div>
+          <div class="card"><h3>Domain knowledge makes it explainable.</h3><p>A hybrid of learned features and ingredient chemistry gives a reason behind every ranking, which a purely data-driven recommender cannot.</p></div>
+          <div class="card"><h3>Fairness has to be measured.</h3><p>Adding FairFace improved diversity, yet accuracy still varied by 14 points across ethnic groups. Reporting it by group is what made the gap visible.</p></div>
+          <div class="card"><h3>Next steps.</h3><p>Vision transformers, multi-task learning across skin tone and skin conditions, a larger ingredient database validated with dermatologists, and user feedback to personalize further.</p></div>
+        </div>
+      </section>
+
+      <section class="case-section stack" data-nav="Poster">
+        <h2 class="reveal">Poster</h2>
+        <figure class="reveal">
+          <a class="case-cover" href="../images/fairness-poster.webp" target="_blank" rel="noopener" style="cursor: zoom-in">
+            <img src="../images/fairness-poster.webp" width="2000" height="1333" loading="lazy" alt="Research poster: Beauty, but Make it Tech. Bridging Skin Tone Classification with Fair Cosmetics Formulation and Recommendation, covering motivation, approach, data, model, results, and per-skin-type product recommendations" />
+          </a>
+          <figcaption class="cover-caption">Click to open the poster at full size.</figcaption>
+        </figure>
       </section>
 
       <a class="next" href="renude.html">

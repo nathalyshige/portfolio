@@ -378,6 +378,15 @@ img, video { display: block; max-width: 100%; }
 .table-wrap + .cards, .clip-fig + .cards { margin-top: 28px; }
 @media (max-width: 760px) { .tiles.four { grid-template-columns: 1fr 1fr; } .spec td:first-child { white-space: normal; } }
 
+/* CS 129 */
+.tiles.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bars.rose .bar { background: #A8295F; }
+.data-grid .spec { min-width: 0; }
+.data-grid .spec td, .data-grid .spec th { padding-right: 14px; }
+.prose + .data-grid { margin-top: 32px; }
+.tone { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+@media (max-width: 760px) { .tiles.three { grid-template-columns: 1fr 1fr; } }
+
 /* Explainer clips */
 .clip-fig { margin: 28px 0 8px; }
 .clip-fig iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: var(--radius); background: #EFEEEB; overflow: hidden; }
