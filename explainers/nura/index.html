@@ -427,7 +427,7 @@ function rSession(u) {
   const pf = aF * (0.62 + 0.38 * eF), pd = aD * (0.62 + 0.38 * eD), pb = aB * (0.62 + 0.38 * eB);
   // panels
   panel(120, 270, 430, 560, aF, eF); panel(580, 270, 440, 560, aD, eD); panel(1050, 270, 270, 560, aB, eB);
-  caps('SKIN', 148, 306, pf); caps('CARTRIDGES AND BASES', 608, 306, pd); caps('BOWL', 1078, 306, pb);
+  caps('SKIN', 148, 306, pf); caps('FORMULA', 608, 306, pd); caps('DOSE', 1078, 306, pb);
   // ---- skin panel
   const FX = 262, FY = 560;
   const sweep = P(u, 0.5, 2.2, E.io3), sy = lerp(FY - 140, FY + 140, sweep);
@@ -466,86 +466,68 @@ function rSession(u) {
     ctx.save(); ctx.globalAlpha = aF * (1 - ks * 0.85); ctx.fillStyle = '#E9D2AE'; ctx.beginPath(); ctx.arc(FX + dx, FY + dy, 7 * clamp(kd) + ks * 34, 0, Math.PI * 2); ctx.fill(); ctx.restore();
   });
   chipT('~90 s, start to finish', 522, 302, '#fff', K.acc, aF * P(u, 15.5, 15.85), 'right');
-  // ---- cartridges and bases, drawn as a flat system diagram
-  const LINE = '#D2D2D2', BUS = 806, RX = 608, RW = 170;
-  const rowY = i => 352 + i * 30, rowC = i => rowY(i) + 12;
+  // ---- the formula: chosen actives and a base converge on one dispense point
+  const LINE = '#DADADA', DXp = 730, CX = 1000, CY = 440, BASEC = '#DCC7A4';
   const kc = i => P(u, 3.6 + ORDER.indexOf(i) * 0.15, 3.95 + ORDER.indexOf(i) * 0.15);
-  // which chosen cartridge sits at the piston right now (the drum indexing)
-  let selY = rowC(ORDER[0]); ORDER.forEach((idx, j) => { if (u >= actT(j) - 0.05) selY = lerp(j ? rowC(ORDER[j - 1]) : rowC(idx), rowC(idx), P(u, actT(j) - 0.05, actT(j) + 0.3, E.io3)); });
-  const selA = pd * P(u, 7.75, 8.0) * (1 - P(u, 11.3, 11.6));
-  caps('8 ACTIVES', RX, 338, pd * 0.9);
+  const rowA = i => 372 + i * 36, rowB = i => 704 + i * 38;
+  const curve = y0 => { const pts = []; for (let k = 0; k <= 28; k++) { const t = k / 28, mt = 1 - t; pts.push([mt ** 3 * DXp + 3 * mt * mt * t * 865 + 3 * mt * t * t * 865 + t ** 3 * CX, mt ** 3 * y0 + 3 * mt * mt * t * y0 + 3 * mt * t * t * CY + t ** 3 * CY]); } return pts; };
+  const OUT = [[CX, CY], [1118, CY], [1118, 470]];
+  const ring = (x, y, a) => { if (a <= 0) return; const pr = (u * 1.4) % 1; ctx.save(); ctx.globalAlpha = a * (1 - pr) * 0.7; ctx.strokeStyle = K.acc2; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, 8 + pr * 14, 0, 6.2832); ctx.stroke(); ctx.restore(); };
+  const travel = (pts, k, col, a) => { if (k <= 0 || k >= 1) return; const [x, y] = along(pts, k); dot(x, y, 4.5, col, a); };
+  caps('ACTIVES', 714, 344, pd * 0.9, K.ink3, 'right');
   for (let i = 0; i < 8; i++) {
-    const y = rowY(i), j = ORDER.indexOf(i), sel = j >= 0 ? kc(i) : 0, dim = j >= 0 ? 1 : 1 - 0.5 * P(u, 3.6, 4.0);
-    const here = selA > 0 ? selA * clamp(1 - Math.abs(selY - (y + 12)) / 30) : 0;
-    ctx.save(); ctx.globalAlpha = pd * dim; ctx.fillStyle = here > 0.01 ? mixc('#FFFFFF', '#F5E6D1', here) : sel > 0.5 ? '#FFFFFF' : 'rgba(255,255,255,.6)'; rr(RX, y, RW, 24, 6); ctx.fill();
-    ctx.strokeStyle = sel > 0.5 ? K.acc2 : 'rgba(20,20,22,.10)'; ctx.lineWidth = sel > 0.5 ? 1.4 : 1; ctx.stroke(); ctx.restore();
-    txt(String(i + 1), RX + 12, y + 17, '500 12px "JetBrains Mono"', K.ink3, pd * dim);
-    txt(CARTS[i], RX + 32, y + 17, (sel > 0.5 ? '600' : '500') + ' 13px Inter', sel > 0.5 ? K.ink : K.ink2, pd * dim);
-    poly([[RX + RW, y + 12], [BUS, y + 12]], LINE, 1.5, pd * dim);
-    if (sel > 0) { dot(RX + RW - 14, y + 12, 8 * clamp(P(u, 3.6 + j * 0.15, 3.85 + j * 0.15, E.back)), ACOL[j], pd); txt(String(j + 1), RX + RW - 14, y + 16, '700 10px Inter', '#fff', pd * sel, 'center'); }
+    const y = rowA(i), j = ORDER.indexOf(i), sel = j >= 0 ? kc(i) : 0, dim = j >= 0 ? 1 : 1 - 0.55 * P(u, 3.6, 4.0);
+    if (sel > 0) poly(curve(y), LINE, 1.5, pd * sel);
+    txt(CARTS[i], 714, y + 5, (sel > 0.5 ? '600' : '400') + ' 14px Inter', sel > 0.5 ? K.ink : K.ink3, pd * dim, 'right');
+    ctx.save(); ctx.globalAlpha = pd * dim; ctx.strokeStyle = 'rgba(20,20,22,.28)'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(DXp, y, 6, 0, 6.2832); ctx.stroke(); ctx.restore();
+    if (sel > 0) dot(DXp, y, 6.6 * clamp(P(u, 3.6 + j * 0.15, 3.85 + j * 0.15, E.back)), ACOL[j], pd);
   }
-  poly([[BUS, rowC(0)], [BUS, rowC(7)]], LINE, 1.5, pd);
-  // the selector that marks the cartridge indexed to the piston
-  if (selA > 0) { ctx.save(); ctx.globalAlpha = selA; ctx.fillStyle = K.acc; rr(RX - 12, selY - 10, 4, 20, 2); ctx.fill(); ctx.beginPath(); ctx.moveTo(RX - 6, selY - 4); ctx.lineTo(RX - 2, selY); ctx.lineTo(RX - 6, selY + 4); ctx.closePath(); ctx.fill(); ctx.restore(); }
-  // the shared piston node
-  const PY = 469, pOn = ORDER.map((_, j) => win(u, actT(j) + 0.28, actT(j) + 0.36, actT(j) + 0.55, actT(j) + 0.65)).reduce((a, b) => Math.max(a, b), 0);
-  poly([[BUS, PY], [830, PY]], LINE, 1.5, pd);
-  const node = (y, h, title, sub, on) => {
-    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = on > 0.01 ? mixc('#FFFFFF', '#F7EBDA', on) : '#FFFFFF'; rr(830, y - h / 2, 162, h, 10); ctx.fill();
-    ctx.strokeStyle = on > 0.01 ? K.acc2 : 'rgba(20,20,22,.12)'; ctx.lineWidth = on > 0.01 ? 1.4 : 1; ctx.stroke(); ctx.restore();
-    txt(title, 846, y - 3, '600 14px Inter', K.ink, pd); txt(sub, 846, y + 16, '400 12px Inter', K.ink3, pd);
-  };
-  node(PY, 52, 'Shared piston', 'ceramic, one for all 8', pOn);
-  // bases: two sealed pouches, a selector valve and their own piston
-  caps('2 BASES', RX, 624, pd * 0.9);
-  const sLvl = 1 - 0.14 * P(u, 5.9, 7.3), baseOn = win(u, 5.8, 5.95, 7.25, 7.45), BY = [638, 684];
-  [['Serum', sLvl, baseOn], ['Moisturizer', 1, 0]].forEach(([n, lv, on], i) => {
-    const y = BY[i];
-    ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#FFFFFF'; rr(RX, y, RW, 34, 8); ctx.fill(); ctx.strokeStyle = on > 0.01 ? K.acc2 : 'rgba(20,20,22,.10)'; ctx.lineWidth = on > 0.01 ? 1.4 : 1; ctx.stroke();
-    ctx.fillStyle = '#ECECEC'; rr(RX + 100, y + 14, 56, 6, 3); ctx.fill(); ctx.fillStyle = '#D9C3A0'; rr(RX + 100, y + 14, 56 * lv, 6, 3); ctx.fill(); ctx.restore();
-    txt(n, RX + 12, y + 22, '500 13px Inter', K.ink, pd);
-    poly([[RX + RW, y + 17], [BUS, y + 17]], LINE, 1.5, pd);
+  caps('BASES', 714, 676, pd * 0.9, K.ink3, 'right');
+  const baseOn = win(u, 5.8, 5.95, 7.25, 7.45);
+  ['Serum', 'Moisturizer'].forEach((n, i) => {
+    const y = rowB(i), on = i === 0 ? P(u, 3.6, 3.95) : 0;
+    if (on > 0) poly(curve(y), LINE, 1.5, pd * on);
+    txt(n, 714, y + 5, (on > 0.5 ? '600' : '400') + ' 14px Inter', on > 0.5 ? K.ink : K.ink3, pd * (1 - 0.55 * P(u, 3.6, 4.0) * (1 - on)), 'right');
+    ctx.save(); ctx.globalAlpha = pd; ctx.strokeStyle = 'rgba(20,20,22,.28)'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(DXp, y, 6, 0, 6.2832); ctx.stroke(); ctx.restore();
+    if (on > 0) dot(DXp, y, 6.6 * clamp(P(u, 3.6, 3.85, E.back)), BASEC, pd);
   });
-  poly([[BUS, BY[0] + 17], [BUS, BY[1] + 17]], LINE, 1.5, pd);
-  const VY = 678; poly([[BUS, VY], [830, VY]], LINE, 1.5, pd);
-  ctx.save(); ctx.globalAlpha = pd; ctx.fillStyle = '#FFFFFF'; ctx.strokeStyle = baseOn > 0.01 ? K.acc2 : 'rgba(20,20,22,.3)'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(BUS, VY - 7); ctx.lineTo(BUS + 7, VY); ctx.lineTo(BUS, VY + 7); ctx.lineTo(BUS - 7, VY); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
-  node(VY, 52, 'Base piston', 'via a selector valve', baseOn);
-  // tubes to the nozzle, with the dose moving through them
-  const flat = (pts, a, t, col = K.acc2) => { if (a <= 0.003) return; poly(pts, col, 2, a * 0.85); for (let k = 0; k < 4; k++) { const [x, y] = along(pts, (t * 0.8 + k / 4) % 1); dot(x, y, 3, col, a); } };
-  const T1 = [[992, PY], [1031, PY], [1031, 330], [1167, 330]], T2 = [[992, VY], [1041, VY], [1041, 342], [1167, 342]];
-  const ta = Math.min(pd, pb); poly(T1, LINE, 1.5, ta); poly(T2, LINE, 1.5, ta);
-  if (baseOn > 0) { flat([[RX + RW, BY[0] + 17], [BUS, BY[0] + 17], [BUS, VY], [830, VY]], baseOn, u); flat(T2, baseOn, u); }
+  // the line out to the bowl
+  poly(OUT, LINE, 1.5, Math.min(pd, pb));
+  // base: a steady stream along its curve
+  if (baseOn > 0) {
+    const cb = curve(rowB(0)), path = cb.concat(OUT.slice(1));
+    poly(cb, BASEC, 2, pd * baseOn); ring(DXp, rowB(0), pd * baseOn);
+    for (let k = 0; k < 5; k++) { const [x, y] = along(path, (u * 0.7 + k / 5) % 1); dot(x, y, 3.5, '#C9AE85', pd * baseOn); }
+  }
+  // actives: one after another, in the order the firmware sets
   ORDER.forEach((idx, j) => {
-    flat([[RX + RW, rowC(idx)], [BUS, rowC(idx)], [BUS, PY], [830, PY]], win(u, actT(j) + 0.1, actT(j) + 0.16, actT(j) + 0.36, actT(j) + 0.44), u * 1.4, ACOL[j]);
-    flat(T1, win(u, actT(j) + 0.36, actT(j) + 0.42, actT(j) + 0.62, actT(j) + 0.7), u * 1.4, ACOL[j]);
+    const t = actT(j), on = win(u, t - 0.05, t + 0.1, t + 0.5, t + 0.7), cv = curve(rowA(idx));
+    if (on > 0) { poly(cv, ACOL[j], 2, pd * on); ring(DXp, rowA(idx), pd * on); }
+    travel(cv, P(u, t + 0.1, t + 0.42, E.io3), ACOL[j], pd);
+    travel(OUT, P(u, t + 0.42, t + 0.62, E.in3), ACOL[j], pb);
   });
+  dot(CX, CY, 5, K.ink, pd);
   chipT(`${ORDER.filter(i => kc(i) > 0.5).length || 4} of 8 chosen`, 992, 302, '#fff', K.acc, pd * P(u, 3.6, 3.9) * (1 - P(u, 7.6, 7.9)), 'right');
   chipT('8 + 2', 992, 302, K.acc, '#FFFFFF', pd * (1 - P(u, 3.55, 3.75) + P(u, 7.7, 8.0)), 'right');
-  // ---- the bowl on its scale, in cross-section: each component lands as a layer
-  const BX = 1185, CT = 452, CB = 590, CW = 150, FULL = 112;
-  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(20,20,22,.35)'; ctx.lineWidth = 1.5; rr(BX - 16, 316, 32, 36, 6); ctx.stroke(); ctx.restore();
-  txt('nozzle', BX + 26, 340, '400 12px Inter', K.ink3, pb);
-  const cup = () => { ctx.beginPath(); ctx.moveTo(BX - CW / 2, CT); ctx.lineTo(BX - CW / 2, CB - 40); ctx.arcTo(BX - CW / 2, CB, BX - CW / 2 + 40, CB, 40); ctx.lineTo(BX + CW / 2 - 40, CB); ctx.arcTo(BX + CW / 2, CB, BX + CW / 2, CB - 40, 40); ctx.lineTo(BX + CW / 2, CT); };
-  const m = massAt(u), blend = P(u, 13.8, 14.6, E.io3), MIX = '#E6CFA8', BASEC = '#EADBC2';
-  const hb = FULL * Math.min(m, 1.8) / 2.4;
-  ctx.save(); ctx.globalAlpha = pb; cup(); ctx.closePath(); ctx.clip();
-  ctx.fillStyle = mixc(BASEC, MIX, blend); ctx.fillRect(BX - CW / 2, CB - hb, CW, hb + 1);
-  let top = CB - hb;
-  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.62, actT(j) + 0.74, E.out3); if (k <= 0) return; const h = FULL * 0.15 / 2.4 * k; ctx.fillStyle = mixc(ACOL[j], MIX, blend); ctx.fillRect(BX - CW / 2, top - h, CW, h + 0.5); top -= h; });
-  if (blend > 0 && blend < 1) { ctx.globalAlpha = pb * Math.sin(blend * Math.PI) * 0.6; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; for (let r = 0; r < 3; r++) { ctx.beginPath(); for (let x = -CW / 2; x <= CW / 2; x += 4) { const y = top + 10 + r * 16 + Math.sin(x * 0.08 + u * 9 + r) * 4; x === -CW / 2 ? ctx.moveTo(BX + x, y) : ctx.lineTo(BX + x, y); } ctx.stroke(); } }
+  // ---- the dose, as one stacked bar that fills toward the intended mass
+  const m = massAt(u), blend = P(u, 13.8, 14.6, E.io3), MIX = '#D9BE92', BX0 = 1088, BW = 60, BOT = 770, FULL = 300, TOP = BOT - FULL;
+  txt(m.toFixed(2) + ' g', 1078, 372, '600 34px "JetBrains Mono"', K.ink, pb);
+  txt('on the scale', 1078, 398, '400 13px Inter', K.ink3, pb);
+  checkMark(1284, 360, 13, pb * clamp(P(u, 12.3, 12.6, E.back)));
+  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#E9E9E9'; rr(BX0, TOP, BW, FULL, 6); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha = pb; rr(BX0, TOP, BW, FULL, 6); ctx.clip();
+  const hb = FULL * Math.min(m, 1.8) / 2.4; ctx.fillStyle = mixc(BASEC, MIX, blend); ctx.fillRect(BX0, BOT - hb, BW, hb);
+  let top = BOT - hb; const segs = [];
+  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.62, actT(j) + 0.74, E.out3); if (k <= 0) return; const h = FULL * 0.15 / 2.4 * k; ctx.fillStyle = mixc(ACOL[j], MIX, blend); ctx.fillRect(BX0, top - h, BW, h + 1); if (blend < 1) { ctx.fillStyle = '#fff'; ctx.globalAlpha = pb * (1 - blend); ctx.fillRect(BX0, top - 1, BW, 1.5); ctx.globalAlpha = pb; } segs.push([j, top - h / 2, k]); top -= h; });
   ctx.restore();
-  ctx.save(); ctx.globalAlpha = pb; ctx.strokeStyle = 'rgba(20,20,22,.45)'; ctx.lineWidth = 1.5; cup(); ctx.stroke(); ctx.restore();
-  if (baseOn > 0) poly([[BX, 354], [BX, CB - hb]], BASEC, 3, pb * baseOn);
-  ORDER.forEach((_, j) => { const k = P(u, actT(j) + 0.45, actT(j) + 0.66, E.in3); if (k > 0 && k < 1) dot(BX, lerp(358, top - 4, k), 4.5, ACOL[j], pb); });
-  // scale platform and readout
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#CFCFCF'; rr(BX - 92, CB + 10, 184, 4, 2); ctx.fill(); ctx.restore();
-  txt('scale', BX + 92, CB + 32, '400 12px Inter', K.ink3, pb, 'right');
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#FFFFFF'; rr(1086, 676, 198, 128, 12); ctx.fill(); ctx.strokeStyle = 'rgba(20,20,22,.10)'; ctx.lineWidth = 1; ctx.stroke(); ctx.restore();
-  caps('ON THE SCALE', 1104, 704, pb);
-  txt(m.toFixed(2) + ' g', 1104, 744, '600 30px "JetBrains Mono"', K.ink, pb);
-  ctx.save(); ctx.globalAlpha = pb; ctx.fillStyle = '#ECECEC'; rr(1104, 762, 162, 6, 3); ctx.fill(); ctx.fillStyle = K.acc2; rr(1104, 762, Math.max(0.1, 162 * clamp(m / 2.4)), 6, 3); ctx.fill(); ctx.fillStyle = K.ink; ctx.fillRect(1104 + 162 - 1, 756, 2, 18); ctx.restore();
-  txt('intended 2.40 g', 1104, 792, '500 13px Inter', K.ink2, pb * P(u, 11.9, 12.2));
-  checkMark(1258, 734, 14, pb * clamp(P(u, 12.3, 12.6, E.back)));
+  // intended mass
+  poly([[BX0 - 8, TOP], [BX0 + BW + 8, TOP]], K.ink, 1.5, pb);
+  txt('intended 2.40 g', BX0 + BW + 16, TOP + 4, '500 13px Inter', K.ink2, pb);
+  // what each layer is, until they are blended
+  const la = pb * (1 - blend);
+  if (hb > 2) txt('Serum', BX0 + BW + 16, BOT - hb / 2 + 4, '400 13px Inter', K.ink2, la * clamp(hb / 40));
+  if (segs.length) { const yTop = top, yBot = BOT - hb; txt('+ ' + segs.length + (segs.length > 1 ? ' actives' : ' active'), BX0 + BW + 16, Math.max((yTop + yBot) / 2 + 4, TOP + 30), '400 13px Inter', K.ink2, la); }
+  txt('blended', BX0 + BW + 16, BOT - FULL / 2 + 4, '600 13px Inter', K.ink, pb * blend);
   footnote('Schematic, not to scale. Values are illustrative.');
 }
 
